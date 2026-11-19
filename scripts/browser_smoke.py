@@ -21,7 +21,11 @@ with sync_playwright() as playwright:
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base, wait_until="networkidle")
     page.get_by_role("heading", name="运营概览", exact=True).wait_for()
+    page.get_by_role("link", name="比较延迟与准时送达订单").click()
+    page.get_by_role("heading", name="差评调查", exact=True).wait_for()
     page.get_by_role("link", name="分析工作台", exact=True).click()
+    page.get_by_role("button", name="总销售额", exact=True).click()
+    assert page.locator("#question").input_value() == "总销售额"
     page.locator("#question").fill(
         "Show the top 10 product categories by item revenue in 2018."
     )

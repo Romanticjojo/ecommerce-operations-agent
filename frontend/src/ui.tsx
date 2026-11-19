@@ -4,8 +4,8 @@ import { AlertCircle, Check, ChevronDown, Clipboard, Database, FileSearch, Loade
 import { display, label, number } from './api'
 import type { Row } from './api'
 
-export function PageHead({ title, sub, action }: { title: string; sub: string; action?: ReactNode }) {
-  return <header className="page-head"><div><h1>{title}</h1><p>{sub}</p></div>{action}</header>
+export function PageHead({ title, sub, action }: { title: string; sub?: string; action?: ReactNode }) {
+  return <header className="page-head"><div><h1>{title}</h1>{sub && <p>{sub}</p>}</div>{action}</header>
 }
 export function Pending() {
   return <div className="blank" role="status"><LoaderCircle className="spin" size={22}/>正在读取数据…</div>

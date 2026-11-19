@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { ArrowDownToLine, CheckCircle2, ChevronRight, CircleAlert, CornerDownLeft, Info, Languages, ScanSearch, Sparkles } from 'lucide-react'
+import { ArrowDownToLine, CheckCircle2, ChevronRight, CircleAlert, CornerDownLeft, Info, Languages, ScanSearch } from 'lucide-react'
 import { api, display, errorText, exportJson, modeName, number, percent, stateName } from './api'
 import type { Answer, Config, Investigation } from './api'
 import { BarChart, ErrorBox, Facts, Fold, PageHead, Sql, Table, Trend } from './ui'
@@ -9,7 +9,7 @@ export function DateFields({ start, end, setStart, setEnd }: { start: string; en
   return <div className="dates"><label>开始日期<input type="date" value={start} onChange={e => setStart(e.target.value)}/></label><label>结束日期（不含当日）<input type="date" value={end} onChange={e => setEnd(e.target.value)}/></label></div>
 }
 const BAD_RANGE = '结束日期须晚于开始日期，请调整时间范围。'
-const examples = ['Show the top 10 product categories by item revenue in 2018.', '按月统计商品成交额', 'Are late deliveries associated with negative customer reviews?']
+const examples = ['总销售额', '按月统计商品成交额', '2018 年哪些品类的商品成交额最高？']
 export function Ask({ config }: { config?: Config }) {
   const [question, setQuestion] = useState('')
   const [language, setLanguage] = useState('zh')
@@ -25,15 +25,15 @@ export function Ask({ config }: { config?: Config }) {
     catch (err) { setError(errorText(err)) }
     finally { setBusy(false) }
   }
-  return <><PageHead title="分析工作台" sub="用中文或英文提问，查看经营数据和实际执行的查询。"/>
-    <form className="panel form-panel" onSubmit={submit}><div className="panel-head"><div className="symbol-heading"><span className="icon-tile blue"><Sparkles size={19}/></span><h2><label htmlFor="question">经营问题</label></h2></div><span className="pill">{modeName(config?.mode)}</span></div>
+  return <><PageHead title="分析工作台" sub={config?.mode === 'demo' ? '离线演示支持下方常用查询，可修改日期范围。' : '输入经营问题，可按购买日期限定范围。'}/>
+    <form className="panel form-panel" onSubmit={submit}><div className="panel-head"><div className="symbol-heading"><h2><label htmlFor="question">经营问题</label></h2></div></div>
       <textarea id="question" placeholder="例如：2018 年哪些品类的商品成交额最高？" maxLength={1500} required value={question} onChange={e => setQuestion(e.target.value)} onKeyDown={e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }}/>
       <div className="options-line"><label className="language"><Languages size={16}/>回答语言<select value={language} onChange={e => setLanguage(e.target.value)}><option value="zh">中文</option><option value="en">English</option></select></label>
       <button className="primary" disabled={busy || !question.trim()}><CornerDownLeft size={16}/>{busy ? '正在执行…' : '运行分析'}</button></div>
       <Fold title="日期筛选"><DateFields {...{ start, end, setStart, setEnd }}/></Fold>
       {busy && <p role="status">已提交问题，正在等待查询服务返回结果。</p>}{error && <ErrorBox message={error}/>}
     </form>
-    {!result && !busy && <section className="examples"><h2>试试这些问题</h2><div>{examples.map(q => <button key={q} onClick={() => { setQuestion(q); document.getElementById('question')?.focus() }}><Sparkles size={16}/><span>{q}</span><ChevronRight size={16}/></button>)}</div></section>}
+    {!result && !busy && <section className="examples"><h2>常用查询</h2><div>{examples.map(q => <button key={q} onClick={() => { setQuestion(q); document.getElementById('question')?.focus() }}><span>{q}</span><ChevronRight size={16}/></button>)}</div></section>}
     {result && <QueryResult key={result.request_id} result={result}/>}</>
 }
 export function QueryResult({ result }: { result: Answer }) {
@@ -47,7 +47,7 @@ export function QueryResult({ result }: { result: Answer }) {
     <p className="answer" role="status" lang={evidence.language === "en" ? "en" : "zh-CN"}>{result.answer}</p>
     {!!result.table?.length && <><div className="panel-head compact"><h3>查询数据</h3>{!!hasChart && <div className="seg">{['chart', 'table'].map(v => <button key={v} aria-pressed={view === v} onClick={() => setView(v)}>{v === 'chart' ? '图表' : '表格'}</button>)}</div>}</div>
       {!!hasChart && view === 'chart' ? (chart.type === 'line' ? <Trend rows={result.table} x={chart.x} y={chart.y} unit={/revenue|aov|value|amount/i.test(chart.y) ? 'BRL' : ''}/> : <BarChart rows={result.table} x={chart.x} y={chart.y} formatter={v => number(v, Number.isInteger(v) ? 0 : 2)}/>) : <Table rows={result.table} caption="查询数据"/>}</>}
-    <Fold title="查询证据与 SQL"><Facts value={{request_id: result.request_id, ...evidence}}/><Sql sql={sql}/></Fold>
+    <Fold title="查询证据与 SQL"><Sql sql={sql}/><Fold title="指标、筛选与执行记录"><Facts value={{request_id: result.request_id, ...evidence}}/></Fold></Fold>
   </section>
 }
 function pointDifference(n: number | null | undefined) { return n == null ? '—' : number(n * 100, 1) + ' 个百分点' }

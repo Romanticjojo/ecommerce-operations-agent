@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Activity, ChevronRight, Database, FlaskConical, History as HistoryIcon, Layers3, LayoutDashboard, Menu, Monitor, ScanSearch, Sparkles, X } from 'lucide-react'
+import { Activity, ChevronRight, Database, FlaskConical, History as HistoryIcon, Layers3, LayoutDashboard, Menu, Monitor, ScanSearch, ChartNoAxesCombined, X } from 'lucide-react'
 import type { Config, Overview as OverviewData } from './api'
 import { modeName, sourceName, useResource } from './api'
 import { Overview } from './Overview'
@@ -9,7 +9,7 @@ import { DataPage, EvalPage, History } from './Library'
 import './style.css'
 
 const nav = [
-  { id: 'overview', title: '运营概览', icon: LayoutDashboard }, { id: 'ask', title: '分析工作台', icon: Sparkles },
+  { id: 'overview', title: '运营概览', icon: LayoutDashboard }, { id: 'ask', title: '分析工作台', icon: ChartNoAxesCombined },
   { id: 'investigation', title: '差评调查', icon: ScanSearch }, { id: 'data', title: '数据与指标', icon: Layers3 },
   { id: 'evaluation', title: '评估记录', icon: FlaskConical }, { id: 'history', title: '运行历史', icon: HistoryIcon },
 ]

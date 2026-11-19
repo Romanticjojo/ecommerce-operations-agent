@@ -32,10 +32,10 @@ h3 { font-size: 16px; line-height: 1.55 }
 .sidebar-bottom { margin-top: auto; padding: 20px 8px 2px; border-top: 1px solid var(--border); display: flex; gap: 11px; align-items: center }
 .sidebar-bottom strong { font-size: 13px; font-weight: 600 }
 .sidebar-bottom small { letter-spacing: .01em; margin-top: 2px; font-size: 11px }
-.device,.quiet-icon { display:grid; place-items:center; width: 34px; height: 34px; background:#f0f1f3; border:1px solid var(--border); color:#636973; border-radius:10px }
+.device { display:grid; place-items:center; width: 34px; height: 34px; background:#f0f1f3; border:1px solid var(--border); color:#636973; border-radius:10px }
 .workspace { margin-left: 232px; min-height: 100vh; min-width: 0 }
 .top-bar { min-height: 65px; border-bottom: 1px solid var(--border); background: #fafafb; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 clamp(24px, 3.3vw, 56px) }
-.crumb, .top-info,.top-source,.config-button, .dateline,.dateline span, .meta-line,.symbol-heading,.quick-link, .notice, .error, .blank, .form-actions,.language,.quiet,.primary,.secondary,.copy,.icon-button { display:flex; align-items:center }
+.crumb, .top-info,.top-source,.config-button,  .meta-line,.symbol-heading, .notice, .error, .blank, .form-actions,.language,.quiet,.primary,.secondary,.copy,.icon-button { display:flex; align-items:center }
 .crumb { color:var(--secondary); font-size:13px; gap:10px }
 .crumb strong { font-weight:550; color:#34363b }
 .crumb-sep { color:#979aa1 }
@@ -61,46 +61,28 @@ h1 { font-size:clamp(34px,3.15vw,46px); line-height:1.2; font-weight:650; letter
 .quiet,.copy { color:#0063c7; padding:3px 10px }
 .quiet:hover,.copy:hover,.secondary:hover,.icon-button:hover { background:#edf3fa }
 .icon-button { min-width:44px }
-.dateline { gap:12px; margin:-7px 0 19px; font-size:12px; color:#5f646a; font-variant-numeric:tabular-nums }
-.dateline span { gap:7px }
-.dateline i { width:1px; height:12px; background:#c7c9ce }
-.metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:18px }
-.metric-card,.panel,.quick-link { border:1px solid var(--border); background:white; border-radius:19px; box-shadow:0 2px 5px #21233804; min-width:0 }
-.metric-card { padding:19px 18px 17px }
-.metric-heading,.quick-section > h2 { display:flex; align-items:center; gap:9px }
-.metric-heading h2 { color:#43464c; font-size:14px; font-weight:580; letter-spacing:0 }
+.panel { border:1px solid var(--border); background:white; border-radius:19px; box-shadow:0 2px 5px #21233804; min-width:0 }
 .icon-tile,.quick-icon { display:inline-grid; place-items:center; width:33px; height:33px; border-radius:10px; flex-shrink:0 }
 .blue { background:#e9f2fd; color:#0069ca }
 .teal { background:#e3f2ec; color:#26775e }
 .purple { background:#eeebf8; color:#6c56a7 }
 .orange { background:#faf0e4; color:#965a19 }
-.metric-value { margin:14px 0 6px; display:flex; align-items:baseline; flex-wrap:wrap; column-gap:6px; font-size:clamp(23px,2.24vw,38px); font-weight:605; letter-spacing:-.062em; font-variant-numeric:tabular-nums; line-height:1.16; overflow-wrap:anywhere }
-.metric-value small { font-size:11px; font-weight:560; line-height:1.4; letter-spacing:.01em; color:var(--secondary) }
-.metric-foot,.axis-unit,.rank { font-size:11px; color:var(--secondary) }
-.chart-row { display:grid; grid-template-columns:minmax(0,1.52fr) minmax(0,1fr); gap:16px }
+.axis-unit,.rank { font-size:11px; color:var(--secondary) }
 .panel { padding:23px }
-.panel + .panel,.result-panel,.quick-section,.examples { margin-top:20px }
-.chart-row .panel { margin:0 }
+.panel + .panel,.result-panel,.examples { margin-top:20px }
 .panel-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:19px }
-.panel-head h2,.quick-section h2 { font-size:19px; font-weight:640 }
+.panel-head h2 { font-size:19px; font-weight:640 }
 .panel-head p { margin-top:3px; font-size:12px }
 .panel-head.compact { align-items:center; margin:18px 0 12px }
 .seg { display:flex; flex-shrink:0; background:#f0f1f3; border-radius:10px; padding:3px; align-items:stretch }
 .seg button { position:relative; padding:5px 10px; border-radius:8px; min-height:32px; font-size:12px; color:var(--secondary); font-weight:540 }
 .seg button:after { content:''; position:absolute; inset:-6px 0 }
 .seg button[aria-pressed=true] { background:white; color:#1d1d1f; box-shadow:0 1px 4px #181c2326 }
-.quiet-icon { border:none; background:#f4f5f7 }
 .trend { position:relative; min-width:0 }
 .trend svg { display:block; overflow:visible }
 .trend svg text { font:10px -apple-system,BlinkMacSystemFont,sans-serif; fill:#686c75; font-variant-numeric:tabular-nums }
 .axis-unit { margin:2px 0 -4px; letter-spacing:.04em }
 .chart-tip { pointer-events:none; position:absolute; top:0; right:0; font-size:11px; font-weight:550; background:#fff; padding:5px 8px; border:1px solid var(--border); border-radius:7px; box-shadow:0 2px 6px #2020200a }
-.chart-panel { display:flex; flex-direction:column }
-.chart-panel > .fold { margin-top:auto; padding-top:10px }
-.chart-panel > .fold summary { justify-content:flex-start; gap:6px; min-height:44px; font-size:12px; color:#535f6d }
-.chart-panel > .fold { border:none }
-.chart-panel > .fold summary:hover { color:var(--blue) }
-.chart-panel { padding-bottom:10px }
 .bars { list-style:none; margin:1px 0 8px; padding:0; display:grid; gap:14px }
 .bars li > div:first-child { display:flex; align-items:baseline; gap:9px; font-size:13px }
 .rank { font-size:10px; color:#5f6470; font-weight:580; font-variant-numeric:tabular-nums }
@@ -108,17 +90,7 @@ h1 { font-size:clamp(34px,3.15vw,46px); line-height:1.2; font-weight:650; letter
 .bars strong { font-size:12px; font-variant-numeric:tabular-nums; font-weight:600 }
 .track { margin:6px 0 0 22px; height:5px; background:#edf0f4; border-radius:5px; overflow:hidden }
 .track i { display:block; height:100%; border-radius:inherit }
-.quick-section { margin-top:25px }
-.quick-section > h2 { margin-bottom:12px }
-.quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px }
-.quick-link { gap:13px; border-radius:15px; padding:17px 18px; transition:border-color .15s,background .15s }
-.quick-link:hover { border-color:#97b9dd; background:#fcfdff }
-.quick-link > span:nth-child(2) { flex:1 }
-.quick-link strong,.quick-link small { display:block }
-.quick-link strong { font-size:14px; font-weight:610; margin-bottom:4px }
-.quick-link small { font-size:12px; color:var(--secondary); line-height:1.5 }
 .quick-icon { width:40px; height:40px; border-radius:12px }
-.quick-link > svg { color:#7c818a }
 .blank,.empty { justify-content:center; gap:12px; color:var(--secondary); padding:36px 12px; font-size:14px }
 .blank { min-height:140px }
 .empty { display:flex; flex-direction:column; align-items:center; text-align:center }
@@ -168,10 +140,8 @@ fieldset legend { font-weight:550; padding:0 }
 input[type=radio] { width:16px; height:16px; accent-color:var(--blue) }
 .field-note { margin:0 0 16px; font-size:13px }
 .examples h2 { margin-bottom:10px }
-.examples > div { display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
-.examples button,.history-list button { margin:0; display:flex; align-items:center; gap:10px; text-align:left; background:white; border:1px solid var(--border); border-radius:13px; padding:13px; min-height:50px; font-size:14px; line-height:1.55 }
+.history-list button { margin:0; display:flex; align-items:center; gap:10px; text-align:left; background:white; border:1px solid var(--border); border-radius:13px; padding:13px; min-height:50px; font-size:14px; line-height:1.55 }
 .examples button span,.history-text { flex:1 }
-.examples button svg:first-child { color:#0071e3 }
 .examples button:hover,.history-list button:hover,.history-list button[aria-expanded=true] { background:#f0f6fc; border-color:#b6cde4 }
 .meta-line { flex-wrap:wrap; gap:12px; color:var(--secondary); font-size:12px }
 .answer { font-size:16px; line-height:1.7; margin:15px 0; white-space:pre-wrap; overflow-wrap:anywhere }
@@ -201,8 +171,7 @@ input[type=radio] { width:16px; height:16px; accent-color:var(--blue) }
 dialog { width:min(460px,calc(100vw - 32px)); max-height:80vh; overflow:auto; color:inherit; border:1px solid var(--border); border-radius:20px; padding:24px; box-shadow:0 18px 78px #1a253328 }
 dialog::backdrop { background:#14202d55 }
 dialog .body-copy { margin-top:16px; font-size:14px }
-@media (min-width:1650px) { .metric-card { padding:23px } }
-@media (max-width:1150px) { .sidebar{width:200px} .workspace{margin-left:200px} .metric-card{padding:16px 14px} .metrics{gap:10px} .panel{padding:19px} .chart-panel{padding-bottom:8px} .chart-row{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)} }
+@media (max-width:1150px) { .sidebar{width:200px} .workspace{margin-left:200px} .panel{padding:19px} }
 @media (max-width:950px) {
   .sidebar { width:232px; top:58px; padding-top:22px; transform:translateX(-102%); visibility:hidden; transition:transform .16s ease-out }
   .sidebar.open { transform:none; visibility:visible }
@@ -214,14 +183,8 @@ dialog .body-copy { margin-top:16px; font-size:14px }
   .main { padding-top:30px }
 }
 @media (max-width:710px) {
-  .chart-row { grid-template-columns:1fr }
-  .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px }
-  .metric-value { font-size:30px }
-  .examples > div { grid-template-columns:1fr }
-  .quick-grid { grid-template-columns:1fr; gap:9px }
   .page-head { align-items:flex-start }
   .top-source { display:none }
-  .chart-panel { padding:18px 18px 5px }
 }
 @media (max-width:480px) {
   .main { padding:23px 16px 40px }
@@ -231,17 +194,10 @@ dialog .body-copy { margin-top:16px; font-size:14px }
   h1 { font-size:32px }
   .page-head p { font-size:14px; margin-top:7px }
   .page-head .primary { margin-top:4px }
-  .dateline { flex-wrap:wrap; gap:7px; font-size:11px; margin:0 0 14px }
-  .metric-card { padding:14px 12px; border-radius:15px }
-  .metric-heading { gap:7px }
-  .metric-heading h2 { font-size:13px }
-  .metric-value { font-size:clamp(22px,6.5vw,29px); margin:11px 0 5px }
   .icon-tile { width:29px; height:29px; border-radius:8px }
-  .metric-foot { font-size:10px }
   .panel { padding:16px }
-  .chart-panel { padding-bottom:5px }
   .panel-head { flex-wrap:wrap; align-items:center; margin-bottom:15px }
-  .panel-head h2,.quick-section h2 { font-size:18px }
+  .panel-head h2 { font-size:18px }
   .group-cards { gap:8px }
   .group-cards > div { padding:10px }
   .stat-list { grid-template-columns:1fr }
@@ -275,7 +231,44 @@ dialog .body-copy { margin-top:16px; font-size:14px }
 .selected-question { margin:24px 0 10px; overflow-wrap:anywhere }
 .selected-question + .result-panel { margin-top:0 }
 
-.metric-card { container-type:inline-size }
-.metric-unit { color:var(--secondary); font-size:10px; font-weight:600; margin-left:auto }
-.metric-value { display:block; white-space:nowrap }
-.metric-value.long-value { font-size:clamp(12px,13.7cqi,36px) }
+
+/* The overview reads as one report, with the sales total and its monthly series together. */
+.workspace:has(.overview-report) { background:#fff }
+.overview-report { --rule:#d6dbe0; --ink:#182936; color:var(--ink) }
+.overview-report .page-head { border-bottom:2px solid var(--ink); margin:0; padding-bottom:24px }
+.overview-report .page-head p { font-size:13px; font-variant-numeric:tabular-nums }
+.overview-report h2 { font-size:19px; letter-spacing:-.035em }
+.sales-spread,.report-details { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.12fr); gap:clamp(24px,3vw,54px); padding:32px 0; border-bottom:1px solid var(--rule) }
+.sales-total { container-type:inline-size; min-width:0; align-self:center }
+.sales-total h2 { font-size:16px }
+.sales-total h2 small { font-size:12px; color:var(--secondary); font-weight:550; margin-left:4px }
+.report-amount { display:block; margin:12px 0 7px; white-space:nowrap; font:500 clamp(28px,12.1cqi,76px)/1.08 Georgia,"Times New Roman",serif; letter-spacing:-.055em; font-variant-numeric:lining-nums tabular-nums }
+.sales-total p,.delivery-report p { font-size:13px; line-height:1.75; color:var(--secondary) }
+.sales-context { display:flex; flex-wrap:wrap; column-gap:clamp(22px,3.3vw,60px); row-gap:14px; border-top:1px solid var(--rule); margin:24px 0 0; padding-top:18px }
+.sales-context dt { color:var(--secondary); font-size:13px }
+.sales-context dd { margin:5px 0 0; font-size:12px }
+.sales-context strong { font-size:clamp(23px,2vw,32px); font-weight:550; letter-spacing:-.045em; font-variant-numeric:tabular-nums }
+.sales-trend { border-left:1px solid var(--rule); padding-left:clamp(18px,2.6vw,45px); min-width:0 }
+.sales-trend .panel-head,.category-report .panel-head { align-items:center; margin-bottom:12px }
+.overview-report .fold { border:0; margin:2px 0 0 }
+.overview-report .fold > summary { justify-content:flex-start; gap:4px; font-size:12px; font-weight:500; color:#44586b; min-height:44px }
+.report-details { grid-template-columns:minmax(0,1.2fr) minmax(0,.85fr); align-items:start }
+.category-report .bars { gap:12px }
+.category-report .panel-head p { margin:0 }
+.delivery-report { border-left:3px solid #83a7bc; padding:4px 0 6px clamp(16px,2vw,32px) }
+.review-metric { display:flex; align-items:baseline; gap:10px; margin:12px 0 8px }
+.review-metric strong { font:500 42px/1.15 Georgia,"Times New Roman",serif; letter-spacing:-.04em }
+.review-metric span { font-size:13px; color:var(--secondary) }
+.report-link { display:inline-flex; gap:9px; align-items:center; min-height:44px; font-size:14px; font-weight:560; color:#005eb2 }
+.report-link:hover { text-decoration:underline; text-underline-offset:3px }
+.delivery-report .report-link { margin-top:10px }
+.report-footer { padding-top:5px }
+.examples > div { gap:0; display:flex; flex-wrap:wrap; border-top:1px solid var(--border) }
+.examples button { display:flex; align-items:center; gap:10px; text-align:left; font-size:14px; min-height:48px; background:transparent; border:0; border-bottom:1px solid var(--border); border-radius:0; width:100%; padding:10px 4px }
+@media (max-width:760px) {
+  .sales-spread,.report-details { grid-template-columns:minmax(0,1fr); gap:24px; padding:24px 0 }
+  .sales-trend { padding:20px 0 0; border-left:0; border-top:1px solid var(--rule) }
+  .sales-context { margin-top:16px; padding-top:14px }
+  .delivery-report { margin-bottom:4px }
+  .overview-report .page-head { padding-bottom:16px }
+}
