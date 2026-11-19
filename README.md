@@ -2,6 +2,8 @@
 
 用自然语言分析电商订单、商品成交额和配送差评。工作台在本机运行，图表中的每个业务指标都能查看数据快照、筛选条件与执行 SQL。中文界面支持中英文提问，默认随附可重复生成的合成数据。
 
+> **当前项目演示使用 demo 模式（离线演示）。** 首次启动默认使用预设规则理解问题，无需 API Key，也不会调用大模型。K03 录像中的成交额来自对本机 Kaggle Olist 数据的实际查询。要使用自己的大模型，请按[模型配置步骤](#配置自己的模型)操作。
+
 **网页展示入口**　启动服务后打开[运营概览](http://127.0.0.1:8731/#overview)或[分析工作台](http://127.0.0.1:8731/#ask)。演示 K03 时，在工作台输入「总销售额」，点击「运行分析」，再展开「查询证据与 SQL」。下图和录像使用 Kaggle Olist v2；导入步骤见下方「使用完整 Olist 数据」。
 
 [观看 K03 前端操作录像（中文解说 MP4）](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4) · [下载含前后端的完整工程 ZIP](https://github.com/Romanticjojo/ecommerce-operations-agent/archive/refs/heads/main.zip)
@@ -36,11 +38,31 @@ docker compose up --build -d --wait
 
 ## 配置自己的模型
 
+项目支持兼容 OpenAI Chat Completions 的接口。配置文件是**项目根目录的 `.env`**，与 `compose.yaml` 同级。如果已有 `.env`，直接编辑它。首次配置可从[模板](.env.example)创建：
+
 ```sh
 cp .env.example .env
 ```
 
-编辑本地 `.env`，填入 `LLM_BASE_URL`（例如兼容服务的 `https://服务地址/v1`）、`LLM_MODEL` 和服务所需的 `LLM_API_KEY`。重新运行本地脚本，或执行 `docker compose up -d --force-recreate`。打开工作台检查模型状态。容器内连接宿主机模型时，基础地址应能从容器访问。提供方收到问题、业务指标与分析结构。快照、明细和查询历史保存在本地。
+在 `.env` 里把下方示例值替换为服务商提供的实际值。密钥只保存在本机。
+
+```dotenv
+LLM_BASE_URL=https://api.example.com/v1
+LLM_MODEL=your-model-id
+LLM_API_KEY=your-api-key
+```
+
+| 参数 | 如何填写 |
+|---|---|
+| `LLM_BASE_URL` | 必填。填写 API 基础地址，保留服务商要求的版本前缀（如 `/v1`）。程序会自动追加 `/chat/completions`。用 Docker 时，地址须能从容器内访问。 |
+| `LLM_MODEL` | 必填。从服务商控制台复制可调用的模型 ID。Agent 每次请求都会发送这个 ID。 |
+| `LLM_API_KEY` | 按服务商要求填写。使用免鉴权的本地模型服务时，保留 `LLM_API_KEY=` 即可。 |
+
+**让配置生效。** 使用 Docker 的用户在项目根目录运行 `docker compose up -d --force-recreate --wait`。使用本机启动脚本的用户在运行服务的终端按 Ctrl+C，再运行 `./scripts/start.sh`。
+
+**验证模型调用。** 刷新[分析工作台](http://127.0.0.1:8731/#ask)，点右上角「模型分析」核对模型名。这个标记表示配置已载入。输入「总销售额」并点击「运行分析」，成功返回查询结果后，展开「查询证据与 SQL」即可核对本次调用的模型和执行的查询。
+
+模型服务收到问题、业务指标与分析结构。快照、明细和查询历史保存在本地。
 
 完整模式将模型返回的结构化计划编译为受限 SQL。基线实验直接向同一模型请求 SQL。两条路径均使用 SQLGlot 检查、受限视图、只读 DuckDB 和独立执行进程。服务面向本机单用户，默认只绑定回环地址。
 
