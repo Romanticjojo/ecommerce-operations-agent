@@ -1,0 +1,56 @@
+id,category,question,variant,status,expected_status,correct,reference_ran,expected_rows,generated_sql,sql_success,error_type,latency_ms,usage,estimated_cost_usd,prompt_version
+Q01,filter,How many delivered orders were there in 2017?,demo,ok,ok,True,True,1,True,True,,107.07,,,demo-1
+Q02,filter,What was item revenue for delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.31,,,demo-1
+Q03,filter,What was average order value for delivered orders in customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q04,filter,How many delivered orders were there in customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q05,filter,What was item revenue for delivered orders in 2017 in customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q06,filter,What was average order value for delivered orders in 2018 in customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q07,filter,How many delivered orders were there in 2017 in customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.04,,,demo-1
+Q08,filter,What was item revenue for delivered orders in 2018 in customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.07,,,demo-1
+Q09,filter,What was average order value for delivered orders in 2017 in customer state MG?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q10,filter,How many delivered orders were there in 2018 in customer state MG?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.04,,,demo-1
+Q11,multiple_tables,What was the average order value for delivered orders in 2017?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q12,multiple_tables,What was the total payment amount for delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q13,multiple_tables,What was the average order value for delivered orders with customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q14,multiple_tables,What was the total payment amount for delivered orders with customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q15,multiple_tables,What was the average order value for delivered orders in 2017 with customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q16,multiple_tables,What was the total payment amount for delivered orders in 2018 with customer state SP?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q17,multiple_tables,What was the average order value for delivered orders in 2017 with customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q18,multiple_tables,What was the total payment amount for delivered orders in 2018 with customer state RJ?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.04,,,demo-1
+Q19,multiple_tables,What was the average order value for delivered orders in 2017 with customer state MG?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.04,,,demo-1
+Q20,multiple_tables,What was the total payment amount for delivered orders in 2018 with customer state MG?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q21,ranking,Show the top 3 product categories by item revenue in 2017.,demo,ok,ok,True,True,3,True,True,,89.48,,,demo-1
+Q22,ranking,Show the top 10 product categories by item revenue in 2018.,demo,ok,ok,True,True,10,True,True,,91.58,,,demo-1
+Q23,ranking,Show the top 5 product categories by item revenue.,demo,ok,ok,True,True,5,True,True,,100.42,,,demo-1
+Q24,ranking,Show the top 5 product categories by item revenue in 2017.,demo,ok,ok,True,True,5,True,True,,90.17,,,demo-1
+Q25,ranking,Show the top 3 product categories by item revenue in 2018.,demo,ok,ok,True,True,3,True,True,,91.31,,,demo-1
+Q26,ranking,Show the top 4 customer states by item revenue.,demo,clarification_required,ok,False,True,4,False,False,status:clarification_required,0.13,,,demo-1
+Q27,ranking,Show the top 7 customer states by item revenue in 2017.,demo,clarification_required,ok,False,True,7,False,False,status:clarification_required,0.05,,,demo-1
+Q28,ranking,Show the top 7 customer states by item revenue in 2018.,demo,clarification_required,ok,False,True,7,False,False,status:clarification_required,0.06,,,demo-1
+Q29,ranking,Show the top 10 customer states by item revenue.,demo,clarification_required,ok,False,True,10,False,False,status:clarification_required,0.06,,,demo-1
+Q30,ranking,Show the top 5 customer states by item revenue in 2018.,demo,clarification_required,ok,False,True,5,False,False,status:clarification_required,0.06,,,demo-1
+Q31,time_series,Show monthly delivered orders in 2017.,demo,ok,ok,True,True,12,True,True,,97.27,,,demo-1
+Q32,time_series,Show monthly item revenue for delivered orders in 2017.,demo,clarification_required,ok,False,True,12,False,False,status:clarification_required,0.1,,,demo-1
+Q33,time_series,Show monthly average order value for delivered orders in 2017.,demo,clarification_required,ok,False,True,12,False,False,status:clarification_required,0.06,,,demo-1
+Q34,time_series,Show monthly total payment amount for delivered orders in 2017.,demo,clarification_required,ok,False,True,12,False,False,status:clarification_required,0.05,,,demo-1
+Q35,time_series,Show monthly delivered orders in 2018.,demo,ok,ok,True,True,8,True,True,,96.64,,,demo-1
+Q36,time_series,Show monthly item revenue for delivered orders in 2018.,demo,clarification_required,ok,False,True,8,False,False,status:clarification_required,0.11,,,demo-1
+Q37,time_series,Show monthly average order value for delivered orders in 2018.,demo,clarification_required,ok,False,True,8,False,False,status:clarification_required,0.05,,,demo-1
+Q38,time_series,Show monthly total payment amount for delivered orders in 2018.,demo,clarification_required,ok,False,True,8,False,False,status:clarification_required,0.06,,,demo-1
+Q39,time_series,Show monthly delivered orders.,demo,ok,ok,True,True,23,True,True,,110.23,,,demo-1
+Q40,time_series,Show monthly item revenue for delivered orders.,demo,clarification_required,ok,False,True,23,False,False,status:clarification_required,0.11,,,demo-1
+Q41,reviews,What is the negative review rate for delivered orders in 2017?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q42,reviews,What is the reviewed order count for late delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q43,reviews,What is the negative review count for on-time delivered orders?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q44,reviews,What is the negative review rate for late delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q45,reviews,What is the reviewed order count for on-time delivered orders in 2017?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q46,reviews,What is the negative review count for delivered orders?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q47,reviews,What is the negative review rate for late delivered orders in 2017?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q48,reviews,What is the reviewed order count for delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q49,reviews,What is the negative review count for on-time delivered orders in 2017?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.06,,,demo-1
+Q50,reviews,What is the negative review rate for on-time delivered orders in 2018?,demo,clarification_required,ok,False,True,1,False,False,status:clarification_required,0.05,,,demo-1
+Q51,unanswerable,How should I price all items tomorrow?,demo,clarification_required,rejected,False,False,0,False,False,status:clarification_required,0.01,,,demo-1
+Q52,unanswerable,What caused buyer anxiety in 2018?,demo,clarification_required,rejected,False,False,0,False,False,status:clarification_required,0.01,,,demo-1
+Q53,unanswerable,How is performance?,demo,clarification_required,clarification_required,True,False,0,False,False,,0.01,,,demo-1
+Q54,unanswerable,Which supplier had the highest margin after taxes?,demo,clarification_required,rejected,False,False,0,False,False,status:clarification_required,0.01,,,demo-1
+Q55,unanswerable,Can you measure success?,demo,clarification_required,clarification_required,True,False,0,False,False,,0.01,,,demo-1

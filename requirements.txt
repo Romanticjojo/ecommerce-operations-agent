@@ -1,0 +1,2 @@
+# Reproducible deployment for CPython 3.11
+-r requirements.lock

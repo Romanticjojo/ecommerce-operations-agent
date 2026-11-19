@@ -1,0 +1,552 @@
+[
+  {
+    "id": "Q01",
+    "category": "filter",
+    "question": "How many delivered orders were there in 2017?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT COUNT(*) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q02",
+    "category": "filter",
+    "question": "What was item revenue for delivered orders in 2018?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q03",
+    "category": "filter",
+    "question": "What was average order value for delivered orders in customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q04",
+    "category": "filter",
+    "question": "How many delivered orders were there in customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT COUNT(*) FROM base WHERE state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q05",
+    "category": "filter",
+    "question": "What was item revenue for delivered orders in 2017 in customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q06",
+    "category": "filter",
+    "question": "What was average order value for delivered orders in 2018 in customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q07",
+    "category": "filter",
+    "question": "How many delivered orders were there in 2017 in customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT COUNT(*) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q08",
+    "category": "filter",
+    "question": "What was item revenue for delivered orders in 2018 in customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q09",
+    "category": "filter",
+    "question": "What was average order value for delivered orders in 2017 in customer state MG?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='MG'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q10",
+    "category": "filter",
+    "question": "How many delivered orders were there in 2018 in customer state MG?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT COUNT(*) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='MG'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q11",
+    "category": "multiple_tables",
+    "question": "What was the average order value for delivered orders in 2017?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q12",
+    "category": "multiple_tables",
+    "question": "What was the total payment amount for delivered orders in 2018?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(paid) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q13",
+    "category": "multiple_tables",
+    "question": "What was the average order value for delivered orders with customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q14",
+    "category": "multiple_tables",
+    "question": "What was the total payment amount for delivered orders with customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(paid) FROM base WHERE state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q15",
+    "category": "multiple_tables",
+    "question": "What was the average order value for delivered orders in 2017 with customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q16",
+    "category": "multiple_tables",
+    "question": "What was the total payment amount for delivered orders in 2018 with customer state SP?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(paid) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='SP'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q17",
+    "category": "multiple_tables",
+    "question": "What was the average order value for delivered orders in 2017 with customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q18",
+    "category": "multiple_tables",
+    "question": "What was the total payment amount for delivered orders in 2018 with customer state RJ?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(paid) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='RJ'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q19",
+    "category": "multiple_tables",
+    "question": "What was the average order value for delivered orders in 2017 with customer state MG?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND state='MG'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q20",
+    "category": "multiple_tables",
+    "question": "What was the total payment amount for delivered orders in 2018 with customer state MG?",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT SUM(paid) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND state='MG'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q21",
+    "category": "ranking",
+    "question": "Show the top 3 product categories by item revenue in 2017.",
+    "reference_sql": "SELECT COALESCE(t.product_category_name_english,p.product_category_name,'unknown') category,\nSUM(i.price) item_revenue FROM orders o JOIN order_items i USING(order_id)\nLEFT JOIN products p USING(product_id) LEFT JOIN category_translation t USING(product_category_name)\nWHERE o.order_status='delivered' AND o.order_purchase_timestamp >= DATE '2017-01-01' AND o.order_purchase_timestamp < DATE '2018-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 3",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q22",
+    "category": "ranking",
+    "question": "Show the top 10 product categories by item revenue in 2018.",
+    "reference_sql": "SELECT COALESCE(t.product_category_name_english,p.product_category_name,'unknown') category,\nSUM(i.price) item_revenue FROM orders o JOIN order_items i USING(order_id)\nLEFT JOIN products p USING(product_id) LEFT JOIN category_translation t USING(product_category_name)\nWHERE o.order_status='delivered' AND o.order_purchase_timestamp >= DATE '2018-01-01' AND o.order_purchase_timestamp < DATE '2019-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 10",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q23",
+    "category": "ranking",
+    "question": "Show the top 5 product categories by item revenue.",
+    "reference_sql": "SELECT COALESCE(t.product_category_name_english,p.product_category_name,'unknown') category,\nSUM(i.price) item_revenue FROM orders o JOIN order_items i USING(order_id)\nLEFT JOIN products p USING(product_id) LEFT JOIN category_translation t USING(product_category_name)\nWHERE o.order_status='delivered' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 5",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q24",
+    "category": "ranking",
+    "question": "Show the top 5 product categories by item revenue in 2017.",
+    "reference_sql": "SELECT COALESCE(t.product_category_name_english,p.product_category_name,'unknown') category,\nSUM(i.price) item_revenue FROM orders o JOIN order_items i USING(order_id)\nLEFT JOIN products p USING(product_id) LEFT JOIN category_translation t USING(product_category_name)\nWHERE o.order_status='delivered' AND o.order_purchase_timestamp >= DATE '2017-01-01' AND o.order_purchase_timestamp < DATE '2018-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 5",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q25",
+    "category": "ranking",
+    "question": "Show the top 3 product categories by item revenue in 2018.",
+    "reference_sql": "SELECT COALESCE(t.product_category_name_english,p.product_category_name,'unknown') category,\nSUM(i.price) item_revenue FROM orders o JOIN order_items i USING(order_id)\nLEFT JOIN products p USING(product_id) LEFT JOIN category_translation t USING(product_category_name)\nWHERE o.order_status='delivered' AND o.order_purchase_timestamp >= DATE '2018-01-01' AND o.order_purchase_timestamp < DATE '2019-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 3",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q26",
+    "category": "ranking",
+    "question": "Show the top 4 customer states by item revenue.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT state,SUM(amount) item_revenue FROM base GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 4",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q27",
+    "category": "ranking",
+    "question": "Show the top 7 customer states by item revenue in 2017.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT state,SUM(amount) item_revenue FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 7",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q28",
+    "category": "ranking",
+    "question": "Show the top 7 customer states by item revenue in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT state,SUM(amount) item_revenue FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 7",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q29",
+    "category": "ranking",
+    "question": "Show the top 10 customer states by item revenue.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT state,SUM(amount) item_revenue FROM base GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 10",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q30",
+    "category": "ranking",
+    "question": "Show the top 5 customer states by item revenue in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT state,SUM(amount) item_revenue FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 5",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q31",
+    "category": "time_series",
+    "question": "Show monthly delivered orders in 2017.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,COUNT(*) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q32",
+    "category": "time_series",
+    "question": "Show monthly item revenue for delivered orders in 2017.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(amount) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q33",
+    "category": "time_series",
+    "question": "Show monthly average order value for delivered orders in 2017.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q34",
+    "category": "time_series",
+    "question": "Show monthly total payment amount for delivered orders in 2017.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(paid) FROM base WHERE purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q35",
+    "category": "time_series",
+    "question": "Show monthly delivered orders in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,COUNT(*) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q36",
+    "category": "time_series",
+    "question": "Show monthly item revenue for delivered orders in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(amount) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q37",
+    "category": "time_series",
+    "question": "Show monthly average order value for delivered orders in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(amount)/NULLIF(COUNT(*),0) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q38",
+    "category": "time_series",
+    "question": "Show monthly total payment amount for delivered orders in 2018.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(paid) FROM base WHERE purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q39",
+    "category": "time_series",
+    "question": "Show monthly delivered orders.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,COUNT(*) FROM base GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q40",
+    "category": "time_series",
+    "question": "Show monthly item revenue for delivered orders.",
+    "reference_sql": "WITH item AS (SELECT order_id, SUM(price) amount FROM order_items GROUP BY order_id),\npay AS (SELECT order_id, SUM(payment_value) paid FROM order_payments GROUP BY order_id),\nbase AS (SELECT o.order_id, o.order_purchase_timestamp purchased, c.customer_state state,\nCOALESCE(i.amount,0) amount,COALESCE(p.paid,0) paid FROM orders o LEFT JOIN item i USING(order_id)\nLEFT JOIN pay p USING(order_id) LEFT JOIN customers c ON c.customer_id=o.customer_id\nWHERE o.order_status='delivered') SELECT CAST(date_trunc('month',purchased) AS DATE) AS month,SUM(amount) FROM base GROUP BY 1 ORDER BY 1",
+    "expected_status": "ok",
+    "ordered": true,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q41",
+    "category": "reviews",
+    "question": "What is the negative review rate for delivered orders in 2017?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT AVG((review_score<=2)::INT) FROM ranked WHERE rn=1 AND purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q42",
+    "category": "reviews",
+    "question": "What is the reviewed order count for late delivered orders in 2018?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FROM ranked WHERE rn=1 AND purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q43",
+    "category": "reviews",
+    "question": "What is the negative review count for on-time delivered orders?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FILTER(WHERE review_score<=2) FROM ranked WHERE rn=1 AND NOT late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q44",
+    "category": "reviews",
+    "question": "What is the negative review rate for late delivered orders in 2018?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT AVG((review_score<=2)::INT) FROM ranked WHERE rn=1 AND purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q45",
+    "category": "reviews",
+    "question": "What is the reviewed order count for on-time delivered orders in 2017?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FROM ranked WHERE rn=1 AND purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND NOT late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q46",
+    "category": "reviews",
+    "question": "What is the negative review count for delivered orders?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FILTER(WHERE review_score<=2) FROM ranked WHERE rn=1",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q47",
+    "category": "reviews",
+    "question": "What is the negative review rate for late delivered orders in 2017?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT AVG((review_score<=2)::INT) FROM ranked WHERE rn=1 AND purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q48",
+    "category": "reviews",
+    "question": "What is the reviewed order count for delivered orders in 2018?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FROM ranked WHERE rn=1 AND purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01'",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q49",
+    "category": "reviews",
+    "question": "What is the negative review count for on-time delivered orders in 2017?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT COUNT(*) FILTER(WHERE review_score<=2) FROM ranked WHERE rn=1 AND purchased >= DATE '2017-01-01' AND purchased < DATE '2018-01-01' AND NOT late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q50",
+    "category": "reviews",
+    "question": "What is the negative review rate for on-time delivered orders in 2018?",
+    "reference_sql": "WITH ranked AS (\n SELECT o.order_id,o.order_purchase_timestamp purchased,r.review_score,\n o.order_delivered_customer_date > o.order_estimated_delivery_date late,\n ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY r.review_answer_timestamp DESC NULLS LAST,\n r.review_creation_date DESC NULLS LAST,r.review_id ASC NULLS LAST,r.source_row ASC) rn\n FROM orders o JOIN order_reviews r USING(order_id)\n WHERE o.order_status='delivered' AND o.order_delivered_customer_date IS NOT NULL\n AND o.order_estimated_delivery_date IS NOT NULL AND r.review_score BETWEEN 1 AND 5)\n SELECT AVG((review_score<=2)::INT) FROM ranked WHERE rn=1 AND purchased >= DATE '2018-01-01' AND purchased < DATE '2019-01-01' AND NOT late",
+    "expected_status": "ok",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q51",
+    "category": "unanswerable",
+    "question": "How should I price all items tomorrow?",
+    "reference_sql": null,
+    "expected_status": "rejected",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q52",
+    "category": "unanswerable",
+    "question": "What caused buyer anxiety in 2018?",
+    "reference_sql": null,
+    "expected_status": "rejected",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q53",
+    "category": "unanswerable",
+    "question": "How is performance?",
+    "reference_sql": null,
+    "expected_status": "clarification_required",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q54",
+    "category": "unanswerable",
+    "question": "Which supplier had the highest margin after taxes?",
+    "reference_sql": null,
+    "expected_status": "rejected",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  },
+  {
+    "id": "Q55",
+    "category": "unanswerable",
+    "question": "Can you measure success?",
+    "reference_sql": null,
+    "expected_status": "clarification_required",
+    "ordered": false,
+    "tolerance": 1e-05,
+    "review": "pending_human_review"
+  }
+]

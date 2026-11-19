@@ -1,0 +1,17 @@
+.venv/
+.env
+.env.*
+!.env.example
+data/
+runtime/
+*.duckdb*
+*.sqlite*
+__pycache__/
+.pytest_cache/
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+.DS_Store
+test-results/
+.ruff_cache/
+coverage/
