@@ -4,11 +4,11 @@
   "total": 15,
   "environment": {
     "dataset": "olistbr/brazilian-ecommerce",
-    "request": "olistbr/brazilian-ecommerce",
+    "request": "olistbr/brazilian-ecommerce/versions/2",
     "resolved_version": "2",
     "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
     "data_license": "CC BY-NC-SA 4.0",
-    "utc": "2026-11-19T09:22:11+00:00",
+    "utc": "2026-11-19T09:31:50+00:00",
     "platform": "Darwin 25.6.0 / arm64",
     "python": "3.11.16",
     "packages": {
@@ -87,10 +87,10 @@
     },
     "suite_sha256": {
       "cases.py": "8f1b7ebf988deb59ae09b4a33b22211b16b619a6296c432671bda891198a3500",
-      "conftest.py": "14fd1a364e219b54372b578da41107ac665d1a8581f63e5e7a6fbd474127780d",
+      "conftest.py": "1c8b193ae0102e0274d0aa422535cf4a95e40fbbe1707e3f35c1d45a163ca48c",
       "oracle.py": "8f0f6496591f23a5d3253161c3812c7367542f805cea49ee659743b69732bab7",
-      "package.py": "43a67d7d44653b812d2238f518a8857407d5c9811aa2f39cf8b0b1d85f814e08",
-      "reporting.py": "0609a939322ed17492db3c6e00f1108f7226c3ca448651767d9bee9b704cad9e"
+      "package.py": "00140754876c6d89ef7ce1a3ea37ff685d228e67a745454907d6aa8e92c9e728",
+      "reporting.py": "7a4e6a61c100597df104f6ceb66dd861857c75113da633124d1e5efe8882080b"
     }
   },
   "cases": [
@@ -191,7 +191,7 @@
           ]
         }
       ],
-      "duration_ms": 100.35
+      "duration_ms": 101.74
     },
     {
       "id": "K02",
@@ -226,7 +226,7 @@
           ]
         }
       ],
-      "duration_ms": 133.61
+      "duration_ms": 134.7
     },
     {
       "id": "K03",
@@ -261,7 +261,7 @@
           ]
         }
       ],
-      "duration_ms": 115.04
+      "duration_ms": 116.74
     },
     {
       "id": "K04",
@@ -288,7 +288,7 @@
           "actual": 137.04
         }
       ],
-      "duration_ms": 120.64
+      "duration_ms": 119.77
     },
     {
       "id": "K05",
@@ -413,7 +413,7 @@
           ]
         }
       ],
-      "duration_ms": 106.91
+      "duration_ms": 105.75
     },
     {
       "id": "K06",
@@ -522,7 +522,7 @@
           ]
         }
       ],
-      "duration_ms": 105.74
+      "duration_ms": 104.59
     },
     {
       "id": "K07",
@@ -570,7 +570,7 @@
           ]
         }
       ],
-      "duration_ms": 100.3
+      "duration_ms": 98.38
     },
     {
       "id": "K08",
@@ -598,7 +598,7 @@
           }
         }
       ],
-      "duration_ms": 22.52
+      "duration_ms": 22.53
     },
     {
       "id": "K09",
@@ -635,7 +635,7 @@
           }
         }
       ],
-      "duration_ms": 55.27
+      "duration_ms": 54.29
     },
     {
       "id": "K10",
@@ -707,7 +707,7 @@
           ]
         }
       ],
-      "duration_ms": 55.07
+      "duration_ms": 54.88
     },
     {
       "id": "K11",
@@ -750,7 +750,7 @@
           }
         }
       ],
-      "duration_ms": 56.41
+      "duration_ms": 53.34
     },
     {
       "id": "K12",
@@ -783,7 +783,7 @@
           ]
         }
       ],
-      "duration_ms": 94.66
+      "duration_ms": 93.62
     },
     {
       "id": "K13",
@@ -808,7 +808,7 @@
           "actual": true
         }
       ],
-      "duration_ms": 1.2
+      "duration_ms": 1.02
     },
     {
       "id": "K14",
@@ -842,7 +842,7 @@
           ]
         }
       ],
-      "duration_ms": 11.18
+      "duration_ms": 11.68
     },
     {
       "id": "K15",
@@ -863,7 +863,7 @@
         },
         {
           "method": "GET",
-          "path": "/api/runs/b473d9f7-9bae-45fd-98e9-8f8902bd5610",
+          "path": "/api/runs/eae6fad0-c15c-4fb7-829c-fb11f0d464cd",
           "input": null,
           "http_status": 200,
           "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
@@ -892,7 +892,7 @@
           ]
         }
       ],
-      "duration_ms": 126.69
+      "duration_ms": 127.57
     }
   ]
 }

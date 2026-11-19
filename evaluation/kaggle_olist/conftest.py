@@ -2,6 +2,7 @@
 
 import hashlib
 import inspect
+import json
 import platform
 import socket
 import threading
@@ -24,6 +25,11 @@ HANDLE = "olistbr/brazilian-ecommerce"
 
 def pytest_addoption(parser):
     parser.addoption(
+        "--olist-trace",
+        action="store_true",
+        help="Print download, import, HTTP and comparison evidence (use with -s)",
+    )
+    parser.addoption(
         "--olist-version", default=None, help="Kaggle version number; default: latest"
     )
     parser.addoption(
@@ -39,7 +45,16 @@ def pytest_configure(config):
 
 
 @pytest.fixture(scope="session")
-def site(request, tmp_path_factory):
+def trace(request):
+    def emit(message):
+        if request.config.getoption("--olist-trace"):
+            print(message, flush=True)
+
+    return emit
+
+
+@pytest.fixture(scope="session")
+def site(request, tmp_path_factory, trace):
     import kagglehub
     from commerce.api import make_app
     from commerce.data import build_db
@@ -49,11 +64,18 @@ def site(request, tmp_path_factory):
         raise ValueError("--olist-version requires a numeric version")
     handle = f"{HANDLE}/versions/{version_id}" if version_id else HANDLE
     # The no-version invocation is the latest-version API requested for this project.
+    trace(f"KaggleHub dataset: {handle}")
     folder = Path(kagglehub.dataset_download(handle))
+    trace(
+        f"CSV files available: {len(list(folder.glob('*.csv')))}. Computing independent CSV reference ..."
+    )
     ref = Reference(folder)
     directory = tmp_path_factory.mktemp("kaggle-olist")
     db = directory / "commerce.duckdb"
     audit = build_db(folder, db, "olist")
+    trace(
+        f"DuckDB ready: {len(audit['files'])} input tables, {audit['files']['orders']['rows']:,} orders."
+    )
     requested_version = folder.name if folder.parent.name == "versions" else version_id
     request.config.olist_metadata.update(
         {
@@ -118,11 +140,13 @@ def site(request, tmp_path_factory):
                 break
             time.sleep(0.05)
         assert client.get("/api/health").json()["data_ready"]
+        trace("Local HTTP server ready. Dataset snapshot: " + audit["snapshot_id"][:16])
         yield client, ref, db, audit["snapshot_id"]
 
 
 class Probe:
-    def __init__(self, site, record):
+    def __init__(self, site, record, trace):
+        self.trace = trace
         self.client, self.ref, self.db, self.snapshot = site
         self.record = record
 
@@ -143,6 +167,9 @@ class Probe:
         if evidence.get("sql"):
             event["executed_sql"] = evidence["sql"]
         self.record["requests"].append(event)
+        self.trace(
+            f"{method} {path}  {json.dumps(body, ensure_ascii=False)}  ->  HTTP {response.status_code}"
+        )
         assert response.status_code == code
         return info
 
@@ -157,12 +184,13 @@ class Probe:
         self.record["checks"].append(
             {"label": label, "expected": expected, "actual": actual}
         )
+        self.trace(f"{label}\n  Expected: {expected}\n  Observed: {actual}")
         assert actual == expected, label
 
 
 @pytest.fixture
-def probe(site, request):
-    return Probe(site, request.config.olist_results[request.node.nodeid])
+def probe(site, request, trace):
+    return Probe(site, request.config.olist_results[request.node.nodeid], trace)
 
 
 def pytest_collection_modifyitems(config, items):

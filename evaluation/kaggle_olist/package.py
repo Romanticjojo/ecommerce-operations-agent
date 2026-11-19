@@ -14,6 +14,8 @@ files = [
     *sorted((root / "tests").glob("test_*.py")),
     pack / "README.md",
     pack / "requirements.txt",
+    pack / "media" / "K03-revenue.mp4",
+    pack / "media" / "K03-results.json",
     *sorted(pack.glob("*.py")),
     *(
         pack / "verified" / name
@@ -32,5 +34,5 @@ with ZipFile(pack / "olist-kaggle-acceptance.zip", "w") as bundle:
         if name == "README.md":
             content = content.replace(
                 b"](verified/", b"](evaluation/kaggle_olist/verified/"
-            )
+            ).replace(b"](media/", b"](evaluation/kaggle_olist/media/")
         bundle.writestr(info, content)

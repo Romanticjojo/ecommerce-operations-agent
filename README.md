@@ -76,7 +76,7 @@ docker compose run --rm -v "/path/to/unzipped-olist:/input:ro" workbench python 
 
 ## 测试与评估
 
-真实 Kaggle 数据验收涵盖 15 项。下载 ZIP 后可从解压目录独立运行，详细报告列出每项输入、期望与实测值。[完整报告](evaluation/kaggle_olist/verified/REPORT.md) · [复现说明](evaluation/kaggle_olist/README.md) · [完整测试包 ZIP](evaluation/kaggle_olist/olist-kaggle-acceptance.zip)
+真实 Kaggle 数据验收涵盖 15 项。下载 ZIP 后可从解压目录独立运行，详细报告列出每项输入、期望与实测值。[K03 本地实测录像（MP4）](evaluation/kaggle_olist/media/K03-revenue.mp4) · [完整报告](evaluation/kaggle_olist/verified/REPORT.md) · [复现说明](evaluation/kaggle_olist/README.md) · [完整测试包 ZIP](evaluation/kaggle_olist/olist-kaggle-acceptance.zip)
 
 ```sh
 .venv/bin/python -m pytest -q

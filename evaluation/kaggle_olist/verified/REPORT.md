@@ -2,7 +2,7 @@
 
 **15 / 15 项通过**。pytest 退出码为 `0`。
 
-运行时间（UTC） `2026-11-19T09:22:11+00:00`。数据来源为 [Olist 官方 Kaggle 数据集](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)，本次解析到版本 **2**。
+运行时间（UTC） `2026-11-19T09:31:50+00:00`。数据来源为 [Olist 官方 Kaggle 数据集](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)，本次解析到版本 **2**。
 
 操作系统 `Darwin 25.6.0 / arm64`，Python `3.11.16`。业务数据快照 `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`。
 
@@ -12,23 +12,71 @@
 
 [机器可读结果](results.json) · [九个源文件的行数、字节数、SHA-256 与环境](manifest.json)
 
+[观看 K03 本地测试全程（MP4）](https://github.com/Romanticjojo/ecommerce-operations-agent/raw/refs/heads/main/evaluation/kaggle_olist/media/K03-revenue.mp4)
+
+## 在本地复现
+
+以下命令在本仓库或完整测试包的根目录执行（Python 3.11）。首行创建虚拟环境，随后安装锁定的应用依赖与 KaggleHub。
+
+```sh
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r evaluation/kaggle_olist/requirements.txt
+```
+
+本项目指定的数据集和下载入口如下。无版本号时由 KaggleHub 解析最新版；复查本报告时选用本次实测版本。
+
+```python
+import kagglehub
+path = kagglehub.dataset_download("olistbr/brazilian-ecommerce")
+print("Path to dataset files:", path)
+```
+
+```sh
+# 全套用例；pytest 会自行取数、建库并启动本机服务
+.venv/bin/python -m pytest -q evaluation/kaggle_olist/cases.py --olist-version 2
+# 单跑 K03，并显示实际 HTTP 输入与断言两侧的值
+.venv/bin/python -m pytest -q -s evaluation/kaggle_olist/cases.py::test_k03_revenue --olist-version 2 --olist-trace --olist-output runtime/k03
+```
+
+整套用例的默认输出目录为 `runtime/kaggle-acceptance/`，上方 K03 命令使用独立的 `runtime/k03/`。两者均生成 REPORT.md、results.json 和 manifest.json。
+
+## 本次运行的数据与环境
+
+发布者 Olist；数据许可 CC BY-NC-SA 4.0。版本 2 的源文件如下。行数使用 CSV 解析器计数，不含表头。
+
+| 源文件 | 用途 | 记录数 | 字节数 | SHA-256 |
+|---|---|---:|---:|---|
+| `olist_customers_dataset.csv` | 导入 | 99,441 | 9,033,957 | `983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2` |
+| `olist_geolocation_dataset.csv` | 仅审计 | 1,000,163 | 61,273,883 | `b514f6fc991b9566aeba02aa5d67e2c3630f034b60a0e05aa0d082a3b66d88d6` |
+| `olist_order_items_dataset.csv` | 导入 | 112,650 | 15,438,671 | `0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279` |
+| `olist_order_payments_dataset.csv` | 导入 | 103,886 | 5,777,138 | `4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0` |
+| `olist_order_reviews_dataset.csv` | 导入 | 99,224 | 14,451,670 | `012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7` |
+| `olist_orders_dataset.csv` | 导入 | 99,441 | 17,654,914 | `8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf` |
+| `olist_products_dataset.csv` | 导入 | 32,951 | 2,379,446 | `3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc` |
+| `olist_sellers_dataset.csv` | 导入 | 3,095 | 174,703 | `1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e` |
+| `product_category_name_translation.csv` | 导入 | 71 | 2,613 | `a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278` |
+
+运行依赖：`kagglehub 1.0.3`、`kagglesdk 0.1.38`、`duckdb 2.0.0`、`scipy 1.17.1`、`pytest 9.2.0`、`fastapi 0.165.0`、`uvicorn 0.54.0`。
+
+## 用例总览
+
 | 用例 | 检查内容 | 结果 | 耗时（ms） |
 |---|---|---|---:|
-| K01 | 导入清单与原始文件一致 | PASS | 100.35 |
-| K02 | 汇总已送达订单 | PASS | 133.61 |
-| K03 | 核对已送达商品成交额 | PASS | 115.04 |
-| K04 | 核对客单价 | PASS | 120.64 |
-| K05 | 2017 年逐月订单趋势 | PASS | 106.91 |
-| K06 | 2018 年成交额前十品类 | PASS | 105.74 |
-| K07 | 日期窗口按购买日左闭右开 | PASS | 100.30 |
-| K08 | 多商品且多支付的订单不会放大金额 | PASS | 22.52 |
-| K09 | 调查样本筛选与排除数 | PASS | 55.27 |
-| K10 | 时间戳口径下的风险差与区间 | PASS | 55.07 |
-| K11 | 自然日口径的敏感性分析 | PASS | 56.41 |
-| K12 | 缺少订单时给出数据不足状态 | PASS | 94.66 |
-| K13 | 拒绝反向日期区间 | PASS | 1.20 |
-| K14 | 离线模式处理缺失的利润指标 | PASS | 11.18 |
-| K15 | 历史记录与执行证据可重放 | PASS | 126.69 |
+| K01 | 导入清单与原始文件一致 | PASS | 101.74 |
+| K02 | 汇总已送达订单 | PASS | 134.70 |
+| K03 | 核对已送达商品成交额 | PASS | 116.74 |
+| K04 | 核对客单价 | PASS | 119.77 |
+| K05 | 2017 年逐月订单趋势 | PASS | 105.75 |
+| K06 | 2018 年成交额前十品类 | PASS | 104.59 |
+| K07 | 日期窗口按购买日左闭右开 | PASS | 98.38 |
+| K08 | 多商品且多支付的订单不会放大金额 | PASS | 22.53 |
+| K09 | 调查样本筛选与排除数 | PASS | 54.29 |
+| K10 | 时间戳口径下的风险差与区间 | PASS | 54.88 |
+| K11 | 自然日口径的敏感性分析 | PASS | 53.34 |
+| K12 | 缺少订单时给出数据不足状态 | PASS | 93.62 |
+| K13 | 拒绝反向日期区间 | PASS | 1.02 |
+| K14 | 离线模式处理缺失的利润指标 | PASS | 11.68 |
+| K15 | 历史记录与执行证据可重放 | PASS | 127.57 |
 
 ## 用例明细
 
@@ -920,7 +968,7 @@ HTTP 输入中的日期区间左闭右开；BRL 为巴西雷亚尔。Geo 文件�
     },
     {
       "method": "GET",
-      "path": "/api/runs/b473d9f7-9bae-45fd-98e9-8f8902bd5610",
+      "path": "/api/runs/eae6fad0-c15c-4fb7-829c-fb11f0d464cd",
       "input": null,
       "http_status": 200,
       "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"

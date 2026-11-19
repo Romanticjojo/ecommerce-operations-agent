@@ -1,6 +1,6 @@
 # Olist · 15 个真实数据测试用例
 
-[阅读本次完整报告](verified/REPORT.md) · [逐项输入、预期与实测 JSON](verified/results.json) · [数据来源和文件指纹](verified/manifest.json)
+[观看 K03 本地单例测试全程（MP4）](media/K03-revenue.mp4) · [录像对应的单次运行记录](media/K03-results.json) · [阅读本次完整报告](verified/REPORT.md) · [逐项输入、预期与实测 JSON](verified/results.json) · [数据来源和文件指纹](verified/manifest.json)
 
 这套验收使用 KaggleHub 下载的 Olist 完整数据，在本机启动真实 HTTP 服务并执行 15 个 pytest 用例。数字对照来自原始 CSV 的独立计算。用例分为导入审计、经营分析、多表金额、配送差评统计、异常输入及证据重放。适合评审课程项目，也可在修改导入或指标逻辑后做回归。
 
