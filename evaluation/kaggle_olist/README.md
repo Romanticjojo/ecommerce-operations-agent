@@ -4,6 +4,10 @@
 
 这套验收使用 KaggleHub 下载的 Olist 完整数据，在本机启动真实 HTTP 服务并执行 15 个 pytest 用例。数字对照来自原始 CSV 的独立计算。用例分为导入审计、经营分析、多表金额、配送差评统计、异常输入及证据重放。适合评审课程项目，也可在修改导入或指标逻辑后做回归。
 
+## 用网页展示 K03
+
+下载[含前端和 API 的完整工程](https://github.com/Romanticjojo/ecommerce-operations-agent/archive/refs/heads/main.zip)，在解压后的项目根目录运行 `./scripts/start.sh`，按项目 README 导入 Olist 数据。打开本机[分析工作台](http://127.0.0.1:8731/#ask)，输入「总销售额」，点击「运行分析」后展开「查询证据与 SQL」。[观看网页操作录像（MP4）](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4)
+
 ## 复现
 
 从本仓库根目录运行（Python 3.11，macOS / Linux）：

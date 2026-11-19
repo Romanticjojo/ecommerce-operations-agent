@@ -2,7 +2,11 @@
 
 用自然语言分析电商订单、商品成交额和配送差评。工作台在本机运行，图表中的每个业务指标都能查看数据快照、筛选条件与执行 SQL。中文界面支持中英文提问，默认随附可重复生成的合成数据。
 
-![Commerce Lens 本地运营概览，显示合成订单、月度趋势及品类排名](docs/images/workbench.png)
+**网页展示入口**　启动服务后打开[运营概览](http://127.0.0.1:8731/#overview)或[分析工作台](http://127.0.0.1:8731/#ask)。演示 K03 时，在工作台输入「总销售额」，点击「运行分析」，再展开「查询证据与 SQL」。下图和录像使用 Kaggle Olist v2；导入步骤见下方「使用完整 Olist 数据」。
+
+[观看 K03 前端操作录像（中文解说 MP4）](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4) · [下载含前后端的完整工程 ZIP](https://github.com/Romanticjojo/ecommerce-operations-agent/archive/refs/heads/main.zip)
+
+![Commerce Lens 的 Olist 实测概览，显示 96,478 笔已送达订单、月度趋势和品类排名](docs/images/workbench.png)
 
 ## 拉取并启动
 
