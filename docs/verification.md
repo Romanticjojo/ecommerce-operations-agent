@@ -33,6 +33,8 @@ Olist 快照 `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`�
 
 未配置模型时，有限示例解析器在这套开放措辞题集上通过 **11 / 55**，其中 **9 / 50** 道可回答题得到正确结果，其他输入大多返回澄清。该结果描述无密钥体验的覆盖范围。可用 `python -m commerce.cli evaluate --mode model` 在相同快照上实际对比 direct/full，输出正确率、SQL 执行成功率、时延、token 和配置价格下的估算成本。目标 ≥90% / ≥95% 尚待真实模型和人工复核题集验证。
 
+标准启动脚本已从全新 Git clone 建立独立 Python 环境，成功安装锁定依赖、使用 npm ci 构建页面、自动生成 3,116 个合成订单并启动 HTTP 工作台。
+
 ## 重跑
 
 按 README 从干净克隆启动。运行 `python -m pytest -q` 检查 API、合约、统计与导入，用 `python scripts/browser_smoke.py http://127.0.0.1:8731` 对运行中的应用做浏览器复核（另装 Playwright 和 Chromium）。源码不含 Kaggle 原始 CSV、模型凭据或个人运行历史。
