@@ -1,8 +1,8 @@
-# Commerce Lens
+# E-commerce Operations Agent
 
 DSC 200 · Project update · November 19, 2026
 
-Which categories drive sales? Do late orders attract more negative reviews? Small e-commerce teams can answer both questions in Commerce Lens. The workbench aggregates items and payments separately so a multi-payment order cannot inflate sales. Each result includes the query behind it.
+Which categories drive sales? Do late orders attract more negative reviews? Commerce Lens is a workbench for small online retailers using the Brazilian E-Commerce Public Dataset by Olist (2016–2018). The workbench aggregates items and payments separately so a multi-payment order cannot inflate sales. Each result includes the query behind it.
 
 **Scope.** The workbench covers sales, delivery and review analysis, and evidence inspection. Live-store actions, causal attribution and multi-user hosting are outside scope. React displays results, FastAPI handles requests, DuckDB stores the snapshot and SQLite retains run history.
 
@@ -26,9 +26,9 @@ All six are P0 release requirements. Stability is high for all except hardware-d
 | orders | One order per order_id. Customer, status, purchase, actual and estimated delivery times. |
 | order_items / order_payments | Order plus item sequence carries product, seller, price and freight. Order plus payment sequence carries method and value. Aggregate each table before joining totals. |
 | order_reviews | One record per source row. Order, review ID, score, creation and answer times. Review IDs can recur across orders. |
-| customers / products / sellers | One row per respective customer, product or seller key. Supply state, category and seller attributes. An optional lookup translates categories. |
+| customers / products / sellers | One row per respective customer, product or seller key. Supply state, category and seller attributes. The category lookup maps Portuguese labels to English. |
 
-Snapshots preserve all seven relations and audit file hashes, row counts, nulls, foreign keys and repeated reviews. Monetary fields retain decimal cents. Dates use source-local time and half-open purchase periods. Item revenue sums item prices, excludes freight, and supplies the numerator for average order value.
+Olist v2 has nine CSVs. The acceptance suite audited all nine. DuckDB imported the seven business tables and category lookup (eight files). Geolocation appears only in the audit. Checks cover hashes, row counts, nulls, foreign keys and repeated reviews. Monetary fields retain decimal cents. Dates use source-local time and half-open purchase periods. Item revenue sums item prices, excludes freight, and supplies the numerator for average order value.
 
 <!-- page -->
 
@@ -93,7 +93,7 @@ Executing --> Terminal: ok / empty / error
 Terminal --> [*]
 ```
 
-Each question starts a fresh run. Invalid structured output can trigger one schema repair; unsupported requests return a terminal status. Execution can finish with rows, insufficient data or an error. The state view makes the retry limit and terminal outcomes explicit.
+Each question starts a fresh run. An invalid plan can trigger one schema repair. Unsupported requests return a terminal status. Execution can finish with rows, insufficient data or an error. The state view makes the retry limit and terminal outcomes explicit.
 
 <!-- page -->
 
@@ -113,7 +113,7 @@ Six acceptance cases exercise the two analytical tasks, the evidence trail and f
 
 ### UT-03 · Recover a known difference in review rates
 
-**Precondition** · Twenty late orders include ten negative reviews; twenty on-time orders include two. Add repeated reviews, ineligible scores and missing dates. **Steps** · Run the order-level analysis and compare it with hand counts and an independent SciPy test. **Expected** · Rates 0.50 and 0.10, difference 0.40, 95% interval about [0.116, 0.613], Pearson test. **Postcondition** · Each eligible order contributes once; empty groups yield a null p-value.
+**Precondition** · Twenty late orders include ten negative reviews. Twenty on-time orders include two. Add repeated reviews, ineligible scores and missing dates. **Steps** · Run the order-level analysis and compare it with hand counts and an independent SciPy test. **Expected** · Rates 0.50 and 0.10, difference 0.40, 95% interval about [0.116, 0.613], Pearson test. **Postcondition** · Each eligible order contributes once. Empty groups yield a null p-value.
 
 ## Functional tests
 
@@ -127,7 +127,7 @@ Six acceptance cases exercise the two analytical tasks, the evidence trail and f
 
 ### FT-03 · Recover after an unsuccessful request
 
-**Precondition** · Save a working run and the database hash. Use a controlled provider for error scenarios. **Steps** · Request a causal explanation, an empty year and a prohibited operation; simulate authentication failure and a timeout, then submit a valid question. **Expected** · Each has the appropriate clarification, empty, rejection or error state. The valid question succeeds. **Postcondition** · Evidence remains retrievable and the database hash is unchanged.
+**Precondition** · Save a working run and the database hash. Use a controlled provider for error scenarios. **Steps** · Request a causal explanation, an empty year and a prohibited operation. Simulate authentication failure and a timeout, then submit a valid question. **Expected** · Each has the appropriate clarification, empty, rejection or error state. The valid question succeeds. **Postcondition** · Evidence remains retrievable and the database hash is unchanged.
 
 <!-- page -->
 
@@ -135,21 +135,21 @@ Six acceptance cases exercise the two analytical tasks, the evidence trail and f
 
 ## What the snapshot shows
 
-The seven-table import recovered **99,441 orders**. Of these, 96,478 were delivered, with **BRL 13,221,498.11** in item revenue and BRL 137.04 average order value. An independent pass over the CSVs using decimal arithmetic verified both revenue and payment totals.
+The Olist snapshot contains **99,441 orders**. Of these, 96,478 were delivered, with **BRL 13,221,498.11** in item revenue and BRL 137.04 average order value. An independent pass over the CSVs using decimal arithmetic verified both revenue and payment totals.
 
 | Delivery definition | Negative / late orders | Negative / on-time orders |
 |---|---:|---:|
 | Actual timestamp after estimated timestamp | 4,142 / 7,661 (54.07%) | 8,130 / 88,163 (9.22%) |
 | Actual date after estimated date | 3,983 / 6,381 (62.42%) | 8,289 / 89,443 (9.27%) |
 
-The Olist snapshot covers September 2016 to October 2018. Both comparisons use 95,824 eligible orders. The timestamp risk difference was **44.84 percentage points** (95% Newcombe-Wilson interval 43.71 to 45.97). Scoring 1 or 2 of 5 counts as negative. The latest eligible review represents each order; 525 orders had a choice of reviews. Selection into the reviewed sample and unmeasured order differences limit causal interpretation.
+The Olist snapshot covers September 2016 to October 2018. Both comparisons use 95,824 eligible orders. The timestamp risk difference was **44.84 percentage points** (95% Newcombe-Wilson interval 43.71 to 45.97). Scoring 1 or 2 of 5 counts as negative. Each order contributes its latest eligible review. For 525 orders, multiple reviews qualified. Selection into the reviewed sample and unmeasured order differences limit causal interpretation.
 
 ## Progress against the requirements
 
 | Requirement | Evidence at this check-in |
 |---|---|
-| FR-01 to FR-03 | Implemented. The local Python suite passed 17 tests across warehouse/statistics (7), query/guard/model adapter (6) and HTTP workbench integration (4). Tests include persisted SQL, filters, snapshot and lookup by run ID. |
-| NFR-01 | The safety suite rejected its prohibited cases. The allowed query succeeded; the fixture database hash was preserved. |
+| FR-01 to FR-03 | Implemented. The original engineering check-in passed 17 Python tests. Fifteen further acceptance cases passed on Olist v2, using independently computed CSV results and the offline planner. Tests include persisted SQL, filters, snapshot and lookup by run ID. |
+| NFR-01 | The safety suite rejected its prohibited cases. The allowed query succeeded and the fixture database hash stayed unchanged. |
 | NFR-02 | Repeat import and rollback passed. The 55-question evaluation has 50 raw-table reference queries and five expected-status cases. Human review and real-model direct/full runs are pending. |
 | NFR-03 | Timeout recovery and 1,000-row truncation passed. A local Mac run of 50 distinct reference queries measured SQL p95 of 16.68 ms. A run on specified target hardware and real-model end-to-end timing are pending. |
 

@@ -1,99 +1,81 @@
-# E-commerce Operations Agent 设计评审稿
+# E-commerce Operations Agent design review
 
-日期：2026-11-19。归档：本设计已获确认。下文保留立项时判断，最终实现和实测范围见 [生命周期记录](../../project-status.md)。模型接口选择已获用户确认：通用兼容接口，稍后由用户配置模型和密钥。
+**Decision date** — November 19, 2026. This record preserves the approved design and its original validation assumptions. The English release uses Commerce Lens as the workbench name. Consult the implementation and verification records for measured outcomes. [Project status](../../project-status.md) · [Verification record](../../verification.md)
 
-## 1. 产品目标与方案选择
+## Product and system choice
 
-让运营人员问清三个问题：卖得怎样、配送与差评是否有关、结论有哪些数据证据。交付本地可部署完整源码、可维护文档、自动化测试、实际验收记录及公开 GitHub 仓库。
+An operator should be able to ask how sales performed, compare negative-review rates by delivery performance and inspect the data behind either answer. The deliverables include local source, a usable interface, testing and deployment instructions, acceptance evidence and a public GitHub repository.
 
-| 方案 | 优势 | 代价 | 建议 |
-|---|---|---|---|
-| A：React + FastAPI + DuckDB 独立模块化单 Agent | UI 可精细设计；指标、安全和实验边界清晰；易本地部署 | 需实现模型适配和编排 | 推荐 |
-| B：在完整 DB-GPT 平台上开发应用 | 复用其 Agent、AWEL、模型与数据源能力 | 引入本课题不需要的运行时、配置及升级负担 | 扩展多数据源时重新评估 |
-| C：沿用 Streamlit 方案 | 最快形成课程原型，Python 单栈 | 精细交互与长期前后端模块化空间较小 | 若用户只要短期课堂 demo 才选择 |
-
-推荐 A；参考 DB-GPT 的工作流与工具契约，自主实现业务层，不声称已使用 DB-GPT 引擎。无 RAG、向量库、微服务集群、多 Agent 或自动经营执行。
-
-## 2. 系统组成与界面
-
-| 模块 | 职责与对外契约 | 依赖 |
+| Option reviewed | Strengths | Costs and decision |
 |---|---|---|
-| 数据导入与审计 | CSV 目录 → 校验、原始表、快照 ID、质量报告；失败保留旧数据 | DuckDB、文件系统 |
-| 指标目录与视图 | 冻结业务口径，提供可查询 schema / metrics；独立预聚合商品和支付 | 数据层 |
-| 模型适配 | question + schema + metric context → 结构化计划/候选 SQL；处理超时、无效 JSON、usage | 后端环境配置、兼容 HTTP API |
-| 单 Agent 控制器 | 分类、规划、生成、校验、执行、统计、证据组织；最多一次修复 | 模型、目录、执行器、统计 |
-| SQL 安全执行器 | 候选 SQL → 拒绝原因或有边界 QueryResult | SQLGlot、只读 DuckDB 子进程 |
-| 差评统计 | 固定样本规则 → 样本量、组率、效应量、置信区间、p 值、排除原因 | 聚合查询、SciPy |
-| 回答与追溯 | 结果 → AnswerEnvelope；持久化请求过程和导出材料 | 本地运行记录 |
-| 评估引擎 | 固定题集/快照/模式 → 逐题比对、汇总、错误案例 | 上述完整流程、独立参考 SQL |
-| Web 工作台 | 概览、提问、差评调查、数据与指标、评估、配置状态 | 同源 FastAPI API |
+| React, FastAPI and DuckDB with a single controller | Custom workbench, explicit metrics, isolated execution and reproducible local experiments | Selected. The project implements its orchestration and provider adapter. |
+| Application on the DB-GPT platform | Existing agents, AWEL, models and connectors | Requires a broader runtime, configuration and upgrades. Reconsider for a future multi-source deployment. |
+| Streamlit | Quick Python-only classroom prototype | Fine-grained interaction and front-end/back-end separation are more limited. Retained as a design alternative. |
 
-页面信息结构：窄侧栏 + 主工作区。概览展示数据来源、时间范围和真实聚合指标；分析页提供提问框、示例问题、执行阶段、图表/表格切换及可展开 SQL 证据；差评页强调样本定义和关联边界；评估页区分“未运行/运行中/已完成/失败”和真实模型/离线演示。
+DB-GPT informed the workflow and tool contracts. The release uses its own implementation. Multi-agent orchestration, RAG, vector storage, a microservice cluster and automatic store actions are outside scope.
 
-界面采用中文导航，支持中英文问题与回答语言选择；MVP 每次提问独立，不默默继承上一题过滤条件。模型配置仅在后端环境变量中保存，界面显示是否配置及模型名称，不回显密钥。桌面和手机均可操作；键盘焦点、读屏标签和 reduced-motion 纳入验收。详细规范见根目录 DESIGN.md。
+## Modules and interface
 
-## 3. 数据与指标
+| Module | Contract | Main dependency |
+|---|---|---|
+| Import and audit | CSV directory to validated source tables, snapshot ID and quality report. A failed import preserves the working snapshot. | DuckDB and filesystem |
+| Catalog and views | Fixed metric definitions, reporting schema and independent item/payment aggregates | Data layer |
+| Model adapter | Question, schema and metrics to structured plan or candidate SQL. Handle timeouts, invalid responses and usage. | Compatible HTTP endpoint and server configuration |
+| Controller | Route, plan, compile, validate, execute and assemble evidence with a bounded repair policy | Adapter, catalog, worker and statistics |
+| SQL execution | Candidate SQL to bounded rows or structured error | SQLGlot and read-only DuckDB worker |
+| Review analyzer | Sampling rule and purchase period to counts, rates, difference, interval, test and exclusions | Read-only analytical queries and SciPy |
+| Evidence and history | Save plan context, execution evidence and exportable result | Local SQLite history |
+| Evaluation | Fixed questions, snapshot and mode to question-level comparisons, aggregates and error examples | Same controller and independent reference SQL |
+| Workbench | Overview, questions, investigation, data and metrics, evaluation, history and configuration status | Same-origin FastAPI service |
 
-核心 CSV：orders、order_items、order_payments、order_reviews、customers、products、sellers；品类英译文件可选；地理坐标明细不属于首版功能。保留表关系，不能把 item × payment × review 直接 JOIN 后计算金额。
+The overview identifies the actual dataset, date coverage and delivered sales. Questions, chart/table switching and expandable SQL share one analysis page. The investigation emphasizes the eligible sample and limits on interpretation. Evaluation identifies its source, mode and run state. The initial design called for Chinese navigation and bilingual input. The English edition uses English navigation, examples and user-facing documentation. Requests are independent, so a new query starts with a fresh set of filters. Model credentials stay in server-side settings. Mobile layouts, keyboard operation, labels and reduced motion are acceptance concerns. [Interface design](../../../DESIGN.md)
 
-主键/粒度：订单 order_id；商品行 (order_id, order_item_id)；支付 (order_id, payment_sequential)；客户 customer_id；商品 product_id；商家 seller_id。评价 review_id 的唯一性不得预设：保留导入行号，报告重复与多订单映射。
+## Data and statistical semantics
 
-- `order_summary` 每单一行，商品和支付分别聚合后关联。
-- `category_sales` 保留商品行口径与品类，默认 delivered；订单数使用 DISTINCT。
-- `monthly_sales` 按购买时间归月，默认 delivered。
-- `review_delivery` 保存有效评价记录并保留 order_id，用于描述性评价统计。
-- `order_review_delivery` 每单选择一条有效评价，用于主推断检验：按 review_answer_timestamp、review_creation_date 降序、review_id 和稳定源行号作平局规则；审计报告公布受影响订单数。
+The required CSVs are orders, order items, payments, reviews, customers, products and sellers. Category translation is optional for custom imports. The Olist v2 acceptance release audited all nine CSVs, imported all seven business tables plus translation and recorded geolocation in the source manifest. [Data dictionary](../../data-dictionary.md)
 
-金额单位 BRL。`item_revenue` 为 delivered 订单的商品 price 之和，不含运费；`order_count` 为去重订单数；`AOV` 为两者之比，分母为零返回 null。原始时间按未附时区的业务本地时间处理，日期筛选左闭右开。
+Orders, customers, products and sellers have their respective single-column keys. Item and payment keys combine the order with the item or payment sequence. Review IDs can repeat or occur across orders. Preserve the source row, report the multiplicity and select one eligible review per order for inference.
 
-延迟主口径沿用 AI spec 的精确时间戳比较 `actual_delivery > estimated_delivery`；界面明确披露，另提供按日比较的敏感性检查，避免同日送达但晚于午夜造成歧义。差评为有效 1–5 分中的 ≤2 分。主分析只用 delivered 且评分/实际/预计时间齐全的订单；排除数量按互斥步骤报告。
+| View | Contract |
+|---|---|
+| `order_summary` | One row per order, with separately aggregated items and payments. |
+| `category_sales` | Item grain with translated category when available, delivered orders and distinct order counts. |
+| `monthly_sales` | Group delivered orders by purchase month. |
+| `review_delivery` | One row per eligible review record for descriptive checks. |
+| `order_review_delivery` | One eligible review per order, choosing the latest answer and creation times and then ascending review ID and source row. |
 
-评价记录级差评率与订单级主检验明确命名，不能互相替换。两独立订单组比较差评率，报告 2×2 表、组数、风险差与 95% Newcombe-Wilson 区间；期望频数 <5 使用 Fisher，否则使用不做连续性校正的 Pearson 卡方。空组返回 insufficient_data；常量结果明确说明检验不适用。报告关联，不报告因果。
+Item revenue sums recorded item prices on delivered orders and excludes freight. Order count is distinct at the requested grain. Average order value divides item revenue by order count with a null result for an empty denominator. Money is in BRL. Treat source times as local and timezone-unspecified. Purchase-date intervals include their start and exclude their end.
 
-## 4. Agent、安全与错误处理
+The primary late flag compares full actual and estimated timestamps. A sensitivity analysis compares local dates. A score of 1 or 2 among valid scores of 1–5 is negative. Sequentially exclude undelivered orders, then missing delivery times, then missing valid scores. Report the mutually exclusive counts. Preserve both review-record descriptive data and order-level inference.
 
-`Question → QueryPlan → CandidateSQL → Validation → ReadOnlyExecution → Statistics/ResultCheck → AnswerEnvelope`。
+For the two independent order groups, report the 2 × 2 table, counts, rates, risk difference and Newcombe-Wilson 95% interval. Use two-sided Fisher exact testing for expected counts below 5 and uncorrected Pearson chi-squared otherwise. Empty groups yield insufficient data. Constant outcomes in two populated groups leave the test and p-value undefined. Results describe association.
 
-结构化计划约束 intent、metric、dimensions、filters、date range、limit、language；未知指标或模糊业务定义返回 clarification_required。销售查询优先使用约定视图；差评推断路由到固定统计工具。模型不执行 Python、不接触数据文件路径，也不能决定统计检验结果。
+## Planning, execution and failure handling
 
-SQL 只接受单条 SELECT/受限 CTE。允许表、列、函数和 AST 节点白名单，禁止写入、扩展、系统表、跨库路径、文件/网络函数、递归 CTE 与无界笛卡尔积。校验之外还要只读连接、禁用外部访问与扩展自动安装/加载、执行子进程超时回收、内存/线程限制。结果最多 1,000 行，取 1,001 行用于判断截断，不将截断结果解释为全集。
+The full path is question → structured plan → compiled SQL → validation → read-only execution → result checks → answer and evidence. Plans constrain the intent, metric, dimensions, filters, dates, limit and language. Ambiguous questions can end in clarification. The deterministic compiler uses documented metrics and views for sales. An investigation uses fixed statistical code. The provider does not execute Python, read source files or choose the outcome of a statistical test.
 
-执行超时默认 15 秒；模型请求默认 60 秒；控制器 SQL 修复最多一次。认证错误、服务不可用、非法计划和危险 SQL 不进入无限重试。API 返回可理解的信息和 request_id，不将密钥、堆栈或磁盘私有路径暴露到 UI。
+Candidate SQL is limited to a single analytical SELECT or supported CTE with approved tables, columns, functions and syntax. The worker runs read-only with external access and extension loading disabled, under memory, thread and timeout limits. It requests at most 1,001 rows to detect truncation and returns at most 1,000. Evidence discloses truncation. The design sets a 15-second SQL deadline and a 60-second model default. At most one repair is allowed for supported structured-plan failures. Rejection, provider failure and invalid final plans end the run with a safe message and request ID.
 
-数据数值由确定性结果格式化生成。可选模型解释只用于非数值建议并标注假设；主答案中的数值可定位至结果字段。证据包括实际执行 SQL、数据快照、指标 ID、过滤条件、时间范围、粒度、行数、截断情况、阶段耗时、模型/Prompt 版本和警告。
+Format numeric answers from deterministic results. Record executed SQL, snapshot, metric, filters, period, grain, row count, truncation, timing, model/prompt identifiers and warnings as applicable. In offline mode the interface identifies the local parser and uses its supported examples. Unknown wording can trigger clarification. Offline coverage and model accuracy have independent records.
 
-无密钥模式使用有限的显式示例问题/确定性规则，并清楚显示“离线演示”；未知问题不能装作由 LLM 理解成功。离线测试成绩不计入模型准确率。
+## API and deployment
 
-## 5. API 与本地部署边界
+The design called for health, catalog, overview, query, investigation, run history, evaluation and configuration-status endpoints. The implemented service documents its routes at `/docs`. CSV import and batch evaluation use the local CLI.
 
-计划端点：`GET /api/health`、`GET /api/catalog`、`GET /api/overview`、`POST /api/query`、`POST /api/investigation`、`GET /api/runs`、`GET /api/runs/{id}`、`GET /api/evaluation`、`GET /api/config/status`。数据导入和批量评估使用本地 CLI，Web 只显示状态和结果，避免未经控制的长任务接口。
+The response includes a structured status, request ID, answer, table, chart, evidence, timing information and mode as applicable. Chart data is declarative. User and provider text are rendered as text. FastAPI serves the built workbench and API from the same origin. Native and container defaults bind to loopback for single-user operation.
 
-查询响应统一包含 status、request_id、answer、table、chart、evidence、timing、mode；失败仍有结构化状态。chart 仅为声明式数据，不接受模型生成的 HTML 或 JavaScript。浏览器渲染用户文本和模型文本时默认转义。
+The original plan supported a clean-start synthetic demo without model credentials. The English course edition adds the version-pinned Olist import workflow. Users obtain Olist under the publisher's data license. [Operator guide](../../operator-guide.md)
 
-默认后端仅监听 127.0.0.1。生产构建由 FastAPI 提供同源静态文件，减少启动配置。提供 Python 虚拟环境启动流程和 Docker Compose；容器端口映射也默认绑定回环地址。此交付定位本地单用户，不能当作已具备公网多租户认证的产品。
+## Evaluation and acceptance
 
-合成演示数据可再生成并公开；真实 Olist 由使用者下载后本地导入，记录 hash/行数/日期范围。首次拉取无需模型密钥即可演示和运行离线测试；完整自然语言分析需要配置模型。
+The 55 questions contain ten each on filtering, multi-table semantics, aggregation/ranking, time series and reviews/delivery, plus five ambiguous or unanswerable questions. Each carries input, reference SQL or expected status, tolerance, ordering rules and review state. Human review of this AI-drafted set is pending.
 
-## 6. 评估与验收
+Compare direct text-to-SQL and the full workflow under the same snapshot, model, question set and recorded prompts. Both use the execution guard. Record actual tokens and latency. Leave cost null when pricing is unavailable. Targets for a real model are at least 90% result accuracy on answerable items, 95% SQL success and zero accepted prohibited cases in the supplied suite.
 
-55 题：过滤 10、多表口径 10、聚合排序 10、时间序列 10、评价配送 10、模糊/不可回答 5。每题包含输入、参考 SQL 或预期状态、容差、排序比较规则和审核状态。AI 起草题集不得称作“人工金标准已验证”；人审状态保留。
+Acceptance includes join-multiplication regression, idempotent import, rollback, statistical boundary cases, browser workflows, mobile layouts, console checks, clean-clone startup and anonymous repository access. Track deployment, synthetic checks, Olist results and real-model/human-review status separately. [Acceptance cases](../../acceptance.md)
 
-至少比较 Direct Text-to-SQL 与完整工作流。baseline 同样保留硬安全边界和只读隔离；差异是规划、语义校验与结果检查。用相同数据、模型、Prompt 记录与题集；实际记录 tokens 和 latency，价格未配置时 cost=null 而不是零。
+## Lifecycle and outstanding work
 
-真实模型目标：可回答题结果准确率 ≥90%、SQL 执行成功率 ≥95%；安全负例接受率 0。部署/功能验收、合成数据验收、真实 Olist 验收、真实模型验收四者分别记录；缺数据或密钥时如实标为未验证，不能改写为全部通过。
+Requirements led to data contracts, planning and execution, statistics, workbench integration, evaluation and publication. Product and integration own scope and acceptance, data owns import and views, application engineering owns planning and execution, analysis owns inference, frontend owns the workbench, and quality owns testing. These are responsibility areas. Actual student assignments require team confirmation.
 
-验收还包括 JOIN 放大回归、数据导入幂等及失败回滚、边界统计、浏览器交互、手机布局、无意外控制台错误、敏感内容扫描、fresh clone 安装启动，以及远程仓库可匿名访问。
-
-## 7. 生命周期、分工与发布
-
-阶段：需求确认 → 数据/契约 → Agent/安全 → 统计 → 前端集成 → 实验/验收 → 文档/公开发布。每阶段在 project-status.md 记录实物、检查命令、结果和剩余风险；任务、需求与测试 ID 互相追踪。
-
-角色：产品/集成负责范围和验收；数据负责导入/视图；Agent 负责规划/模型/执行；分析负责统计；前端负责页面；质量负责测试/评估。它们是模块职责，不冒充任何学生已经完成的个人工作，也不要求启动多个 AI 子代理。
-
-GitHub 发布已获用户授权；完成本地交付后创建公开仓库并推送源码、文档、示例数据与 CI。发布前核对内容和许可证，发布后检查匿名可读、克隆和 CI 实际状态。原始作业附件与个人信息不随项目公开。
-
-## 8. 已知待验证项
-
-当前未提供真实 Olist CSV、模型凭据与人工审核题集。可以完成系统实现、合成数据测试和模型适配的模拟测试；无法据此声称真实数据或真实模型的指标已达标。课程反思和实际组员分工由组员本人填写。
-
-设计自审：已区分原始要求与建议；已固定金额、时间和统计粒度；已区分运行模式与评估模式；所有性能数字均为待测目标；没有把公开仓库发布误当成课程作业已提交。
+At design approval, the team had no real Olist snapshot, credentials for the chosen model or a human-reviewed benchmark. Later Olist verification addressed the first item. A configured provider and human review are still needed for benchmark claims. The public repository contains the technical deliverables, excludes original course attachments and personal information, and leaves the required development reflection to the students.

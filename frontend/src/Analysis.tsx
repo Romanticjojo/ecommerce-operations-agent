@@ -6,13 +6,17 @@ import type { Answer, Config, Investigation } from './api'
 import { BarChart, ErrorBox, Facts, Fold, PageHead, Sql, Table, Trend } from './ui'
 
 export function DateFields({ start, end, setStart, setEnd }: { start: string; end: string; setStart: (s: string) => void; setEnd: (s: string) => void }) {
-  return <div className="dates"><label>开始日期<input type="date" value={start} onChange={e => setStart(e.target.value)}/></label><label>结束日期（不含当日）<input type="date" value={end} onChange={e => setEnd(e.target.value)}/></label></div>
+  return <div className="dates"><label>Start date<input type="date" value={start} onChange={e => setStart(e.target.value)}/></label><label>End date (exclusive)<input type="date" value={end} onChange={e => setEnd(e.target.value)}/></label></div>
 }
-const BAD_RANGE = '结束日期须晚于开始日期，请调整时间范围。'
-const examples = ['总销售额', '按月统计商品成交额', '2018 年哪些品类的商品成交额最高？']
+const BAD_RANGE = 'Choose an end date after the start date.'
+const examples = [
+  'What is total item revenue?',
+  'Show monthly item revenue.',
+  'Show the top 10 product categories by item revenue in 2018.',
+]
 export function Ask({ config }: { config?: Config }) {
   const [question, setQuestion] = useState('')
-  const [language, setLanguage] = useState('zh')
+  const [language, setLanguage] = useState('en')
   const [start, setStart] = useState(''), [end, setEnd] = useState('')
   const [result, setResult] = useState<Answer>()
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
@@ -25,15 +29,15 @@ export function Ask({ config }: { config?: Config }) {
     catch (err) { setError(errorText(err)) }
     finally { setBusy(false) }
   }
-  return <><PageHead title="分析工作台" sub={config?.mode === 'demo' ? '离线演示支持下方常用查询，可修改日期范围。' : '输入经营问题，可按购买日期限定范围。'}/>
-    <form className="panel form-panel" onSubmit={submit}><div className="panel-head"><div className="symbol-heading"><h2><label htmlFor="question">经营问题</label></h2></div></div>
-      <textarea id="question" placeholder="例如：2018 年哪些品类的商品成交额最高？" maxLength={1500} required value={question} onChange={e => setQuestion(e.target.value)} onKeyDown={e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }}/>
-      <div className="options-line"><label className="language"><Languages size={16}/>回答语言<select value={language} onChange={e => setLanguage(e.target.value)}><option value="zh">中文</option><option value="en">English</option></select></label>
-      <button className="primary" disabled={busy || !question.trim()}><CornerDownLeft size={16}/>{busy ? '正在执行…' : '运行分析'}</button></div>
-      <Fold title="日期筛选"><DateFields {...{ start, end, setStart, setEnd }}/></Fold>
-      {busy && <p role="status">已提交问题，正在等待查询服务返回结果。</p>}{error && <ErrorBox message={error}/>}
+  return <><PageHead title="Ask the agent" sub={config?.mode === 'demo' ? 'Choose an example question to run offline. Use the date filter to narrow the results.' : 'Ask about sales, orders, or reviews. Filter by purchase date to narrow the results.'}/>
+    <form className="panel form-panel" onSubmit={submit}><div className="panel-head"><div className="symbol-heading"><h2><label htmlFor="question">Business question</label></h2></div></div>
+      <textarea id="question" placeholder={examples[2]} maxLength={1500} required value={question} onChange={e => setQuestion(e.target.value)} onKeyDown={e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }}/>
+      <div className="options-line"><label className="language"><Languages size={16}/>Answer language<select value={language} onChange={e => setLanguage(e.target.value)}><option value="en">English</option><option value="zh">Chinese</option></select></label>
+      <button className="primary" disabled={busy || !question.trim()}><CornerDownLeft size={16}/>{busy ? 'Running…' : 'Run analysis'}</button></div>
+      <Fold title="Date filter"><DateFields {...{ start, end, setStart, setEnd }}/></Fold>
+      {busy && <p role="status">Running your query…</p>}{error && <ErrorBox message={error}/>}
     </form>
-    {!result && !busy && <section className="examples"><h2>常用查询</h2><div>{examples.map(q => <button key={q} onClick={() => { setQuestion(q); document.getElementById('question')?.focus() }}><span>{q}</span><ChevronRight size={16}/></button>)}</div></section>}
+    {!result && !busy && <section className="examples"><h2>Example questions</h2><div>{examples.map(q => <button key={q} onClick={() => { setQuestion(q); document.getElementById('question')?.focus() }}><span>{q}</span><ChevronRight size={16}/></button>)}</div></section>}
     {result && <QueryResult key={result.request_id} result={result}/>}</>
 }
 export function QueryResult({ result }: { result: Answer }) {
@@ -42,23 +46,23 @@ export function QueryResult({ result }: { result: Answer }) {
   const ok = ['ok', 'success', 'completed'].includes(result.status)
   const chart = result.chart
   const hasChart = chart && result.table?.length && result.table.some(r => typeof r[chart.y] === 'number')
-  return <section className="panel result-panel" aria-label="分析结果"><div className="panel-head"><div className="symbol-heading">{ok ? <CheckCircle2 size={20} className="success-text"/> : <CircleAlert size={20}/>}<h2>分析结果</h2></div><button className="quiet" onClick={() => exportJson(result, result.request_id)}><ArrowDownToLine size={16}/>导出结果</button></div>
+  return <section className="panel result-panel" aria-label="Analysis result"><div className="panel-head"><div className="symbol-heading">{ok ? <CheckCircle2 size={20} className="success-text"/> : <CircleAlert size={20}/>}<h2>Analysis result</h2></div><button className="quiet" onClick={() => exportJson(result, result.request_id)}><ArrowDownToLine size={16}/>Export result</button></div>
     <div className="meta-line"><span className="pill">{stateName(result.status)}</span><span>{modeName(result.mode)}</span><span>{number(result.timing_ms)} ms</span></div>
-    <p className="answer" role="status" lang={evidence.language === "en" ? "en" : "zh-CN"}>{result.answer}</p>
-    {!!result.table?.length && <><div className="panel-head compact"><h3>查询数据</h3>{!!hasChart && <div className="seg">{['chart', 'table'].map(v => <button key={v} aria-pressed={view === v} onClick={() => setView(v)}>{v === 'chart' ? '图表' : '表格'}</button>)}</div>}</div>
-      {!!hasChart && view === 'chart' ? (chart.type === 'line' ? <Trend rows={result.table} x={chart.x} y={chart.y} unit={/revenue|aov|value|amount/i.test(chart.y) ? 'BRL' : ''}/> : <BarChart rows={result.table} x={chart.x} y={chart.y} formatter={v => number(v, Number.isInteger(v) ? 0 : 2)}/>) : <Table rows={result.table} caption="查询数据"/>}</>}
-    <Fold title="查询证据与 SQL"><Sql sql={sql}/><Fold title="指标、筛选与执行记录"><Facts value={{request_id: result.request_id, ...evidence}}/></Fold></Fold>
+    <p className="answer" role="status" lang={evidence.language === "zh" ? "zh-CN" : "en"}>{result.answer}</p>
+    {!!result.table?.length && <><div className="panel-head compact"><h3>Query data</h3>{!!hasChart && <div className="seg">{['chart', 'table'].map(v => <button key={v} aria-pressed={view === v} onClick={() => setView(v)}>{v === 'chart' ? 'Chart' : 'Table'}</button>)}</div>}</div>
+      {!!hasChart && view === 'chart' ? (chart.type === 'line' ? <Trend rows={result.table} x={chart.x} y={chart.y} unit={/revenue|aov|value|amount/i.test(chart.y) ? 'BRL' : ''}/> : <BarChart rows={result.table} x={chart.x} y={chart.y} formatter={v => number(v, Number.isInteger(v) ? 0 : 2)}/>) : <Table rows={result.table} caption="Query data"/>}</>}
+    <Fold title="Query evidence and SQL"><Sql sql={sql}/><Fold title="Metrics, filters, and execution details"><Facts value={{request_id: result.request_id, ...evidence}}/></Fold></Fold>
   </section>
 }
-function pointDifference(n: number | null | undefined) { return n == null ? '—' : number(n * 100, 1) + ' 个百分点' }
+function pointDifference(n: number | null | undefined) { return n == null ? '—' : number(n * 100, 1) + ' percentage points' }
 export function InvestigationResult({ result, grain }: { result: Investigation; grain: string }) {
-  return <section className="panel result-panel"><div className="panel-head"><div><h2>{grain === 'day' ? '按日比较' : '按时间戳比较'}结果</h2><p>{stateName(result.status)}</p></div><button className="quiet" onClick={() => exportJson(result, result.request_id)}><ArrowDownToLine size={16}/>导出结果</button></div>
-    <div className="group-cards">{(result.groups || []).map(g => <div key={g.group}><small>{g.group === 'late' ? '延迟送达' : '准时送达'}</small><strong>{percent(g.rate)}</strong><span>{number(g.negative)} 笔差评 / {number(g.n)} 笔订单</span></div>)}</div>
-    <dl className="stat-list"><div><dt>差评率差值（延迟 − 准时）</dt><dd>{pointDifference(result.risk_difference)}</dd></div><div><dt>95% 置信区间</dt><dd>{result.ci95 && result.ci95.every(n => n != null) ? result.ci95.map(n => number(n * 100, 1)).join(' 至 ') + ' 个百分点' : '—'}</dd></div><div><dt>检验方法</dt><dd>{display(result.test)}</dd></div><div><dt>p 值</dt><dd>{result.p_value == null ? '—' : result.p_value < .001 ? '< 0.001' : result.p_value.toPrecision(4)}</dd></div></dl>
-    <h3>样本限制</h3><Facts value={result.limitations}/>
-    {result.review_records && <Fold title="评价记录级统计"><p>按有效评价记录计数，同一笔订单可包含多条评价。</p><Facts value={{ '评价记录数': result.review_records.n, '差评记录数': result.review_records.negative, rate: percent(result.review_records.rate) }}/><Sql sql={result.review_records_sql}/></Fold>}
-    <Fold title="排除记录与 SQL"><Facts value={{ request_id: result.request_id, snapshot: result.snapshot_id, filters: result.filters }}/><Facts value={result.exclusions}/><Sql sql={result.sql}/>
-      {result.exclusions_sql && <Fold title="排除计数 SQL"><Sql sql={result.exclusions_sql}/></Fold>}</Fold>
+  return <section className="panel result-panel"><div className="panel-head"><div><h2>{grain === 'day' ? 'Calendar-day comparison' : 'Timestamp comparison'}</h2><p>{stateName(result.status)}</p></div><button className="quiet" onClick={() => exportJson(result, result.request_id)}><ArrowDownToLine size={16}/>Export result</button></div>
+    <div className="group-cards">{(result.groups || []).map(g => <div key={g.group}><small>{g.group === 'late' ? 'Late deliveries' : 'On-time deliveries'}</small><strong>{percent(g.rate)}</strong><span>{number(g.negative)} negative / {number(g.n)} orders</span></div>)}</div>
+    <dl className="stat-list"><div><dt>Difference in negative review rates (late − on time)</dt><dd>{pointDifference(result.risk_difference)}</dd></div><div><dt>95% confidence interval</dt><dd>{result.ci95 && result.ci95.every(n => n != null) ? result.ci95.map(n => number(n * 100, 1)).join(' to ') + ' percentage points' : '—'}</dd></div><div><dt>Statistical test</dt><dd>{result.test === 'pearson_chi2' ? 'Pearson chi-square' : result.test === 'fisher_exact' ? 'Fisher exact test' : display(result.test)}</dd></div><div><dt>p-value</dt><dd>{result.p_value == null ? '—' : result.p_value < .001 ? '< 0.001' : result.p_value.toPrecision(4)}</dd></div></dl>
+    <h3>Limitations</h3><Facts value={result.limitations}/>
+    {result.review_records && <Fold title="Review-level counts"><p>These counts include each eligible review. An order can have multiple reviews.</p><Facts value={{ 'Reviews': result.review_records.n, 'Negative reviews': result.review_records.negative, rate: percent(result.review_records.rate) }}/><Sql sql={result.review_records_sql}/></Fold>}
+    <Fold title="Exclusions and SQL"><Facts value={{ request_id: result.request_id, snapshot: result.snapshot_id, filters: result.filters }}/><Facts value={result.exclusions}/><Sql sql={result.sql}/>
+      {result.exclusions_sql && <Fold title="SQL for exclusion counts"><Sql sql={result.exclusions_sql}/></Fold>}</Fold>
   </section>
 }
 export function Investigate() {
@@ -72,11 +76,11 @@ export function Investigate() {
     try { setResult(await api<Investigation>('investigation', { start: start || undefined, end: end || undefined, grain: nextGrain })); setUsedGrain(nextGrain) }
     catch (err) { setError(errorText(err)) } finally { setBusy(false) }
   }
-  return <><PageHead title="差评调查" sub="比较延迟送达与准时送达订单的差评率。"/><div className="notice"><Info size={18}/>观察性关联，不能证明因果。</div>
-    <form className="panel form-panel" onSubmit={e => { e.preventDefault(); void run(grain) }}><div className="panel-head"><div className="symbol-heading"><span className="icon-tile teal"><ScanSearch size={19}/></span><h2>样本与比较口径</h2></div></div>
-    <p className="body-copy">纳入已送达、有有效评分且实际与预计送达时间齐全的订单。每单取一条有效评价，1–2 分计为差评。</p>
-    <fieldset disabled={busy}><legend>延迟定义</legend><div className="choice-row">{['timestamp', 'day'].map(v => <label key={v}><input type="radio" name="grain" checked={grain === v} onChange={() => { setGrain(v); if (result) void run(v) }}/>{v === 'day' ? '按日比较' : '按时间戳比较'}</label>)}</div></fieldset>
-    <p className="field-note">{grain === 'day' ? '实际送达日期晚于预计日期计为延迟。' : '实际送达时间晚于预计时间计为延迟，包括同日较晚送达。'}</p><DateFields {...{ start, end, setStart, setEnd }}/>
-    <div className="form-actions"><button className="primary" disabled={busy}><ScanSearch size={16}/>{busy ? '正在调查…' : '运行调查'}</button></div>{busy && <p role="status">正在按所选口径计算订单级统计。</p>}{error && <ErrorBox message={error}/>}</form>
+  return <><PageHead title="Delivery and reviews" sub="Compare negative review rates for late and on-time orders."/><div className="notice"><Info size={18}/>This observational comparison measures association. Other factors may influence both delivery and ratings.</div>
+    <form className="panel form-panel" onSubmit={e => { e.preventDefault(); void run(grain) }}><div className="panel-head"><div className="symbol-heading"><span className="icon-tile teal"><ScanSearch size={19}/></span><h2>Sample and comparison</h2></div></div>
+    <p className="body-copy">The sample includes delivered orders with a valid rating and both actual and estimated delivery timestamps. Each order contributes its latest eligible review. A score of 1 or 2 is negative.</p>
+    <fieldset disabled={busy}><legend>Definition of late</legend><div className="choice-row">{['timestamp', 'day'].map(v => <label key={v}><input type="radio" name="grain" checked={grain === v} onChange={() => { setGrain(v); if (result) void run(v) }}/>{v === 'day' ? 'Calendar day' : 'Exact timestamp'}</label>)}</div></fieldset>
+    <p className="field-note">{grain === 'day' ? 'An order is late if it arrives after the estimated calendar date.' : 'An order is late if it arrives after the estimated time, including later on the same day.'}</p><DateFields {...{ start, end, setStart, setEnd }}/>
+    <div className="form-actions"><button className="primary" disabled={busy}><ScanSearch size={16}/>{busy ? 'Calculating…' : 'Run investigation'}</button></div>{busy && <p role="status">Calculating order-level statistics for this comparison…</p>}{error && <ErrorBox message={error}/>}</form>
     {result && <InvestigationResult result={result} grain={usedGrain}/>}</>
 }

@@ -177,7 +177,7 @@ class Probe:
         return self.api(
             "POST",
             "/api/query",
-            {"question": text, "mode": "demo", "language": "zh", **filters},
+            {"question": text, "mode": "demo", "language": "en", **filters},
         )
 
     def check(self, label, expected, actual):

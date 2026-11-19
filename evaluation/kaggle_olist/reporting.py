@@ -1,4 +1,4 @@
-"""Generate the complete reviewable report from actual pytest observations."""
+"""Generate the acceptance report from observations recorded by pytest."""
 
 import json
 
@@ -19,33 +19,42 @@ def write_reports(directory, metadata, cases, exit_code):
     }
     (directory / "results.json").write_text(dump(payload) + "\n", encoding="utf-8")
     (directory / "manifest.json").write_text(dump(metadata) + "\n", encoding="utf-8")
+    version = metadata.get("resolved_version") or "unknown"
     lines = [
-        "# Olist 真实数据验收报告",
+        "# Olist acceptance report",
         "",
-        f"**{passed} / {len(cases)} 项通过**。pytest 退出码为 `{exit_code}`。",
+        f"**{passed} of {len(cases)} cases passed.** pytest exited with code `{exit_code}`.",
         "",
-        f"运行时间（UTC） `{metadata.get('utc', '—')}`。数据来源为 [Olist 官方 Kaggle 数据集](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)，本次解析到版本 **{metadata.get('resolved_version', '—')}**。",
+        f"Run recorded at `{metadata.get('utc', 'unknown')}` on "
+        f"`{metadata.get('platform', 'unknown')}` with Python `{metadata.get('python', 'unknown')}`.",
         "",
-        f"操作系统 `{metadata.get('platform', '—')}`，Python `{metadata.get('python', '—')}`。业务数据快照 `{metadata.get('snapshot', '—')}`。",
+        f"The suite used version **{version}** of the Olist dataset. "
+        f"DuckDB snapshot `{metadata.get('snapshot', 'unknown')}`. "
+        "[Olist dataset on Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)",
         "",
-        "**共同前置条件**：KaggleHub 取得指定数据，在临时工作目录新建 DuckDB 快照；服务监听本机随机端口。预期数值由 Python CSV、Decimal 与独立统计公式计算。自然语言测试显式指定离线演示模式。",
+        "KaggleHub resolves the dataset, then pytest builds a fresh DuckDB database and starts "
+        "the application on a temporary local port. A separate Python reference reads the original "
+        "CSVs, sums monetary values with decimal arithmetic and calculates the statistical intervals. "
+        "Business questions run in English using offline demo mode.",
         "",
-        "**共同后置条件**：HTTP 查询及统计仅访问该快照，历史写入临时数据库。会话结束时关闭服务。每项耗时只计调用与断言，下载和建库时间另计。该报告衡量指定数据集上的功能与数值一致性。",
+        "Each request uses the same snapshot. The application saves query history in the temporary "
+        "environment and the test session shuts down the server. Case timings cover requests and "
+        "assertions. Dataset preparation happens once before the cases run.",
         "",
-        "[机器可读结果](results.json) · [九个源文件的行数、字节数、SHA-256 与环境](manifest.json)",
+        "[Recorded results](results.json) · [Source file hashes and environment](manifest.json) · "
+        "[Watch the K03 terminal run (MP4)](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/evaluation/kaggle_olist/media/K03-revenue.mp4)",
         "",
-        "[观看 K03 本地测试全程（MP4）](https://github.com/Romanticjojo/ecommerce-operations-agent/raw/refs/heads/main/evaluation/kaggle_olist/media/K03-revenue.mp4)",
+        "## Reproduce the run",
         "",
-        "## 在本地复现",
-        "",
-        "以下命令在本仓库或完整测试包的根目录执行（Python 3.11）。首行创建虚拟环境，随后安装锁定的应用依赖与 KaggleHub。",
+        "From the root of the repository or the standalone test archive, create a Python 3.11 "
+        "environment and install the dependencies.",
         "",
         "```sh",
         "python3.11 -m venv .venv",
         ".venv/bin/python -m pip install -r evaluation/kaggle_olist/requirements.txt",
         "```",
         "",
-        "本项目指定的数据集和下载入口如下。无版本号时由 KaggleHub 解析最新版；复查本报告时选用本次实测版本。",
+        "With the default options, pytest calls KaggleHub to resolve the latest dataset version.",
         "",
         "```python",
         "import kagglehub",
@@ -53,35 +62,38 @@ def write_reports(directory, metadata, cases, exit_code):
         'print("Path to dataset files:", path)',
         "```",
         "",
+        "To reproduce this run, specify the recorded version. The second command runs only "
+        "the revenue case and prints the HTTP request, expected total and observed total.",
+        "",
         "```sh",
-        "# 全套用例；pytest 会自行取数、建库并启动本机服务",
         f".venv/bin/python -m pytest -q evaluation/kaggle_olist/cases.py --olist-version {metadata.get('resolved_version') or '2'}",
-        "# 单跑 K03，并显示实际 HTTP 输入与断言两侧的值",
         f".venv/bin/python -m pytest -q -s evaluation/kaggle_olist/cases.py::test_k03_revenue --olist-version {metadata.get('resolved_version') or '2'} --olist-trace --olist-output runtime/k03",
         "```",
         "",
-        "整套用例的默认输出目录为 `runtime/kaggle-acceptance/`，上方 K03 命令使用独立的 `runtime/k03/`。两者均生成 REPORT.md、results.json 和 manifest.json。",
+        "The full suite writes `REPORT.md`, `results.json` and `manifest.json` to "
+        "`runtime/kaggle-acceptance/`. The single-case command writes its own copies to `runtime/k03/`.",
         "",
-        "## 本次运行的数据与环境",
+        "## Data and environment",
         "",
-        f"发布者 Olist；数据许可 {metadata.get('data_license', '—')}。版本 {metadata.get('resolved_version', '—')} 的源文件如下。行数使用 CSV 解析器计数，不含表头。",
+        f"Olist publishes the source data under {metadata.get('data_license', 'unknown')}. "
+        "Record counts exclude the header and count CSV records across embedded line breaks.",
         "",
-        "| 源文件 | 用途 | 记录数 | 字节数 | SHA-256 |",
+        "| Source file | Use | Records | Bytes | SHA-256 |",
         "|---|---|---:|---:|---|",
         *[
-            f"| `{file}` | {'仅审计' if 'geolocation' in file else '导入'} | {entry['rows']:,} | {entry['bytes']:,} | `{entry['sha256']}` |"
+            f"| `{file}` | {'Audit only' if 'geolocation' in file else 'Imported'} | {entry['rows']:,} | {entry['bytes']:,} | `{entry['sha256']}` |"
             for file, entry in metadata.get("files", {}).items()
         ],
         "",
-        "运行依赖："
-        + "、".join(
+        "Package versions used in this run include "
+        + ", ".join(
             f"`{key} {value}`" for key, value in metadata.get("packages", {}).items()
         )
-        + "。",
+        + ".",
         "",
-        "## 用例总览",
+        "## Results by case",
         "",
-        "| 用例 | 检查内容 | 结果 | 耗时（ms） |",
+        "| Case | Check | Result | Time (ms) |",
         "|---|---|---|---:|",
     ]
     for case in cases:
@@ -90,9 +102,11 @@ def write_reports(directory, metadata, cases, exit_code):
         )
     lines += [
         "",
-        "## 用例明细",
+        "## Case evidence",
         "",
-        "HTTP 输入中的日期区间左闭右开；BRL 为巴西雷亚尔。Geo 文件包含地理位置数据，本系统使用其余八个 CSV。采集请求时保留实际执行的 SQL。",
+        "Request date ranges include the start and exclude the end. Monetary values are in "
+        "Brazilian reais (BRL). Each case records its inputs and comparisons, including the "
+        "executed SQL when available.",
     ]
     for case in cases:
         lines += [
@@ -101,9 +115,9 @@ def write_reports(directory, metadata, cases, exit_code):
             "",
             case["procedure"],
             "",
-            f"**实测判定**：{case['status']}。",
+            f"**{case['status']}**",
             "",
-            "<details><summary>查看实际输入、执行 SQL、期望值与实测值</summary>",
+            "<details><summary>Requests, executed SQL, expected values and observations</summary>",
             "",
             "```json",
             dump(

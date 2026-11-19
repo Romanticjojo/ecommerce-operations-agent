@@ -8,7 +8,7 @@
     "resolved_version": "2",
     "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
     "data_license": "CC BY-NC-SA 4.0",
-    "utc": "2026-11-19T09:33:31+00:00",
+    "utc": "2026-11-19T12:44:55+00:00",
     "platform": "Darwin 25.6.0 / arm64",
     "python": "3.11.16",
     "packages": {
@@ -70,10 +70,10 @@
     },
     "app_sha256": {
       "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "agent.py": "f5263d6372f17d91e1391c6e97a1f491c42cd0f61a85284fc657955a1694800c",
-      "api.py": "416b149235fc212a1994a82d6ce2a0ce2c305640112596863abcc8f15a31b1e2",
+      "agent.py": "b16739341b9e2fef453d1105392612a600049f129db7caa84de1f803d9b7b696",
+      "api.py": "ccfb0e519addbcef69aa09f0dae86f64e506cb641efadf9dfcb6bfb7fd13ef63",
       "benchmark.py": "69818204212a4537a15c755df808d512b7688f461ebf77ed58b372e6d2514c7e",
-      "cli.py": "f67185fbba3b241e9216039aee3d62d4f3a84b49e850570dab0729927bc5d706",
+      "cli.py": "cdaa482724da5405c4b681c52a8bb5986e52c40bfec7958dd3cc6c6c1681d8f4",
       "data.py": "0b73f8e6e1c86f42a4314833ca8c6e3565efa12552b22c74497918bfd08891df",
       "demo.py": "a6786b54940239268d5d75f6d86b431b48c0577b517a1ed156b3f7704965b9bc",
       "history.py": "cde89bb6bea879fa172cb772cadaf9fb5067713d5a4403bf5e71caf9217c5dc7",
@@ -86,27 +86,27 @@
       "stats.py": "4909d70fc659ed0cec5cdb269fd9d7f0ae5c9ab9314c6127da1b0f05240dcbe8"
     },
     "suite_sha256": {
-      "cases.py": "8f1b7ebf988deb59ae09b4a33b22211b16b619a6296c432671bda891198a3500",
-      "conftest.py": "1c8b193ae0102e0274d0aa422535cf4a95e40fbbe1707e3f35c1d45a163ca48c",
+      "cases.py": "4418dbab86d090606ae0b7458b7a15314857eb9b0f4e69bcb85517ed299ac06a",
+      "conftest.py": "afde50c15c47c58fb551a9072dc184f2c73efe84fc2a952b4cd46424f9f79f2f",
       "oracle.py": "8f0f6496591f23a5d3253161c3812c7367542f805cea49ee659743b69732bab7",
       "package.py": "00140754876c6d89ef7ce1a3ea37ff685d228e67a745454907d6aa8e92c9e728",
-      "reporting.py": "7a4e6a61c100597df104f6ceb66dd861857c75113da633124d1e5efe8882080b"
+      "reporting.py": "7d2736a167aa2a0f1bbc352f4cb83c7a4a5dc9e409923fde17332c94913c3af4"
     }
   },
   "cases": [
     {
       "id": "K03",
-      "title": "核对已送达商品成交额",
-      "procedure": "请求“总销售额”。独立累加已送达订单下的商品价格，使用十进制定点数，单位 BRL，精确到分。",
+      "title": "Item revenue from delivered orders",
+      "procedure": "Ask for total item revenue. Sum item prices for delivered orders using decimal arithmetic, then compare the API result with the CSV total to the cent in Brazilian reais.",
       "status": "PASS",
       "requests": [
         {
           "method": "POST",
           "path": "/api/query",
           "input": {
-            "question": "总销售额",
+            "question": "What is total item revenue?",
             "mode": "demo",
-            "language": "zh"
+            "language": "en"
           },
           "http_status": 200,
           "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' HAVING COUNT(*) > 0) AS result LIMIT 1001"
@@ -114,7 +114,7 @@
       ],
       "checks": [
         {
-          "label": "商品成交额（BRL）",
+          "label": "Delivered item revenue (BRL)",
           "expected": [
             {
               "item_revenue": 13221498.11
@@ -127,7 +127,7 @@
           ]
         }
       ],
-      "duration_ms": 169.99
+      "duration_ms": 138.15
     }
   ]
 }

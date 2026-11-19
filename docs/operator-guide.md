@@ -1,8 +1,19 @@
-# 使用与维护
+# Operator guide
 
-## 业务问题
+## Prepare a dataset
 
-离线演示支持品类排名、月订单数、月商品成交额、合计、客单价和差评调查等预设问法。例如：
+For the DSC 200 project, use the Brazilian E-Commerce Public Dataset by Olist, version 2. Install the Kaggle dependencies in the project's virtual environment and run the importer from the repository root.
+
+```sh
+python -m pip install -r evaluation/kaggle_olist/requirements.txt
+python -m commerce.cli olist
+```
+
+The Docker image includes KaggleHub. Local installation, Docker, existing CSV directories and the separate synthetic fixture workflow are covered in the README. Confirm the dataset label, source dates and snapshot in the workbench before interpreting a result. Olist v2 covers purchases from September 2016 through October 2018. [Startup instructions](../README.md) · [Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+## Ask an operational question
+
+Offline demo mode recognizes a limited set of sales totals, order trends, category rankings, average order value and review questions. Try one of these examples.
 
 - Show the top 10 product categories by item revenue in 2018.
 - Show monthly delivered orders in 2017.
@@ -10,44 +21,46 @@
 - What is average order value?
 - Are late deliveries associated with negative customer reviews?
 
-模型模式支持销售总量、按月趋势、按品类或客户州拆分，以及订单级评价统计。问题应指明指标和维度。日期范围按购买时间筛选，包含开始日、不含结束日。金额以 BRL 表示。模型配置保存在运行服务的机器上，重新启动应用后读取。
+Model mode supports plans for sales totals, monthly trends, category or customer-state breakdowns and order-level review analysis. Specify the metric and grouping. Purchase-date filters include the start date and exclude the end date. The application reads server-side model configuration at startup. The planner mode and the source of the data are independent. For example, an offline planner can query a real Olist snapshot.
 
-## 指标解释
+## Interpret the metrics
 
-| 指标 | 计算方式 |
+| Metric | Definition |
 |---|---|
-| 商品成交额 | 已送达订单的商品行 price 总和，不含运费 |
-| 订单量 | 指定粒度中已送达订单的去重计数；跨品类相加可能重复 |
-| 客单价 | 商品成交额除以已送达订单数 |
-| 支付额 | 在订单级独立汇总支付记录，再关联订单 |
-| 差评 | 有效的 1 至 5 分评价中，得分 1 或 2 |
-| 延迟 | 实际签收时间晚于预计签收时间；可用自然日口径做敏感性检验 |
-| 风险差 | 延迟组差评率减去准时组差评率，以百分点呈现 |
+| Item revenue | Sum of item prices on delivered orders. Freight is separate. |
+| Order count | Distinct delivered orders at the requested grain. Category counts can overlap. |
+| Average order value | Delivered item revenue divided by the number of delivered orders. |
+| Payment total | Aggregate payment sequences per order before joining. |
+| Negative review | A score of 1 or 2 among valid scores from 1 to 5. |
+| Late delivery | Actual delivery after the estimate. The primary comparison uses timestamps, with calendar dates available as a sensitivity check. |
+| Risk difference | Late negative-review rate minus on-time negative-review rate, expressed in percentage points. |
 
-调查以订单为单位，每单取最新有效评价，先按回答时间和评价创建时间倒序，再按评价 ID 和稳定源行号解决并列。多条原始评价仍保留用于描述性分析。缺少有效评分或配送时间的订单不进入推断样本。两组都有数据时计算 Newcombe-Wilson 风险差区间。期望格数小于 5 时使用双侧 Fisher 精确检验，否则使用无连续性校正的 Pearson 卡方检验。单组或恒定结局时，页面说明不可进行的推断。观察性结果用于定位进一步调查的方向。
+The investigation selects one review per eligible order. It takes the latest answer, then the latest creation time and breaks remaining ties by review ID and source row. Raw review records remain available for descriptive analysis. Orders without a valid score or both delivery times are excluded. With two nonempty groups, the analyzer calculates a Newcombe-Wilson interval. For variable outcomes it selects a two-sided Fisher exact test if an expected cell count is below 5, otherwise Pearson's chi-squared test without continuity correction. The comparison describes an observational association. [Methods and exclusions](data-dictionary.md)
 
-## 运行结构
+## Find and maintain the implementation
 
-- `commerce/data.py`、`schema.py`、`demo.py` 导入数据、创建视图与记录质量报告。
-- `commerce/model.py`、`plans.py`、`agent.py` 处理问题、生成或编译 SQL、组成可追溯回答。
-- `commerce/query_guard.py` 与 `query_worker.py` 校验查询，在独立只读进程运行。
-- `commerce/stats.py` 负责差评统计，`benchmark.py` 运行参考 SQL 和两种模型变体。
-- `commerce/api.py` 提供同源 API 与前端，`history.py` 在 SQLite 中最多保留 200 次请求。
-- `frontend/src/` 提供 React 页面。更新界面后重新运行原生启动脚本，或重新构建容器。
-
-访问 `/docs` 可查看 FastAPI 生成的请求字段与接口说明。变更口径时，同时更新指标目录、独立参考 SQL、测试和验收记录。不同导入源与模型设置会产生不同结果。
-
-## 常见问题
-
-| 现象 | 检查与处理 |
+| Location | Responsibility |
 |---|---|
-| 数据始终显示合成样本 | 完整导入后刷新页面，核对快照与源表行数。容器和原生模式使用各自的工作目录 |
-| 问题要求澄清 | 查看页面右上角模式，用示例问法验证管道；需要自由表达时配置模型 |
-| 模型调用失败 | 确认接口路径包含提供方要求的版本前缀，模型已加载，服务端可访问，密钥有权限 |
-| 容器访问本机模型失败 | 使用 Docker 环境允许的宿主机地址。容器内的 127.0.0.1 指向该容器本身 |
-| 缺 CSV 或类型异常 | 保持原文件、列名与编码；检查导入错误。详情见数据字典 |
-| 评估无模型成绩 | 使用相同快照、同一模型配置运行 model 评估；配置单价才会有成本估算 |
-| 本地端口占用 | 原生运行 `PORT=8732 ./scripts/start.sh`，或 `PORT=8732 docker compose up -d` |
-| 恢复某次分析 | 从历史导出证据，保留对应源 CSV 与 hash。在独立 LENS_HOME 导入对应快照后执行保存的 SQL |
+| `commerce/data.py`, `schema.py`, `demo.py` | Import source tables, create views, report data quality and generate synthetic fixtures. |
+| `commerce/model.py`, `plans.py`, `agent.py` | Interpret a question, generate or compile SQL and assemble a traceable answer. |
+| `commerce/query_guard.py`, `query_worker.py` | Validate candidate SQL and execute it in a read-only worker. |
+| `commerce/stats.py`, `benchmark.py` | Investigate review rates and evaluate the two model variants against references. |
+| `commerce/api.py`, `history.py` | Serve the UI and API and retain up to 200 local requests in SQLite. |
+| `frontend/src/` | React workbench. Rebuild through the native startup script or the container build after a UI change. |
 
-开发反思按课程要求由学生本人撰写。团队可从验收记录、模块测试和发布历史取材，补充真实分工和亲身经验。
+FastAPI exposes interactive request and endpoint documentation at `/docs`. When changing a metric, update its catalog definition, independent reference SQL, tests and acceptance record together.
+
+## Troubleshooting
+
+| Symptom | Checks and recovery |
+|---|---|
+| Synthetic data still appears | Confirm the Olist import finished. Refresh the page and check snapshot and source row counts. Native and container deployments use separate data locations. |
+| The workbench asks for clarification | Check the active mode, try a listed example and supply a metric, grouping or date. A configured model can interpret a broader range of wording. |
+| Model request fails | Check the provider's API path/version, model name, network reachability and credentials on the server. |
+| Container cannot reach a model on the host | Use the host address supported by Docker. Loopback inside a container points to that container. |
+| Missing CSV or invalid type | Check exact headers, original filenames, encoding and the import error. |
+| Evaluation has no model scores | Run the model evaluation with one snapshot and one model configuration. Set pricing if a cost estimate is needed. |
+| Local port is occupied | Use `PORT=8732 ./scripts/start.sh` or `PORT=8732 docker compose up -d`. |
+| Reproduce an earlier analysis | Export its evidence from history and keep the matching source CSV hashes. Recreate the snapshot in a separate `LENS_HOME` and run the saved query. |
+
+Students can use the test record and release history when documenting what they personally worked on. The course requires the students' own development reflection.

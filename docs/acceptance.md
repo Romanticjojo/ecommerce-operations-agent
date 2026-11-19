@@ -1,81 +1,71 @@
-# 验收计划
+# Acceptance plan
 
-此文档定义验收条件。实测结果、运行环境与尚待人审的内容见 [验收记录](verification.md)。
+The DSC 200 project update selects UT-01 through UT-03 and FT-01 through FT-03 for grading. This plan defines their inputs and expected outcomes. The verification record reports what was exercised and which checks still require a model or human reviewer. [Verification record](verification.md)
 
-## 课程选定的单元测试
+## Selected unit tests
 
-### UT-01：多商品、多支付不放大
+### UT-01 · Preserve totals across multiple items and payments
 
-- 对应 FR-01、FR-04、NFR-02。
-- 前置：独立测试数据库，一笔 delivered 订单，商品 price 10 与 20，两笔 payment_value 12 与 18。
-- 输入/步骤：导入 fixture、创建视图、查询 order_summary；重新导入同一 fixture 再查询。
-- 预期：恰好 1 行；item_revenue=30、payment_total=30、order_count=1、AOV=30；二次导入一致。
-- 后置：源 fixture 未修改；测试数据库可删除；不存在乘法放大。
+- **Requirements** — FR-01, FR-04, NFR-02.
+- **Precondition and input** — An isolated fixture has one delivered order, item prices of BRL 10 and 20, and payments of BRL 12 and 18.
+- **Steps** — Import the fixture, build the views, query the order and monthly summaries, then repeat the import and queries.
+- **Expected** — One order, BRL 30 item revenue, BRL 30 payment total and BRL 30 average order value on each run.
+- **Postcondition** — The fixture and snapshot identifier match their initial values. The test database can be discarded.
 
-### UT-02：危险 SQL 无法执行
+### UT-02 · Confine execution to approved analytical queries
 
-- 对应 NFR-01、FR-03。
-- 前置：数据库基准 hash/表数已记录；外部文件放入唯一哨兵值；执行器启用只读、禁外部访问与时间限制。
-- 输入/步骤：提交 DROP、UPDATE、COPY、ATTACH、read_csv、read_parquet、HTTP 读取、系统表、多语句、递归/无界查询及嵌套绕过样本；单独验证受控合法 SELECT 可执行。
-- 预期：危险样本被拒绝或资源隔离终止；无外部哨兵内容返回；合法 SELECT 返回正确值。
-- 后置：数据库与源文件未改变；工作子进程已回收；无密钥进入错误输出。
+- **Requirements** — NFR-01, FR-03.
+- **Precondition and input** — Record the fixture database hash and table count. Put a unique marker in an external test file. Enable read-only resource-limited execution.
+- **Steps** — Run the supplied prohibited-operation and external-access cases, including system data, multi-statement and unsupported query forms. Run a permitted aggregate.
+- **Expected** — The prohibited cases produce rejection or bounded termination, the external marker stays private and the permitted aggregate returns the expected value.
+- **Postcondition** — Database and source file contents match their original values, the worker exits and errors contain no credentials.
 
-### UT-03：差评统计与边界
+### UT-03 · Recover a known difference in negative-review rates
 
-- 对应 FR-02。
-- 前置：固定独立订单样本，延迟组 20 单含差评 10 单，准时组 20 单含差评 2 单；另有重复评价、缺失时间、无效评分和取消订单。
-- 输入/步骤：调用统计工具，与直接构造的 2×2 SciPy 参考检验及手算组率比较；另测小样本、空组、恒定结果和同日延迟。
-- 预期：主样本两组各 20、差评率 0.5 与 0.1、风险差 0.4；CI 覆盖规则正确；检验类型符合期望频数；重复订单只贡献一次；无效记录排除；空组不产生伪 p 值。
-- 后置：输入不变；结果附样本粒度、筛选和局限。
+- **Requirement** — FR-02.
+- **Precondition and input** — Twenty late orders include ten negative reviews. Twenty on-time orders include two. Add repeated reviews, invalid scores, missing dates and cancelled orders.
+- **Steps** — Compare the order-level analysis with hand counts and a separate SciPy test of the 2 × 2 table. Exercise a small sample, empty group, constant outcomes and delivery later on the promised day.
+- **Expected** — Group rates are 0.50 and 0.10 with a risk difference of 0.40. The 95% interval is approximately [0.116, 0.613]. Each eligible order appears once. Expected cell counts determine the test, and an empty group yields a null p-value.
+- **Postcondition** — Inputs remain reusable. The result identifies the sample grain, filters, exclusions and statistical limitations.
 
-## 课程选定的功能测试
+## Selected functional tests
 
-### FT-01：销售问题完整链路
+### FT-01 · Trace a category ranking to its source
 
-- 对应 FR-01、FR-03、FR-05、FR-07。
-- 前置：应用启动、已知 fixture 导入；模型适配器使用可控测试服务或明确的离线示例模式。
-- 输入：Show the top 10 product categories by item revenue in 2018.
-- 步骤：浏览器提问，等待结果，切换图表/表格，展开并复制 SQL。
-- 预期：排序和值与独立 SQL 相同；delivered 和 2018 时间过滤明确；金额为 BRL；模式清晰；图表与表格一致。
-- 后置：request_id 可查；历史中的实际 SQL/数据快照一致；数据库未写入。
-- 限制：可控服务通过只证明集成，真实模型能力需单独评估。
+- **Requirements** — FR-01, FR-03, FR-05, FR-07.
+- **Precondition and input** — Start the workbench on a known snapshot using the offline planner or controlled test provider. Ask “Show the top 10 product categories by item revenue in 2018.”
+- **Steps** — Submit, switch chart/table views, expand evidence, copy SQL and reopen the saved run.
+- **Expected** — Values and order agree with independent SQL. The chart matches its table. The result identifies delivered orders, the purchase year, BRL and the active mode.
+- **Postcondition** — The run ID retrieves the original SQL and snapshot. The analytical database is unchanged. A controlled provider exercises the contract. Real-model performance is evaluated separately.
 
-### FT-02：差评调查与敏感性
+### FT-02 · Compare both definitions of late delivery
 
-- 对应 FR-02、FR-03。
-- 前置：含 on-time/late、同日午夜差异、重复评价及缺失的已知数据。
-- 输入：Are late deliveries associated with negative customer reviews?
-- 步骤：打开调查页，选择时间范围，运行调查；查看证据和按日敏感性。
-- 预期：两组样本、差评率、风险差、CI、p 值与独立统计一致；日粒度改变样本时数字和标题一起变化；有非因果说明与排除数。
-- 后置：主分析与敏感性结果的口径各自可追踪；无虚构解释。
+- **Requirements** — FR-02, FR-03.
+- **Precondition and input** — Include late and on-time orders, a delivery after midnight on its promised date, repeated reviews and missing fields. Ask “Are late deliveries associated with negative customer reviews?”
+- **Steps** — Select a purchase period and run the investigation with timestamp and calendar-day definitions. Inspect each run's evidence.
+- **Expected** — Counts, rates, risk difference, interval and p-value agree with independent calculations. The example order changes group, the eligible total stays constant, and the heading identifies the active definition. Show exclusions and the observational limitation.
+- **Postcondition** — Both runs retain their own definitions, sample and results.
 
-### FT-03：异常与证据闭环
+### FT-03 · Recover after an unsuccessful request
 
-- 对应 FR-03、NFR-01、NFR-03。
-- 前置：已有一次成功请求；记录数据库 hash。
-- 输入/步骤：依次请求不存在的因果信息、无数据年份、危险 SQL 意图、模拟模型 401/超时、超时查询。
-- 预期：澄清/拒绝/数据不足/错误状态正确；UI 保留输入；错误不回显密钥；SQL 修复不超过一次；后续合法查询正常。
-- 后置：每次运行有状态与 ID；数据库 hash 不变；无残留执行进程。
+- **Requirements** — FR-03, NFR-01, NFR-03.
+- **Precondition and input** — Save one successful request and the database hash. Use a controlled provider for failure cases.
+- **Steps** — Ask for an unsupported causal explanation, an empty year and a prohibited operation. Simulate provider authentication failure, a provider timeout and a query timeout. Submit another supported question.
+- **Expected** — Display clarification, rejection, insufficient data or error as appropriate. Preserve the question, keep credentials private and permit at most one bounded repair where supported. The final valid query succeeds.
+- **Postcondition** — Accepted requests have retrievable run IDs and outcomes, the database hash matches, and the timed-out worker has exited.
 
-## 补充验收
+## Additional acceptance criteria
 
-| ID | 范围 | 通过标准 |
+| ID | Area | Pass condition |
 |---|---|---|
-| FT-04 | 干净安装 | fresh clone，按 README 安装、生成示例、启动、测试成功 |
-| FT-05 | 数据导入失败 | 缺必需列/坏类型时明确报错；原可用快照不损坏 |
-| FT-06 | 无密钥 | 演示可用；未知问题明确不支持；不冒充真实模型 |
-| FT-07 | 模型适配 | URL/model/key 可配置；非法 JSON、限流和服务错误可诊断；usage 缺失记录 null |
-| FT-08 | 评估 | 55 题有分类、参考、容差、审核状态；baseline/full 同条件；结果来源标注 |
-| UX-01 | 响应式 | 390/768/1440 px 无页面横向溢出；必要表格自身滚动 |
-| UX-02 | 可访问性 | 键盘完整路径、焦点、标签、状态提示、图表替代表格、200% 放大 |
-| PERF-01 | 性能 | 记录数据规模/硬件/样本数；本地 SQL p95 与 E2E 分开计算 |
-| RELEASE-01 | 公开发布 | 无密钥/个人信息/原始附件；匿名可读；远程 commit 对齐；CI 实际状态可查 |
+| FT-04 | Clean install | A fresh clone can install, prepare data, start and run tests using the README. |
+| FT-05 | Import failure | Missing required columns and invalid types produce an error and preserve the previous snapshot. |
+| FT-06 | Offline operation | The demo handles its supported examples and asks for clarification when necessary. The UI identifies the mode. |
+| FT-07 | Model adapter | URL, model and credentials are configurable. Invalid responses, rate limits and provider errors are identifiable. Missing usage remains null. |
+| FT-08 | Evaluation | All 55 cases have a category, reference or expected status, tolerance and review state. Direct and full variants use the same conditions. |
+| UX-01 | Responsive layout | No page overflow at 390, 768 or 1,440 px. Wide tables scroll locally. |
+| UX-02 | Accessibility | Verify keyboard navigation, focus, labels, status feedback, table alternatives and 200% zoom. |
+| PERF-01 | Performance | Record hardware, data size and query count. Measure local SQL and end-to-end times separately. |
+| RELEASE-01 | Publication | Verify public access, commit identity and actual CI status. Exclude credentials, personal details and original course attachments. |
 
-## 最终报告必须分开的四项
-
-1. 系统部署与自动化测试：实际结果。
-2. 合成数据与确定性工具：实际结果，不可外推真实数据结论。
-3. 完整 Olist 数据验证：没有数据时未验证。
-4. 真实模型和人工审核 benchmark：没有配置/审核时未验证。
-
-阈值未达到时给出错误类别与限制，不能通过移除失败题目、改分母或把 mock 结果混入模型成绩来达标。
+Report deployment, synthetic fixtures, real Olist checks, and real-model/human-reviewed evaluation separately. Document failed cases and their original denominators. [Kaggle v2 acceptance suite](../evaluation/kaggle_olist/README.md)

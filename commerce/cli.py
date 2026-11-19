@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("demo", help="Install the reproducible synthetic dataset")
+    commands.add_parser("olist", help="Download the course dataset from Kaggle (Olist v2) and import it")
     importer = commands.add_parser("import", help="Install the seven Olist CSV tables")
     importer.add_argument("directory", type=Path)
     evaluation = commands.add_parser(
@@ -38,6 +39,15 @@ def main():
         with tempfile.TemporaryDirectory() as directory:
             demo_data(Path(directory))
             audit = build_db(Path(directory), database(), "demo")
+    elif options.command == "olist":
+        try:
+            import kagglehub
+        except ModuleNotFoundError as exc:
+            if exc.name != "kagglehub":
+                raise
+            parser.exit(2, "Install the dataset tools: python -m pip install -r evaluation/kaggle_olist/requirements.txt\n")
+        directory = kagglehub.dataset_download("olistbr/brazilian-ecommerce/versions/2")
+        audit = build_db(Path(directory), database(), "olist")
     else:
         audit = build_db(options.directory, database(), "olist")
     print(

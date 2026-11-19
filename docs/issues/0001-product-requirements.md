@@ -1,20 +1,20 @@
-# 0001 · 本地电商数据 Agent 完整交付
+# 0001 · Local e-commerce analysis agent
 
-状态：系统交付，真实模型实验和题库人审为使用方复核事项。类型：PRD。正文：[产品需求](../PRD.md)。
+**Status** — System delivered. Real-provider experiments and human review of the benchmark remain open. The work packages below describe the engineering delivery. [Product requirements](../PRD.md) · [Verification record](../verification.md)
 
-## 工作包
+| Work package | Delivered item | Trace |
+|---|---|---|
+| WP-01 | Data import and quality audits | FR-04, UT-01, FT-05 |
+| WP-02 | Metric views and catalog | FR-01, UT-01 |
+| WP-03 | Compatible model adapter and typed plans | FR-05, FT-07 |
+| WP-04 | Bounded, read-only SQL | NFR-01, UT-02, FT-03 |
+| WP-05 | Controller, evidence and run history | FR-01, FR-03, FT-01, FT-03 |
+| WP-06 | Negative-review statistics and sensitivity analysis | FR-02, UT-03, FT-02 |
+| WP-07 | Workbench and accessibility | FR-07, FR-08, UX-01, UX-02 |
+| WP-08 | Direct/full comparison runner, 55 questions and evaluation report | FR-06, FT-08 |
+| WP-09 | Deployment, CI, documentation and clean install | NFR-05, FT-04 |
+| WP-10 | Acceptance record and public repository | RELEASE-01 |
 
-- [x] WP-01 数据导入与质量审计 → FR-04 / UT-01、FT-05
-- [x] WP-02 指标视图与目录 → FR-01 / UT-01
-- [x] WP-03 模型适配与有类型计划 → FR-05 / FT-07
-- [x] WP-04 安全 SQL 执行 → NFR-01 / UT-02、FT-03
-- [x] WP-05 控制器、证据、运行记录 → FR-01、FR-03 / FT-01、FT-03
-- [x] WP-06 差评统计与敏感性 → FR-02 / UT-03、FT-02
-- [x] WP-07 前端与可访问性 → FR-07、FR-08 / UX-01、UX-02
-- [x] WP-08 基线、55 题、评估报告 → FR-06 / FT-08
-- [x] WP-09 部署、CI、文档、干净安装 → NFR-05 / FT-04
-- [x] WP-10 验收、公开 GitHub 发布 → RELEASE-01
+Work began with data and metric definitions (01–02), followed by the adapter and guard (03–04), controller (05) and statistics (06). The workbench and evaluation runner (07–08) depend on those contracts. Their checks feed deployment and release (09–10).
 
-依赖：01→02→03/04→05；02/04→06；05/06→07；05/06→08；07/08→09→10。各包完成时记录证据，而非只勾选清单。
-
-范围变更需说明影响的需求/验收项，并同步 PRD、指标契约、测试与状态。各阶段实际结果见 [验收记录](../verification.md)。
+When scope changes, identify the affected requirement and test IDs, then update the PRD, metric contract and verification record together.

@@ -1,47 +1,49 @@
-# 数据字典与统计方法
+# Data dictionary and statistical methods
 
-金额单位为巴西雷亚尔（BRL）。系统保留 CSV 中不带时区的本地业务时间，所有日期筛选以购买时间为准，起始日包含，结束日排除。数据概览显示的起止日期是源表可观测到的最早和最晚购买日，两端都包含。概览指标使用全部已送达订单。
+The Brazilian E-Commerce Public Dataset by Olist describes Brazilian marketplace orders purchased between September 2016 and October 2018. Prices and payments are in Brazilian reais (BRL). Source timestamps retain their local, timezone-unspecified values. Purchase-date filters include the start and exclude the end. The overview labels the earliest and latest observed purchase dates inclusively and uses all delivered orders for its sales metrics. [Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
-## 导入契约
+## Source files and import rules
 
-必需文件名为 `olist_<表名>_dataset.csv`。导入器读取 UTF-8 CSV 表头，支持换行和引号包裹的评价正文。列可重新排列，但必须包含该表的全部原始字段。空单元格表示空值。邮编前缀保留为文本，金额以两位小数精确存储。可选文件 `product_category_name_translation.csv` 有原始品类名和英文品类名两列。
+The acceptance manifest records counts, byte sizes and SHA-256 hashes for **all nine CSVs** in Olist v2. The warehouse uses the seven business tables and the category translation, or **eight inputs** in this snapshot. The geolocation file is audit-only. Custom imports require the seven business files and may omit the translation. [Verified source manifest](../evaluation/kaggle_olist/verified/manifest.json)
 
-| 原始表 | 一行的含义与键 | 业务字段 |
-| --- | --- | --- |
-| orders | 每单一行，order_id | customer_id、状态、下单、批准、交运、实际送达、预计送达时间 |
-| order_items | 每个订单商品行，(order_id, order_item_id) | product_id、seller_id、交运期限、商品价格、运费 |
-| order_payments | 每笔支付，(order_id, payment_sequential) | 支付方式、分期数、支付额 |
-| order_reviews | 每条评价记录，以 source_row 记录源文件顺序 | review_id、order_id、1–5 分评分、标题、正文、创建与回答时间 |
-| customers | 每个订单客户键，customer_id | 跨订单 customer_unique_id、邮编前缀、城市、州 |
-| products | 每种商品，product_id | 原品类、名称与描述长度、图片数、重量（g）、长高宽（cm） |
-| sellers | 每个卖家，seller_id | 邮编前缀、城市、州 |
+| Source | Row grain or key | Representative fields | Olist v2 rows |
+|---|---|---|---:|
+| orders | One order, `order_id` | Customer, status, purchase, approval, carrier handoff, actual and estimated delivery | 99,441 |
+| order_items | One item, `(order_id, order_item_id)` | Product, seller, shipping limit, price, freight value | 112,650 |
+| order_payments | One payment, `(order_id, payment_sequential)` | Method, installments and payment value | 103,886 |
+| order_reviews | One CSV record, tracked by `source_row` | Review ID, order ID, score, title, comment, creation and answer times | 99,224 |
+| customers | One `customer_id` | Cross-order customer identifier, ZIP prefix, city, state | 99,441 |
+| products | One `product_id` | Category, title and description lengths, photo count, weight (g), dimensions (cm) | 32,951 |
+| sellers | One `seller_id` | ZIP prefix, city, state | 3,095 |
+| product_category_name_translation | One Portuguese category label | English category label | 71 |
+| geolocation | One source coordinate observation | ZIP prefix, latitude, longitude, city, state | 1,000,163 |
 
-`source_row` 从 1 开始按 CSV **记录**计数，不含表头；含多行评价正文的记录只占一行号。商品名称和描述长度列沿用源文件中的拼写 `product_name_lenght` 和 `product_description_lenght`。完整字段和类型可在代码 [schema.py](../commerce/schema.py) 及数据目录的 `audit.files.<表名>.columns` 中查看。
+Business filenames follow `olist_<table>_dataset.csv`. The lookup is `product_category_name_translation.csv`. Read UTF-8 headers, quoted fields and multiline reviews. Reordered columns are supported if the original required fields are present. Empty fields represent nulls, ZIP prefixes are text and money is stored at decimal-cent precision. The source spellings `product_name_lenght` and `product_description_lenght` are preserved. `source_row` starts at 1 after the header and counts CSV records, including a multiline review as one record. [Schema definitions](../commerce/schema.py)
 
-导入遇到缺文件、表头不匹配、非法字段类型、非评价表的空主键或重复主键时终止。全部表和视图成功生成后才原子替换既有数据库。评价 ID 可以重复并可以出现在多个订单上。外键缺失保留为审计项，不能把此类记录归属到一个不存在的订单。审计包括各表行数、输入字节 SHA-256、缺失值计数、孤立外键数、评价 ID 重复和跨订单数、存在多个可用评价的订单数及无商品行的已送达订单数。快照标识汇总所有采用的文件散列与转换版本。
+An import stops on missing required files or columns, invalid types or null/duplicate keys in keyed business tables. The importer replaces the current database only after completing all tables, views and audits. Review IDs can recur, including across orders. Orphan foreign keys remain visible in the audit. The audit records source fields, row counts, hashes, missing values, foreign-key failures, repeated and cross-order review IDs, orders with multiple eligible reviews, and delivered orders with no item lines. The snapshot ID covers the selected inputs and transformation version.
 
-## 分析视图与指标
+## Reporting views
 
-| 视图 | 粒度 | 口径与用途 |
-| --- | --- | --- |
-| order_summary | 所有状态，每单一行 | 独立按订单汇总商品和支付，再关联客户州。销售指标选择 status='delivered'。含商品额、支付额、运费和商品行数 |
-| category_sales | 已送达订单的每个商品行 | 品类优先取英译，缺译时取原始品类，再缺失显示 unknown。商品价格不含运费。品类订单数使用 count(distinct order_id)，同一订单可以涉及多个品类 |
-| monthly_sales | 每个有已送达订单的购买月 | month 为当月第一天；汇总订单数、商品额和 AOV。购买时间缺失的订单不进入月度汇总 |
-| review_delivery | 每条符合条件的评价记录 | 已送达，评分在 1–5，实际与预计送达均非空。包含记录级配送标志，用于描述性复核 |
-| order_review_delivery | 每个符合条件的已送达订单一行 | 从 review_delivery 选择最近回答时间，再选最近创建时间。时间并列时取升序 review_id，再取最早 source_row。排序时空值置后 |
+| View | Grain | Purpose |
+|---|---|---|
+| `order_summary` | One order across all statuses | Aggregate items and payments separately, then attach the customer state. Expose revenue, payment total, freight and item count. Sales default to delivered orders. |
+| `category_sales` | One item line on a delivered order | Prefer the translated category, then the source label, then `unknown`. Item price excludes freight. Count distinct orders per category. An order can appear in several categories. |
+| `monthly_sales` | One observed purchase month with delivered orders | The month is its first date. Aggregate order count, item revenue and AOV. Exclude missing purchase timestamps. |
+| `review_delivery` | One eligible review record | Require a delivered order, valid 1–5 score and both delivery times. Use for record-level descriptive counts. |
+| `order_review_delivery` | One eligible delivered order | Take the latest answer time, then latest creation time, with nulls last. Break ties with ascending review ID and source row. Use for inference. |
 
-`item_revenue` 汇总有记录的商品 price。`freight_total` 单独汇总 freight_value。`payment_total` 使用源支付额，一个支付序号计一次，分期数不作为乘数。三项均按各自记录独立预聚合；无相应记录或没有非空金额时，订单汇总返回 0，缺失字段仍在质量报告可查。`order_count` 在概览中为已送达订单数；`aov` 为商品额除以该订单数，空分母返回 null。订单汇总与品类销售里的缺失州显示 unknown。
+`item_revenue` sums item prices. `freight_total` sums freight independently. `payment_total` counts each payment sequence once regardless of installments. For an order without corresponding non-null amounts, the summary uses zero and the audit retains missing-field counts. Overview `order_count` counts delivered orders and `aov` divides their item revenue by that count. An empty denominator returns null. Missing state is shown as `unknown`.
 
-## 配送与差评
+## Delivery and negative reviews
 
-系统在所选购买期内依次排除三个互斥子集。
+Within a selected purchase period, exclude the following mutually exclusive groups in order.
 
-1. 状态不为 delivered 的订单。
-2. 剩余订单中，实际或预计送达时间缺失的订单。
-3. 剩余订单中，没有有效评分的订单。
+1. Orders outside delivered status.
+2. Remaining orders missing actual or estimated delivery time.
+3. Remaining orders with no eligible review score.
 
-分组主口径比较实际和预计送达时间戳；实际晚于预计即为延迟。按日敏感性将两个值转本地日期后比较。例如预计 5 月 10 日零时、当日 14 时送达，时间戳口径归为延迟，日期口径归为准时。两种定义使用相同的合格订单。评分 1 或 2 定义为差评。评价记录级分母允许同一订单有多条评价；推断只使用订单级分母。
+A score of 1 or 2 is negative. In the primary comparison, an order is late when its actual timestamp exceeds its estimated timestamp. In the sensitivity analysis it is late when its actual local date exceeds its estimated date. A parcel promised for May 10 at midnight and delivered May 10 at 14:00 counts as late by timestamp and on time by date. Both comparisons start from the same eligible orders.
 
-列联表的行依次为延迟、准时，列依次为差评、非差评。风险差是延迟组差评率减去准时组差评率，0.10 表示十个百分点。95% 置信区间使用 Newcombe 方法 10，结合两个未做连续性校正的 Wilson 评分区间。任意期望频数低于 5 时使用双侧 Fisher 精确检验，其余使用不做连续性校正的 Pearson 卡方检验。组为空时返回 insufficient_data，效应量、区间与 p 值均为空。两组合格但所有结果相同时仍报告效应量与区间，检验和 p 值为空。极小概率发生数值下溢时，报告 p < 0.001。
+The contingency table has rows for late and on-time orders and columns for negative and other eligible reviews. The risk difference subtracts the on-time negative-review rate from the late rate. A difference of 0.10 is ten percentage points. The 95% interval uses Newcombe method 10 with uncorrected Wilson score intervals. Use a two-sided Fisher exact test if any expected cell is below 5, otherwise Pearson's chi-squared test without continuity correction. For an empty group the status is `insufficient_data` and effect, interval and p-value are null. With two nonempty groups and a constant outcome, report the difference and interval and leave test and p-value null. Extremely small values may be displayed as p < 0.001.
 
-订单频率、地区、承运情况和选择是否评价等因素可能影响结果。这里衡量的是可观察已评价订单中的关联，无法确定提前送达会减少多少差评。
+Region, carrier, order mix and the customer's decision to review may affect the comparison. The result describes an association among reviewed orders. It cannot establish how many negative reviews an earlier delivery would prevent.

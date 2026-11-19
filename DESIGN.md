@@ -1,47 +1,35 @@
-# Commerce Lens · 界面设计规范
+# Commerce Lens interface design
 
-首版工作台的界面规范。产品工程名 E-commerce Operations Agent，界面工作名 Commerce Lens。参考 [DesignMD Apple](https://designmd.me/discover/apple)，为分析工作台重新组织信息，不复制 Apple 标志、图像或专有字体文件。
+Commerce Lens is the workbench for **E-commerce Operations Agent**. Operators need to read an amount, see which orders contributed, and trace the result to its query. The Apple design reference informed the system typography, white surfaces and blue controls. The application uses its own graphics and the fonts installed on the device. [Design reference](https://designmd.me/discover/apple)
 
-## 视觉原则
+## Visual system
 
-让问题、数据与证据依次成为焦点。克制、清晰、留白充足；蓝色代表可交互状态，图表承担主要视觉内容。禁止大面积装饰渐变和不对应实际数据的图表。错误、空数据、未配置与加载状态的设计优先级与成功状态相同。
-
-## 基础样式
-
-| Token | 值/用法 |
+| Token | Value and use |
 |---|---|
-| background | #F5F5F7 |
-| surface | #FFFFFF |
-| text | #1D1D1F |
-| secondary | #6E6E73，使用前检查对背景的对比度 |
-| border | #D2D2D7 |
-| accent | #0071E3 |
-| accent-hover | #0055C6 |
-| success / warning / error | 绿/橙/红仅用于状态，同时提供图标与文字 |
-| typography | -apple-system、BlinkMacSystemFont、中文系统字体、sans-serif 回退 |
-| body | 15–17 px；正文行高 1.5–1.65 |
-| title | 桌面 36–48 px；手机 28–32 px，字重 600 |
-| numbers | tabular-nums，金额标注 BRL |
-| spacing | 4/8/12/16/24/32/48/64 px |
-| radius | 控件 10–12 px；内容面板 18–24 px |
-| elevation | 细边框与浅阴影；不可只靠阴影区分输入框 |
+| Background / surface | `#F5F5F7` / `#FFFFFF` |
+| Text / secondary text | `#1D1D1F` / `#6E6E73`. Check secondary text against its background. |
+| Border | `#D2D2D7` |
+| Accent / hover | `#0071E3` / `#0055C6` for interactive elements |
+| Status | Pair green, orange or red with a text label or icon. Give loading, empty, configuration and error states a readable message. |
+| Type | `-apple-system`, `BlinkMacSystemFont`, system sans-serif. Body 15–17 px, line height 1.5–1.65. Titles 36–48 px on desktop and 28–32 px on mobile, weight 600. |
+| Numbers | Use tabular figures and label amounts in BRL. |
+| Spacing | 4, 8, 12, 16, 24, 32, 48 and 64 px |
+| Corners | Controls 10–12 px, panels 18–24 px |
+| Elevation | Delineate inputs and panels with fine borders. Reserve subtle shadows for depth. |
 
-用户指定 Apple 风格，因此系统字体优先于通用 frontend-design 技能中“避免系统字体”的偏好。字体随系统提供，不打包 SF Pro。
+Charts show actual results and include a table alternative. Use white space and clear headings to guide the reader from the question to the evidence.
 
-## 页面与交互
+## Pages and interactions
 
-桌面：232 px 导航栏，主内容最大 1280 px；顶部显示当前数据集、模式、配置状态。导航包含概览、分析工作台、差评调查、数据与指标、评估记录。手机改为可折叠导航，表格在自身区域横向滚动，页面不可横向溢出。
+The desktop layout uses a 232 px navigation rail and a main area up to 1,280 px wide. Show dataset, mode and configuration status near the top. On small screens, collapse navigation, stack panels in reading order and let wide tables scroll within their containers.
 
-概览采用经营报表版式。标题下列出数据源和订单购买日期。左侧突出商品成交额、币种和运费口径，下方列订单数与客单价；右侧对照月度趋势。第二行展示品类排行和差评调查入口。差评率旁注明样本范围，点击入口后才能得到按配送表现分组的比较。窄屏依阅读顺序纵向排列。数据为空时提供“查看数据准备说明”。
+- **Overview.** Identify the dataset and observed purchase dates. Show delivered item revenue beside BRL, the freight definition, order count and average order value. Pair these figures with the monthly trend. Show category ranking, review sample and a link to the delivery investigation. When the snapshot is empty, link to data preparation.
+- **Workbench.** Supply three editable English example questions and purchase-date controls. Identify the active mode. Follow the answer with its chart or table and expandable evidence. Put the executed, copyable SQL first. Include definitions, filters, snapshot and timing. Preserve the question after an error.
+- **Review investigation.** State the eligibility rule and show each group's size, negative-review rate, percentage-point difference, interval and test result. Keep the observational limitation visible. Switching delivery definitions updates the heading and results together.
+- **Data and metrics.** Show tables, views, row counts, grain, missing values, duplicates, import time and snapshot. Label review-record counts separately from the order-level sample.
+- **Evaluation.** Show per-question outcome, mode, model, snapshot, accuracy and timing. Give the user an explicit empty state before a run and explain local model configuration. Identify the source of every result.
+- **History.** Let the reader reopen a recorded request and inspect or export its evidence.
 
-分析页面提供三个可直接填入的中文常用查询，用户可修改问题和日期后提交。页眉显示当前模式。结果按回答、图表或表格、查询证据排列。展开证据先看可复制的实际 SQL，再按需查看指标、过滤条件、快照和耗时。查询失败时保留输入。
+## Accessibility checks
 
-差评调查：先展示样本规则，再展示两组样本量、差评率和百分点差值；CI 和检验结果在同一信息层级。页面常驻“观察性关联，不能证明因果”。可切换时间戳/日粒度敏感性结果，标题随口径改变。
-
-数据：源表/视图、行数、粒度、重复与缺失、导入时间及快照。评价记录与订单级统计样本分别显示。
-
-评估：逐题结果、模式、模型、数据快照、准确率与耗时；未运行显示空状态。未配置模型时解释如何本地配置，不把合成样本结果显示成真实模型成绩。
-
-## 可访问性与验收
-
-交互目标至少 44×44 px；所有控件有可读名称；输入有 label；键盘可完整操作；焦点清晰；状态变化使用适当 live region。颜色不是唯一编码，图表提供对应数据表。动画 120–200 ms，尊重 prefers-reduced-motion。验收宽度至少 390、768、1440 px，并检查 200% 放大。
+Provide 44 × 44 px interaction targets, accessible names, associated input labels, visible focus and keyboard access throughout. Announce state changes where appropriate. Use 120–200 ms transitions and respect reduced-motion preferences. Check widths of 390, 768 and 1,440 px, local horizontal scrolling for tables and browser zoom at 200%.

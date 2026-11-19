@@ -171,7 +171,7 @@ def _run(db, question, chosen, en, left, right, variant, out):
     out.update(status="ok", answer=msg, table=rows)
 
 
-def ask(db: Path, question: str, *, mode="auto", language="zh", start=None, end=None, variant="full"):
+def ask(db: Path, question: str, *, mode="auto", language="en", start=None, end=None, variant="full"):
     began = perf_counter()
     configured = model_status()
     chosen = configured["mode"] if mode == "auto" else mode

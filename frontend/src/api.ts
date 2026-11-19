@@ -34,8 +34,8 @@ export async function api<T>(path: string, body?: unknown, signal?: AbortSignal)
   if (!res.ok) {
     let detail
     try { detail = (await res.json()).detail } catch { /* Non-JSON upstream response. */ }
-    const hint = typeof detail === 'string' ? detail : '请检查本地服务和数据快照，然后重试。'
-    throw new Error('请求未完成（' + res.status + '）。' + hint)
+    const hint = typeof detail === 'string' ? detail : 'Check the local service and data snapshot, then retry.'
+    throw new Error('Request failed (' + res.status + '). ' + hint)
   }
   return res.json()
 }
@@ -56,59 +56,65 @@ export function useResource<T>(path: string) {
   return { data, error, retry }
 }
 
-export const errorText = (err: unknown) => err instanceof Error ? err.message : '服务连接失败，请检查本地服务并重试。'
+export const errorText = (err: unknown) => err instanceof Error ? err.message : 'Connection failed. Check the local service and retry.'
 export const number = (n: unknown, digits = 0) => typeof n === 'number' && Number.isFinite(n)
   ? n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits }) : '—'
 export const percent = (n: unknown) => typeof n === 'number' ? number(n * 100, 1) + '%' : '—'
-export const dateOnly = (value?: string | null) => value ? value.slice(0, 10).replaceAll('-', '.') : '—'
+export const dateOnly = (value?: string | null) => value ? value.slice(0, 10) : '—'
 export function display(value: unknown): string {
   if (value == null || value === '') return '—'
-  if (typeof value === 'boolean') return value ? '是' : '否'
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
   if (typeof value === 'object') return JSON.stringify(value, null, 2)
   return String(value)
 }
 export function sourceName(value?: string) {
-  if (!value) return '数据集'
-  if (/synth|fixture|demo|示例|合成/i.test(value)) return '合成示例数据'
-  return value.toLowerCase() === 'olist' ? 'Olist 数据集' : value
+  if (!value) return 'Dataset'
+  if (/synth|fixture|demo/i.test(value)) return 'Synthetic sample'
+  return value.toLowerCase() === 'olist' ? 'Olist Brazilian E-Commerce' : value
 }
 export function modeName(value?: string) {
-  if (!value) return '模式待确认'
-  if (/offline|demo|deterministic/i.test(value)) return '离线演示'
-  if (/full|model|online|live/i.test(value)) return '模型分析'
-  if (value === 'statistics') return '统计调查'
-  if (value === 'reference') return '参考 SQL'
-  if (value === 'baseline' || value === 'direct') return '基线模型'
+  if (!value) return 'Checking mode…'
+  if (/offline|demo|deterministic/i.test(value)) return 'Offline demo'
+  if (value === 'full') return 'Full workflow'
+  if (/model|online|live/i.test(value)) return 'Live model'
+  if (value === 'statistics') return 'Statistical investigation'
+  if (value === 'reference') return 'Reference SQL'
+  if (value === 'baseline' || value === 'direct') return 'Baseline model'
   return value
 }
 const names: Record<string, string> = {
-  month: '月份', category: '商品品类', item_revenue: '商品成交额（BRL）', order_count: '订单数',
-  aov: '客单价（BRL）', negative_rate: '差评率', risk_difference: '差评率差值', filters: '筛选条件',
-  metric: '指标', metrics: '指标', metric_id: '指标 ID', metric_ids: '指标 ID', definitions: '指标定义',
-  metric_definitions: '指标定义', snapshot: '数据快照', source: '数据来源', grain: '数据粒度',
-  row_count: '返回行数', truncated: '结果已截断', warnings: '提示', language: '回答语言',
-  timing_ms: '耗时（ms）', stages: '执行阶段', mode: '运行模式', model: '模型', start: '开始日期',
-  end: '结束日期（不含）', answer: '回答', status: '状态', label: '名称', question: '问题',
-  request_id: '请求 ID', created_at: '创建时间', method: '方法', accuracy: '准确率',
-  imported_at: '导入时间', name: '名称', count: '数量', group: '分组', n: '订单数', negative: '差评订单数',
-  passed: '通过', expected: '预期', actual: '实际', test: '检验方法', results: '逐题记录',
-  included_orders: '纳入订单', total_orders: '范围内订单', not_delivered: '未送达订单', missing_delivery_time: '缺少配送时间',
-  no_valid_review: '无有效评价', missing_values: '缺失字段计数', orphan_foreign_keys: '缺少对应主表记录',
-  invalid_review_scores: '无效评分记录', repeated_review_ids: '重复评价编号', review_ids_on_multiple_orders: '跨订单评价编号',
-  orders_with_multiple_eligible_reviews: '有多条有效评价的订单', delivered_orders_without_items: '无商品明细的已送达订单',
-  type: '类型', description: '字段说明', variant: '评估方法', total: '题数', correct: '正确', execution_accuracy: '可回答题准确率',
-  sql_success_rate: 'SQL 成功率', median_ms: '耗时中位数（ms）', errors: '错误分类', reference_sql_count: '参考 SQL 数',
-  human_review: '人工审核', expected_status: '预期状态', reference_ran: '参考 SQL 已执行', expected_rows: '预期行数',
-  sql_success: 'SQL 成功', generated_sql: '已生成 SQL', error_type: '错误类型', latency_ms: '耗时（ms）',
-  usage: '模型用量', estimated_cost_usd: '估算费用（USD）', prompt_version: '提示词版本', rate: '差评率', statistics: '统计结果',
-  payment_total: '支付金额（BRL）', freight_value: '运费（BRL）',
+  month: 'Month', category: 'Product category', item_revenue: 'Item revenue (BRL)', order_count: 'Orders',
+  aov: 'Average order value (BRL)', negative_rate: 'Negative review rate', risk_difference: 'Difference in negative review rates',
+  filters: 'Filters', metric: 'Metric', metrics: 'Metrics', metric_id: 'Metric ID', metric_ids: 'Metric IDs',
+  definitions: 'Definitions', metric_definitions: 'Metric definitions', snapshot: 'Snapshot ID', source: 'Data source', grain: 'Grain',
+  row_count: 'Rows returned', truncated: 'Result truncated', warnings: 'Warnings', language: 'Answer language',
+  timing_ms: 'Elapsed time (ms)', stages: 'Execution stages', mode: 'Mode', model: 'Model', start: 'Start date',
+  end: 'End date (exclusive)', answer: 'Answer', status: 'Status', label: 'Label', question: 'Question',
+  request_id: 'Request ID', created_at: 'Created at', method: 'Method', accuracy: 'Accuracy',
+  imported_at: 'Imported at', name: 'Name', count: 'Count', group: 'Group', n: 'Orders', negative: 'Orders with negative reviews',
+  passed: 'Passed', expected: 'Expected', actual: 'Actual', test: 'Statistical test', results: 'Results by question',
+  included_orders: 'Included orders', total_orders: 'Orders in scope', not_delivered: 'Undelivered orders', missing_delivery_time: 'Missing delivery timestamps',
+  no_valid_review: 'No valid review', missing_values: 'Missing values by field', orphan_foreign_keys: 'Unmatched foreign keys',
+  invalid_review_scores: 'Invalid review scores', repeated_review_ids: 'Repeated review IDs', review_ids_on_multiple_orders: 'Review IDs shared by multiple orders',
+  orders_with_multiple_eligible_reviews: 'Orders with multiple eligible reviews', delivered_orders_without_items: 'Delivered orders without items',
+  type: 'Type', description: 'Description', variant: 'Workflow', total: 'Questions', correct: 'Correct', execution_accuracy: 'Accuracy on answerable questions',
+  sql_success_rate: 'SQL success rate', median_ms: 'Median time (ms)', errors: 'Errors by type', reference_sql_count: 'Reference SQL queries',
+  human_review: 'Human review', expected_status: 'Expected status', reference_ran: 'Reference SQL executed', expected_rows: 'Expected rows',
+  sql_success: 'SQL succeeded', generated_sql: 'SQL generated', error_type: 'Error type', latency_ms: 'Latency (ms)',
+  usage: 'Model usage', estimated_cost_usd: 'Estimated cost (USD)', prompt_version: 'Prompt version', rate: 'Negative review rate',
+  statistics: 'Statistics', payment_total: 'Payment total (BRL)', freight_value: 'Freight (BRL)', currency: 'Currency', plan: 'Query plan',
+  requires_purchase_time: 'Requires purchase timestamp', intent: 'Intent', dimension: 'Grouping', sort: 'Sort order', limit: 'Row limit',
+  year: 'Year', state: 'Customer state', delivery_group: 'Delivery group', error_code: 'Error code', repairs: 'Repair attempts',
+  model_ms: 'Model time (ms)', sql_ms: 'SQL time (ms)', statistics_ms: 'Statistical analysis time (ms)',
+  id: 'ID', ci95: '95% confidence interval', p_value: 'p-value', reviewed_order_count: 'Orders with reviews', negative_count: 'Negative reviews',
 }
 export const label = (key: string) => names[key] ?? key
 export function stateName(state: string) {
-  return ({ success: '成功', ok: '成功', completed: '已完成', not_run: '尚未运行',
-    insufficient_data: '样本不足', no_data: '无数据', clarification_required: '需要澄清',
-    needs_clarification: '需要澄清', refused: '已拒绝', rejected: '已拒绝', error: '执行失败',
-    refusal: '已拒绝', unsafe_request: '已拒绝', reference_only: '参考查询', model_error: '模型服务异常', failed: '失败', running: '运行中', unsupported: '暂不支持', empty: '无数据',
+  return ({ success: 'Success', ok: 'Success', completed: 'Completed', not_run: 'Not run',
+    insufficient_data: 'Insufficient data', no_data: 'No data', clarification_required: 'Clarification needed',
+    needs_clarification: 'Clarification needed', refused: 'Declined', rejected: 'Declined', error: 'Execution failed',
+    refusal: 'Declined', unsafe_request: 'Declined', reference_only: 'Reference only', model_error: 'Model error',
+    failed: 'Failed', running: 'Running', unsupported: 'Unsupported', empty: 'No data',
   } as Record<string, string>)[state] ?? state
 }
 

@@ -20,37 +20,40 @@ with sync_playwright() as playwright:
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base, wait_until="networkidle")
-    page.get_by_role("heading", name="运营概览", exact=True).wait_for()
-    page.get_by_role("link", name="比较延迟与准时送达订单").click()
-    page.get_by_role("heading", name="差评调查", exact=True).wait_for()
-    page.get_by_role("link", name="分析工作台", exact=True).click()
-    page.get_by_role("button", name="总销售额", exact=True).click()
-    assert page.locator("#question").input_value() == "总销售额"
+    assert page.locator("html").get_attribute("lang") == "en"
+    page.get_by_role("heading", name="Operations overview", exact=True).wait_for()
+    page.get_by_role("link", name="Compare late and on-time orders").click()
+    page.get_by_role("heading", name="Delivery and reviews", level=1, exact=True).wait_for()
+    nav = page.get_by_role("navigation", name="Main navigation")
+    nav.get_by_role("link", name="Ask the agent", exact=True).click()
+    page.get_by_role("button", name="What is total item revenue?", exact=True).click()
+    assert page.locator("#question").input_value() == "What is total item revenue?"
     page.locator("#question").fill(
         "Show the top 10 product categories by item revenue in 2018."
     )
     with page.expect_response("**/api/query") as query:
-        page.get_by_role("button", name="运行分析").click()
+        page.get_by_role("button", name="Run analysis").click()
     result = query.value.json()
+    assert result["evidence"]["language"] == "en"
     assert result["status"] == "ok" and result["table"]
-    page.get_by_role("button", name="表格", exact=True).click()
+    page.get_by_role("button", name="Table", exact=True).click()
     assert page.locator("tbody tr").count() == len(result["table"])
-    page.get_by_text("查询证据与 SQL", exact=True).click()
-    page.get_by_role("button", name="复制 SQL").click()
+    page.get_by_text("Query evidence and SQL", exact=True).click()
+    page.get_by_role("button", name="Copy SQL").click()
     assert page.evaluate("navigator.clipboard.readText()") == result["evidence"]["sql"]
     with page.expect_download() as exported:
-        page.get_by_role("button", name="导出结果").click()
+        page.get_by_role("button", name="Export result").click()
     assert exported.value.suggested_filename.endswith(".json")
-    page.get_by_role("link", name="差评调查", exact=True).click()
+    nav.get_by_role("link", name="Delivery and reviews", exact=True).click()
     with page.expect_response("**/api/investigation") as investigation:
-        page.get_by_role("button", name="运行调查").click()
+        page.get_by_role("button", name="Run investigation").click()
     assert investigation.value.json()["status"] == "completed"
-    page.get_by_text("95% 置信区间", exact=True).wait_for()
-    page.get_by_role("link", name="运行历史", exact=True).click()
+    page.get_by_text("95% confidence interval", exact=True).wait_for()
+    nav.get_by_role("link", name="Run history", exact=True).click()
     page.get_by_role(
         "button", name="Show the top 10 product categories", exact=False
     ).first.click()
-    page.get_by_text("查询证据与 SQL", exact=True).wait_for()
+    page.get_by_text("Query evidence and SQL", exact=True).wait_for()
     for width in (390, 768, 1440):
         page.set_viewport_size({"width": width, "height": 900})
         for route in (

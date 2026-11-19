@@ -27,12 +27,12 @@ def test_answer_matches_dashboard_and_persisted_evidence(workspace):
         json={
             "question": "What is total item revenue?",
             "mode": "demo",
-            "language": "en",
         },
     )
     assert res.status_code == 200
     answer = res.json()
     assert answer["status"] == "ok"
+    assert answer["evidence"]["language"] == "en"
     assert answer["table"][0]["item_revenue"] == pytest.approx(overview["item_revenue"])
     assert answer["evidence"]["snapshot"] == overview["snapshot"]
     assert answer["evidence"]["sql"]

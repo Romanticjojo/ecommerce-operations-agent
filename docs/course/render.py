@@ -67,7 +67,7 @@ a {color:#126567; text-decoration:underline; }
 with sync_playwright() as p:
     b=p.chromium.launch(channel=os.getenv('PDF_BROWSER_CHANNEL'), headless=True)
     page=b.new_page(viewport={'width':816,'height':1056},device_scale_factor=1)
-    page.set_content('<!doctype html><html lang="en"><head><title>Commerce Lens | Project update</title><style>'+style+'</style></head><body></body></html>')
+    page.set_content('<!doctype html><html lang="en"><head><title>E-commerce Operations Agent | DSC 200 Project Update</title><style>'+style+'</style></head><body></body></html>')
     page.add_script_tag(path=str(folder/'node_modules/markdown-it/dist/markdown-it.min.js'))
     page.add_script_tag(path=str(folder/'node_modules/mermaid/dist/mermaid.min.js'))
     page.evaluate('''async ({pages, labels})=>{

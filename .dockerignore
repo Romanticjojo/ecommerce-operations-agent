@@ -5,6 +5,8 @@
 !commerce/*.py
 !evaluation/
 !evaluation/questions.json
+!evaluation/kaggle_olist/
+!evaluation/kaggle_olist/requirements.txt
 !frontend/
 !frontend/**
 frontend/node_modules

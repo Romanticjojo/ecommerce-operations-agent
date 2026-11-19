@@ -1,22 +1,22 @@
-# 生命周期与交付记录
+# Project status and release history
 
-2026-11-19 发布检查。技术文档和运行说明对应仓库源码。发布后最新构建状态见 [GitHub Actions](https://github.com/Romanticjojo/ecommerce-operations-agent/actions)。
+The November 19, 2026 check-in selected three outcomes from the original proposal: sales questions, a delivery and negative-review investigation, and traceable evidence. Commerce Lens is the local web interface for **E-commerce Operations Agent**. The course release uses Olist's Brazilian marketplace data for 2016–2018. [Verification record](verification.md) · [GitHub Actions](https://github.com/Romanticjojo/ecommerce-operations-agent/actions)
 
-| 阶段 | 已交付 | 复核依据 |
+| Stage | Deliverable | Evidence |
 |---|---|---|
-| 需求确认 | 选定销售分析、差评调查、数据证据三个目标；用户选择兼容模型接口 | PRD、设计决策、评分要求映射 |
-| 数据与指标 | 七张原始业务表、可选翻译、五个分析视图、审计与合成数据 | 数据字典、仓库测试、真实 Olist 独立对账 |
-| Agent | 有类型的模型计划、指标 SQL 编译器、只读执行进程、解释和溯源 | 模型 HTTP 合约、有限修复、拒绝与超时测试 |
-| 统计 | 订单级主分析、评价级描述、按日敏感性分析、检验与区间 | 手算样本与真实 CSV 的两种列联表 |
-| Web 工作台 | 概览、问答、调查、数据字典、评估与历史六个页面 | 桌面/移动浏览器、复制、导出、键盘操作 |
-| 评估 | 55 题、原始表参考 SQL、离线覆盖率、真实模型对照运行器 | 验收报告；模型成绩待用户配置后实测，金标准待人审 |
-| 部署 | 原生启动脚本、前端锁文件、Python 锁文件、容器与 CI | README、干净安装和发布验证 |
-| 维护 | 固定版本、请求历史、快照哈希、源码许可证、可重跑检查 | 更新指标时同步修改字典、参考 SQL、测试及验收报告 |
+| Requirements | Three course priorities, a compatible provider API and requirements linked to tests | PRD, design decisions and rubric review |
+| Data and metrics | Seven business tables, optional category translation, five reporting views, audit and synthetic fixtures. On Olist v2, eight CSVs imported and all nine source files audited. | Dictionary, warehouse tests, independent Olist reconciliation |
+| Agent | Typed plan, metric compiler, read-only worker, answer and evidence | HTTP contract, bounded repair, rejection and timeout tests |
+| Statistics | Order-level inference, review-record descriptions, calendar-day sensitivity, tests and intervals | Hand-counted fixture and two Olist contingency tables |
+| Workbench | Overview, questions, investigation, data dictionary, evaluation and history | Desktop/mobile browser, copy, export and keyboard checks |
+| Evaluation | 55 questions, raw-table references, offline coverage and real-model comparison runner | Verified CSV outputs. Real-model results and human review are pending. |
+| Deployment | Native launcher, Python/npm lock files, Docker and CI | Clean install and release checks |
+| Maintenance | Versioned source, run history, snapshot hashes, license and repeatable checks | Metric changes require corresponding dictionary, reference, test and report changes. |
 
-## 关键实现决定
+## Design decisions and evidence
 
-完整模型模式负责将问题翻译为结构化计划，后端编译约定指标 SQL。Direct 基线直接生成 SQL，两种方式共用执行边界。该选择缩小了生产路径可执行的查询范围，使销售金额、时间和粒度便于审阅。
+The full workflow asks a model for a structured plan. The backend compiles the metric, time window and grouping into SQL. The direct baseline asks for SQL. Both share the same execution limits. This makes the effect of planning testable under the same conditions.
 
-已从官方数据页取得 Olist CSV，并与独立原始数据汇总对账。公开仓库附合成数据生成器。用户下载真实数据后可以复现本次分析。所有实际模型 token、时延和对照成绩需要在选定模型服务上测量。
+The public source includes a reproducible synthetic generator and a version-pinned Olist import path. Independent aggregates over Olist CSVs confirmed the reported sales and review counts. Provider-specific accuracy, token consumption and timing still require a run on the chosen model. [Olist acceptance report](../evaluation/kaggle_olist/verified/REPORT.md)
 
-本次仅发布代码和技术资料。课程的个人反思和实际组员分工需由团队成员填写。
+The English edition uses English navigation, demo prompts, documentation and a four-page course brief. The technical materials are ready for students to review. Actual team assignments and a first-person development reflection remain student inputs. [Editable course brief](course/project-update.md)

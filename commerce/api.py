@@ -29,13 +29,13 @@ class DateRange(BaseModel):
     @model_validator(mode="after")
     def valid_window(self):
         if self.start and self.end and self.start >= self.end:
-            raise ValueError("结束日期必须晚于开始日期（不含结束日）")
+            raise ValueError("End date must be later than start date. The end date is exclusive.")
         return self
 
 
 class Question(DateRange):
     question: str = Field(min_length=1, max_length=1500)
-    language: Literal["zh", "en"] = "zh"
+    language: Literal["en", "zh"] = "en"
     mode: Literal["auto", "model", "demo"] = "auto"
 
 
@@ -50,7 +50,7 @@ def snapshot():
             yield db
     except FileNotFoundError:
         raise HTTPException(
-            503, detail="请先运行 python -m commerce.cli demo，或导入 Olist 数据。"
+            503, detail="Import the Olist dataset before submitting a query."
         )
 
 
@@ -80,7 +80,7 @@ def make_app():
             and origin != str(request.base_url).rstrip("/")
         ):
             return JSONResponse(
-                {"detail": "仅接受当前工作台发起的请求。"}, status_code=403
+                {"detail": "Requests must originate from this workbench."}, status_code=403
             )
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -114,7 +114,7 @@ def make_app():
                 {
                     "name": name,
                     "rows": info["rows"],
-                    "grain": "原始 CSV",
+                    "grain": "Source CSV record",
                     "columns": info.get("columns")
                     or [{"name": col, "type": kind} for col, kind in schema.items()],
                 }
@@ -167,7 +167,7 @@ def make_app():
                 "metric_ids": ["negative_rate", "risk_difference"],
             },
         )
-        return envelope(result, "配送延迟与差评关联调查", started)
+        return envelope(result, "Late delivery and negative reviews", started)
 
     @app.get("/api/runs")
     def runs():
@@ -177,7 +177,7 @@ def make_app():
     def run(request_id: str):
         record = history.lookup(request_id)
         if record is None:
-            raise HTTPException(404, detail="未找到该分析记录")
+            raise HTTPException(404, detail="Analysis run not found.")
         return record
 
     @app.get("/api/evaluation")

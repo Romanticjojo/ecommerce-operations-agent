@@ -1,42 +1,47 @@
-# 1.0 验收记录
+# Verification record
 
-实测日期 2026-11-19。原生环境为 Apple M4（10 核、16 GB），Python 3.11、Node.js 22、Chromium / Chrome。下列数字来自本次本地验收。可在 [CI](https://github.com/Romanticjojo/ecommerce-operations-agent/actions) 查看相应提交的 Linux 原生构建、容器构建和启动检查。
+The November 19, 2026 engineering check-in ran locally on an Apple M4 (10 cores, 16 GB) with Python 3.11, Node.js 22 and Chromium/Chrome. That check-in recorded **17 passing backend and integration tests**. A separate acceptance suite subsequently passed **15 of 15** cases against version 2 of the Brazilian E-Commerce Public Dataset by Olist. The figures below retain their original test conditions. [Olist acceptance report](../evaluation/kaggle_olist/verified/REPORT.md) · [CI runs by commit](https://github.com/Romanticjojo/ecommerce-operations-agent/actions)
 
-后端与集成测试共 **17 项通过**。已将两个离线运行的逐题记录保存为 [参考 SQL 记录](../evaluation/verified/reference-results.csv) 和 [无密钥模式记录](../evaluation/verified/offline-results.csv)。
+## Olist data and independent checks
 
-## 真实数据与统计复核
+The acceptance suite counted CSV records and recorded SHA-256 hashes, sizes and usage for nine source files. DuckDB imported seven business tables and the English category translation. The geolocation file has 1,000,163 records and is included only in the download audit. The analytical snapshot is `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`. One observed build took approximately 0.7 seconds, excluding download. [Source manifest](../evaluation/kaggle_olist/verified/manifest.json)
 
-Olist 快照 `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`。在本机从公开 CSV 建库一次用时约 0.7 秒（不含下载）。输入 99,441 个订单、112,650 个商品行、103,886 条支付、99,224 条评价。独立 Python CSV/Decimal 汇总与 DuckDB 在已送达订单数 96,478、商品成交额 BRL 13,221,498.11 以及两组列联表上相符。按 50 个不同参考查询各运行一次测得 SQL p95 约 17 ms；硬件与题目集合限定了这一数值的适用范围。
+The source contains 99,441 orders, 112,650 item lines, 103,886 payment records and 99,224 review records. Its purchase dates run from September 2016 to October 2018. An independent Python pass over the CSVs using decimal arithmetic confirmed **96,478 delivered orders**, **BRL 13,221,498.11** in delivered item revenue and **BRL 137.04** average order value. Cross-checks also covered payment totals and both contingency tables.
 
-| 判断延迟的口径 | 延迟组差评 / 订单 | 准时组差评 / 订单 |
+| Late-delivery definition | Negative / late orders | Negative / on-time orders |
 |---|---:|---:|
-| 完整时间戳 | 4,142 / 7,661 | 8,130 / 88,163 |
-| 自然日 | 3,983 / 6,381 | 8,289 / 89,443 |
+| Actual timestamp after estimated timestamp | 4,142 / 7,661 | 8,130 / 88,163 |
+| Actual local date after estimated date | 3,983 / 6,381 | 8,289 / 89,443 |
 
-主分析排除 2,963 个未送达订单、8 个缺配送时间的订单、646 个缺有效评价的订单，保留 95,824 个。525 个订单有多条有效评价。精确时间口径下，风险差为 **44.84 个百分点**，95% 区间 **43.71–45.97**，Pearson 检验 p < 0.001。业务解释是延迟组低评分更常见，观察性数据无法识别因果。
+The analysis excluded 2,963 undelivered orders, then eight with missing delivery times, then 646 without valid reviews. Of the 95,824 eligible orders, 525 had multiple eligible reviews. Using timestamps, the late group's negative-review rate exceeded the on-time group's by **44.84 percentage points**. The 95% Newcombe-Wilson interval was **43.71 to 45.97 points**, with Pearson p < 0.001. The comparison measures an association among reviewed orders. It does not identify a causal effect.
 
-## 需求与证据
+## Requirements and observed behavior
 
-| 项目 | 验证 |
+| Item | Evidence at the engineering check-in |
 |---|---|
-| FR-01 / 经营分析 | 真实数据 2018 年品类排行第一为 health_beauty，BRL 755,724.50；2017 年 1 月已送达 750 单。API、表格、图表和复制的 SQL 经核对 |
-| FR-02 / 统计调查 | 固定样本核对差值、区间、两类检验、空组和恒定结局。真实数据结果见上表 |
-| FR-03 / 证据 | 浏览器验证实际执行 SQL、筛选、指标口径、快照、运行 ID、历史恢复与 JSON 下载 |
-| NFR-01 / 执行边界 | 测试验证受限语法树、只读连接、外部访问拒绝、超时后回收及后续查询 |
-| NFR-02 / 重现 | 重复导入、失败保留旧快照、参考 SQL 执行、锁定依赖与干净克隆部署 |
-| NFR-03 / 交互 | 浏览器实测 320、390、768、1440 px 和 200% 缩放下的六个路由，检查横向溢出和脚本错误，验证问答、复制、导出与调查 |
-| 模型兼容接口 | 使用可控 HTTP 服务发送真实 HTTP 请求，验证响应契约、错误、修复次数、usage 与成本。真实提供方评估待配置 |
+| FR-01 · Sales | The 2018 category leader was `health_beauty` at BRL 755,724.50. The January 2017 delivered count was 750. Checks covered API results, chart, table and copied SQL. |
+| FR-02 · Investigation | Known samples covered the risk difference, interval, both tests, empty groups and constant outcomes. The independent source-data check confirmed the counts above. |
+| FR-03 · Evidence | Browser checks exercised executed SQL, filters, metric definitions, snapshot, run ID, history retrieval and JSON download. |
+| NFR-01 · Execution | The supplied suite verified syntax-tree limits, read-only access, external-access rejection, timeout cleanup and a subsequent successful query. |
+| NFR-02 · Reproducibility | Identical imports, preservation of a working snapshot after an invalid import, reference SQL execution, locked dependencies and clean-clone startup were checked. Live-model and review targets remain pending. |
+| NFR-03 · Performance and UI | Running each of 50 distinct reference queries once gave a local SQL p95 of 16.68 ms. This timing measures the stated machine and queries. Browser checks covered six routes at 320, 390, 768 and 1,440 px and at 200% zoom, including overflow, script errors, query, copy, export and investigation. |
+| Model interface | A controlled HTTP provider exercised response shape, error mapping, repair count, usage and cost handling. A real provider is required to evaluate the model. |
 
-## 实验
+## Benchmark interpretation
 
-题集按过滤、多表口径、聚合排序、趋势、评价各 10 题，另有 5 道澄清或拒答题。50 条独立参考 SQL 均可在完整 Olist 上执行。参考运行器给出执行结果和时间；模型成绩只在接入模型并实际调用时生成。
+The benchmark has ten questions each on filters, multi-table semantics, aggregation/ranking, time series and review/delivery, plus five expected clarification or rejection cases. All 50 independent reference SQL queries executed on the Olist snapshot. The reference run provides expected results and timing.
 
-未配置模型时，有限示例解析器在这套开放措辞题集上通过 **11 / 55**，其中 **9 / 50** 道可回答题得到正确结果，其他输入大多返回澄清。该结果描述无密钥体验的覆盖范围。可用 `python -m commerce.cli evaluate --mode model` 在相同快照上实际对比 direct/full，输出正确率、SQL 执行成功率、时延、token 和配置价格下的估算成本。目标 ≥90% / ≥95% 尚待真实模型和人工复核题集验证。
+The original offline parser passed **11 of 55** questions overall and **9 of 50** answerable questions. The remaining questions often reached clarification. The numbers describe the offline parser and the recorded question set. Real-model accuracy, execution success, end-to-end latency, token use and cost require a fresh direct/full comparison. The targets of at least 90% result accuracy and 95% SQL success require a human-reviewed benchmark and a configured model. [Reference run](../evaluation/verified/reference-results.csv) · [Offline run](../evaluation/verified/offline-results.csv)
 
-标准启动脚本已从全新 Git clone 建立独立 Python 环境，成功安装锁定依赖、使用 npm ci 构建页面、自动生成 3,116 个合成订单并启动 HTTP 工作台。
+## Reproduction
 
-## 重跑
+Run the following from the repository root with the documented dependencies installed.
 
-按 README 从干净克隆启动。运行 `python -m pytest -q` 检查 API、合约、统计与导入，用 `python scripts/browser_smoke.py http://127.0.0.1:8731` 对运行中的应用做浏览器复核（另装 Playwright 和 Chromium）。源码不含 Kaggle 原始 CSV、模型凭据或个人运行历史。
+```sh
+python -m pytest -q
+python -m pytest -q evaluation/kaggle_olist/cases.py --olist-version 2
+python scripts/browser_smoke.py http://127.0.0.1:8731
+python -m commerce.cli evaluate --mode model
+```
 
-四页课程技术说明和可编辑稿见 course 目录。实际团队分工与个人反思由组员补写。
+The browser check requires a running workbench, Playwright and Chromium. The last command requires configured model access. The original clean-clone startup check installed locked Python and npm dependencies, built the UI, generated 3,116 synthetic orders and served the workbench. The current course workflow imports Olist v2 with `python -m commerce.cli olist`. It keeps Kaggle CSVs, credentials and personal history outside the published source. [Operator guide](operator-guide.md) · [Four-page project update](course/project-update.pdf)

@@ -1,86 +1,57 @@
-# 产品需求 PRD
+# Product requirements
 
-状态：已确认的首版范围。实际结果见 [验收记录](verification.md)。优先级 P0=首版必需，P1=交付体验；稳定性 High=来自原始目标/正确性约束，Medium=产品实现选择。追踪来源见 source-review.md。
+**E-commerce Operations Agent** helps small online retailers answer sales and delivery questions through the Commerce Lens workbench. The DSC 200 submission selects three functional and three nonfunctional requirements below. P0 means required for the release. P1 identifies an experience requirement. High stability reflects a business or correctness constraint. Medium stability marks an implementation target that may depend on hardware. [Source review](source-review.md) · [Verification record](verification.md)
 
-## Problem Statement
+## Problem and scope
 
-运营人员需要跨订单、商品、支付和评价查询经营问题，但直接合表容易重复计数，直接询问模型容易得到无法复核的数字。课程同时要求明确系统选型、可验证需求、架构图、测试与实际进展。
+Orders, item lines, payments and reviews have different grains. Joining them directly can count revenue multiple times. A plausible number is also hard to assess without the underlying query and population. Operators need to compare sales across periods or categories and determine whether reviewed late deliveries have higher negative-review rates.
 
-## Solution
+The workbench translates a question into a bounded query or statistical operation, then returns rows, definitions, executed SQL, filters, snapshot and limitations. It uses the Brazilian E-Commerce Public Dataset by Olist for 2016–2018. The acceptance suite audits nine CSVs. The application imports eight, including the category translation, and leaves geolocation at the audit stage.
 
-提供本地分析工作台，将问题转换为受控的数据查询与统计工具调用；每个结果附实际 SQL、指标口径、数据快照和限制。用独立题集和 baseline 对比记录准确性，以公开源码和可复现部署交付。
+## User stories
 
-## User Stories
+| Reader | Tasks |
+|---|---|
+| Operator | Ask sales and order questions in plain English. Identify the purchase period and status filter. Compare monthly trends and category ranks. Distinguish product price, freight and payment value. Investigate the link between delivery and low review scores. |
+| Analyst | Inspect sample sizes, exclusions, effect sizes and intervals. Compare timestamp and calendar-day definitions. Copy the actual SQL. Look up table grain and metric definitions. Review missing data and repeated reviews. |
+| Workbench user | Clarify ambiguous questions. Recognize empty results and execution errors and recover from either. Use the major workflows on a phone or with a keyboard. |
+| Local operator | Start with offline examples. Configure a compatible model through environment variables. Keep credentials and source data out of the public repository. Reproduce a deployment from a clean clone. |
+| Reviewer and maintainer | Trace requirements to tests and observed results. Compare model workflows on the same benchmark. Change independently tested modules and rerun CI. |
 
-1. 作为运营人员，我希望用自然语言查询销量和金额，以免手写多表 SQL。
-2. 作为运营人员，我希望查询时间段与订单状态清楚显示，以免误读默认范围。
-3. 作为运营人员，我希望查看月度趋势和品类排行，以识别经营变化。
-4. 作为运营人员，我希望区分商品金额、运费与支付额，以避免混淆收入定义。
-5. 作为运营人员，我希望调查配送与差评的关联，以形成可验证的改善假设。
-6. 作为分析者，我希望看到样本量、排除规则、效应量与置信区间，以判断证据强弱。
-7. 作为分析者，我希望能切换配送日期粒度做敏感性检查，以理解口径影响。
-8. 作为分析者，我希望复制实际执行的 SQL，以独立复核结果。
-9. 作为分析者，我希望看到指标定义与表粒度，以避免 JOIN 放大。
-10. 作为分析者，我希望看到缺失值和重复评价报告，以判断数据限制。
-11. 作为用户，我希望模糊问题被要求澄清，以免得到看似确定的错误答案。
-12. 作为用户，我希望空数据与执行失败有明确说明，以便下一步操作。
-13. 作为本地部署者，我希望无密钥也能运行示例，以快速检查环境。
-14. 作为部署者，我希望配置兼容模型服务而不用改代码，以选择自己的提供商。
-15. 作为部署者，我希望数据和密钥留在本地配置中，以避免进入公开仓库。
-16. 作为评审者，我希望查看需求对应的测试和真实状态，以验证进度。
-17. 作为评审者，我希望在固定条件下对比 baseline 与完整系统，以评估改进。
-18. 作为维护者，我希望模块接口清楚、CI 可重复运行，以安全修改系统。
-19. 作为开源使用者，我希望从干净 clone 按 README 部署，以复用系统。
-20. 作为手机或键盘用户，我希望完整访问主要页面，以独立完成分析。
+## Functional requirements selected for grading
 
-## 核心功能需求（选为课程评分的三条）
-
-| ID | 要求 | 优先级/稳定性 | 验收 |
+| ID | Requirement | Rank / stability | Verification |
 |---|---|---|---|
-| FR-01 | 对受支持的销售、订单、品类、时间问题，返回正确结果表及适用图表；默认 delivered，口径明确；不支持时澄清或拒答 | P0/High | FT-01、55 题评估 |
-| FR-02 | 对指定时间范围执行订单级差评配送关联调查，返回组数/率、差值、95% CI、检验、排除计数和非因果说明 | P0/High | UT-03、FT-02 |
-| FR-03 | 每次请求产生可查的执行记录，成功回答展示实际 SQL、指标、过滤、快照、粒度和警告；失败有明确状态 | P0/High | FT-03 |
+| FR-01 | Answer supported sales, order, category and time questions with a correctly filtered table and a chart for grouped results. Use delivered orders by default and label monetary results in BRL. Return clarification or rejection for unsupported questions. | P0 / High | UT-01, FT-01, benchmark |
+| FR-02 | Compare eligible late and on-time orders over the selected purchase period. For either delivery definition, report sample sizes, group rates, difference, 95% interval, test, exclusions and observational limitation. | P0 / High | UT-03, FT-02 |
+| FR-03 | Give each accepted analysis request a retrievable run ID. Save outcome, executed SQL, metric, filters, snapshot, grain and warnings where applicable. Distinguish execution failures from empty results. | P0 / High | FT-01–FT-03 |
 
-## 核心非功能需求（选为课程评分的三条）
+## Nonfunctional requirements selected for grading
 
-| ID | 要求 | 优先级/稳定性 | 验收 |
+| ID | Requirement | Rank / stability | Verification |
 |---|---|---|---|
-| NFR-01 | 所有 SQL 经过 AST 安全边界和只读资源限制；安全负例执行接受率为 0；日志/前端不泄露密钥 | P0/High | UT-02、FT-03、安全负例集 |
-| NFR-02 | 固定快照和模型配置可重跑；依赖锁定；导入幂等；真实模型准确率目标 ≥90%、SQL 成功率目标 ≥95%，未实测须标注 | P0/High | UT-01、FT-04、评估报告 |
-| NFR-03 | 约 10 万订单环境下本地查询 p95 目标 <2s；SQL 硬超时 15s、行数上限 1000；UI 有明确等待/错误状态且手机键盘可用 | P0/Medium | 性能记录、超时测试、浏览器验收 |
+| NFR-01 | Validate parsed SQL and limit execution to read-only, resource-limited reporting views. Accept zero prohibited cases in the supplied suite. Keep model credentials out of responses and logs. | P0 / High | UT-02, FT-03 |
+| NFR-02 | Reimport identical inputs reproducibly and pin dependencies. On a fixed snapshot and human-reviewed benchmark, target at least 90% result accuracy and 95% SQL success for a real model. Record unmeasured outcomes as pending. | P0 / High | UT-01, FT-04, evaluation report |
+| NFR-03 | On roughly 100,000 orders, target local SQL p95 below 2 seconds. Enforce a 15-second query limit and a 1,000-row result cap. Support waiting and error states, mobile use and keyboard navigation. | P0 / Medium | PERF-01, FT-03, UX-01/02 |
 
-## 补充需求
+## Supporting requirements
 
-| ID | 内容 | 优先级 |
+| ID | Deliverable | Rank |
 |---|---|---|
-| FR-04 | CSV 导入、质量报告、数据字典、指标目录 | P0 |
-| FR-05 | 通用兼容模型接口 + 明确标注的离线演示 | P0 |
-| FR-06 | baseline/full 评估、逐题记录和报告 | P0 |
-| FR-07 | Apple 风格工作台、数据表和 SQL 复制 | P1 |
-| FR-08 | 本地运行历史和结果导出 | P1 |
-| NFR-04 | 本地单用户、同源 API、默认回环监听 | P0 |
-| NFR-05 | 公共源码、依赖和许可证说明、可复制部署命令、CI | P0 |
+| FR-04 | CSV import, data-quality report, data dictionary and metric catalog | P0 |
+| FR-05 | Compatible model interface and clearly labeled offline demo | P0 |
+| FR-06 | Direct and full model evaluation with per-question results and run summary | P0 |
+| FR-07 | Apple-inspired workbench, chart/table switching and SQL copying | P1 |
+| FR-08 | Local history and result export | P1 |
+| NFR-04 | Local single-user service, same-origin API and loopback default | P0 |
+| NFR-05 | Public source, dependencies, license information, repeatable startup and CI | P0 |
 
-## Implementation Decisions
+## Implementation and test decisions
 
-### 展示场景的产品取舍
+Put delivered item revenue beside the purchase period, currency and freight definition on the overview. A user can check it in the workbench by asking “What is total item revenue?” Place the investigation link beside the review sample so users can compare the two delivery groups. Put copyable SQL first in the evidence panel.
 
-| 使用者要完成的事 | 页面上的决定 | 验收动作 |
-|---|---|---|
-| 运营人员核对这段时间卖了多少 | 把商品成交额与购买日期、币种、已送达口径放在同一阅读区域 | 在概览读出金额，进入分析工作台用“总销售额”复核 |
-| 评审者判断配送延迟是否与差评相关 | 在总体差评率附近说明样本规则，提供分组调查入口 | 从概览进入调查并查看两组差评率、差值和置信区间 |
-| 分析者解释数字从哪里来 | 在查询证据顶部呈现实际 SQL，执行细节可单独展开 | 运行查询后展开证据，复制 SQL 并核对订单状态条件 |
+Keep data import, metrics, model adapter, controller, execution, statistics, evidence, evaluation and UI separately testable. Aggregate items and payments independently. Use one eligible review per order for inference and calculate statistics in code. React and FastAPI support the custom workbench. Test monetary totals with hand-counted fixtures, guard behavior with an immutable snapshot, inference with known contingency tables, and the complete path through recorded evidence. A controlled HTTP provider verifies the integration contract. Model accuracy needs an actual model run. [Design review](superpowers/specs/2026-11-19-ecommerce-agent-design.md) · [Acceptance cases](acceptance.md)
 
-模块采用数据审计、指标目录、模型适配、控制器、只读执行、统计、证据、评估、UI 九个边界。接口统一使用结构化请求和响应。数据关系保留，金额先聚合；主统计每订单一条评价。统计推断与模型文本分离。用 React/FastAPI 替代 AI 草案的 Streamlit；完整理由见设计评审稿。
+## Boundaries
 
-## Testing Decisions
-
-测试对外行为：独立手算 fixture 检查金额；攻击 SQL 验证数据库没有变化和外部访问失败；已知列联表检查统计；端到端核对输入→SQL→结果→证据。模型适配用模拟服务验证异常与契约，真实服务另行验收；不使用模拟服务成绩替代真实模型评估。本项目为新项目，没有现成测试先例。
-
-## Out of Scope
-
-自动改价/下单/发消息；实时商店接入；多租户权限系统；任意 Python 执行；因果识别；大规模评论文本情感训练；RAG 与多 Agent；假定全部原始五项 Done 都完整实现。
-
-## Further Notes
-
-模型服务选型已确认通用兼容接口。真实数据、实际模型验收和人工 golden 审核分别跟踪；缺少这些时不宣称课程实验已完成。用户已授权本地开发并在开发完成后公开 GitHub 发布。
+Scope covers sales analysis, negative-review investigation and evidence retrieval. Live stores, automated pricing or ordering, outbound messages, causal identification, unrestricted code execution, multi-tenant permissions, review-text model training, retrieval-augmented generation and multi-agent orchestration are outside this release. The project tracks real-data verification, real-model evaluation and human benchmark review separately.

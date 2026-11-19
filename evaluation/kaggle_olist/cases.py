@@ -6,8 +6,10 @@ from oracle import group_summary
 
 
 def test_k01_import(probe):
-    """导入清单与原始文件一致
-    请求数据目录。对照下载目录中 CSV 的 SHA-256 和按 CSV 记录计数的行数，逐表核对七张核心表及翻译表。地理坐标文件只列入下载清单。"""
+    """Imported tables match the source files
+    Fetch the catalog and compare the row count and SHA-256 of each imported file with
+    its downloaded CSV. The import covers seven core tables and the category translation table.
+    The download manifest also includes geolocation."""
     cat = probe.api("GET", "/api/catalog")
     expected = {
         name: {"rows": entry["rows"], "sha256": entry["sha256"]}
@@ -18,85 +20,94 @@ def test_k01_import(probe):
         v["filename"]: {"rows": v["rows"], "sha256": v["sha256"]}
         for v in cat["audit"]["files"].values()
     }
-    probe.check("业务表、翻译表的行数与摘要", expected, observed)
+    probe.check("Row counts and SHA-256 hashes of imported CSVs", expected, observed)
     probe.check(
-        "数据来源与导入快照",
+        "Dataset source and snapshot ID",
         ["olist", probe.snapshot],
         [cat["source"], cat["snapshot"]],
     )
 
 
 def test_k02_order_count(probe):
-    """汇总已送达订单
-    用英文查询订单数。以原始订单表中状态为 delivered 的不同订单 ID 数为期望值。"""
+    """Total delivered orders
+    Ask for the delivered order count. Count distinct order IDs with status
+    delivered in the orders CSV and compare the total with the response."""
     answer = probe.ask("Show total delivered order count.")
     probe.check(
-        "已送达订单数", [{"order_count": len(probe.ref.delivered)}], answer["table"]
+        "Distinct delivered orders", [{"order_count": len(probe.ref.delivered)}], answer["table"]
     )
 
 
 def test_k03_revenue(probe):
-    """核对已送达商品成交额
-    请求“总销售额”。独立累加已送达订单下的商品价格，使用十进制定点数，单位 BRL，精确到分。"""
-    answer = probe.ask("总销售额")
+    """Item revenue from delivered orders
+    Ask for total item revenue. Sum item prices for delivered orders using decimal
+    arithmetic, then compare the API result with the CSV total to the cent in Brazilian reais."""
+    answer = probe.ask("What is total item revenue?")
     probe.check(
-        "商品成交额（BRL）",
+        "Delivered item revenue (BRL)",
         [{"item_revenue": float(probe.ref.revenue)}],
         answer["table"],
     )
 
 
 def test_k04_aov(probe):
-    """核对客单价
-    请求“客单价”。将已送达商品成交额除以已送达订单数，比对保留两位小数的 BRL 金额。"""
-    answer = probe.ask("客单价")
+    """Average order value
+    Divide item revenue from delivered orders by the number of distinct delivered
+    orders. Compare the result with the reported average to the nearest cent."""
+    answer = probe.ask("What is the average order value?")
     want = round(float(probe.ref.revenue / len(probe.ref.delivered)), 2)
-    probe.check("客单价（BRL）", want, round(answer["table"][0]["aov"], 2))
+    probe.check("Average order value (BRL)", want, round(answer["table"][0]["aov"], 2))
 
 
 def test_k05_months(probe):
-    """2017 年逐月订单趋势
-    请求 2017 年月度已送达订单数。从 CSV 按购买年月计数，完整比较每月标签、行数、数值及顺序。"""
+    """Monthly delivered orders in 2017
+    Group delivered orders in the CSV by purchase month. Compare every month,
+    count and position in the API response for 2017 with the reference series."""
     answer = probe.ask("Show monthly delivered orders in 2017.")
     want = [
         {"month": m + "-01", "order_count": n}
         for m, n in sorted(probe.ref.month_counts.items())
         if m.startswith("2017-")
     ]
-    probe.check("各月订单数", want, answer["table"])
+    probe.check("Delivered order count by month", want, answer["table"])
 
 
 def test_k06_categories(probe):
-    """2018 年成交额前十品类
-    按 CSV 关联已送达订单行、商品和品类翻译，缺翻译时回退到原始品类。按金额降序、品类名升序取十项，核对完整排名。"""
-    answer = probe.ask("2018 年哪些品类的商品成交额最高？")
+    """Top ten categories by 2018 item revenue
+    Join delivered items to products and category translations in the CSVs, keeping
+    the source category when a translation is missing. Rank by revenue descending, then
+    by category name ascending for ties. Compare all ten categories and amounts."""
+    answer = probe.ask("What are the top 10 categories by item revenue in 2018?")
     ranked = sorted(
         probe.ref.categories_2018.items(), key=lambda pair: (-pair[1], pair[0])
     )[:10]
     probe.check(
-        "前十品类及 BRL 金额",
+        "Top ten categories and item revenue (BRL)",
         [{"category": k, "item_revenue": float(v)} for k, v in ranked],
         answer["table"],
     )
 
 
 def test_k07_half_open(probe):
-    """日期窗口按购买日左闭右开
-    查询 2018-01-01 至 2018-02-01（不含）商品成交额。独立汇总购买月份为 2018-01 的商品行，并核对证据中的实际日期范围。"""
+    """January revenue with an exclusive end date
+    Request revenue for purchases from January 1 up to February 1, 2018. Sum delivered
+    items purchased in January in the CSVs and check both date bounds in the query evidence."""
     start, end = "2018-01-01", "2018-02-01"
-    answer = probe.ask("总销售额", start=start, end=end)
+    answer = probe.ask("What is total item revenue?", start=start, end=end)
     probe.check(
-        "一月商品成交额",
+        "January item revenue (BRL)",
         [{"item_revenue": float(probe.ref.month_revenue["2018-01"])}],
         answer["table"],
     )
     filters = answer["evidence"]["filters"]
-    probe.check("日期边界", [start, end], [filters["start"], filters["end"]])
+    probe.check("Purchase date bounds", [start, end], [filters["start"], filters["end"]])
 
 
 def test_k08_join(probe):
-    """多商品且多支付的订单不会放大金额
-    仅取商品行数和支付行数均大于一的已送达订单。独立 CSV 逐单累加商品及支付，再用只读连接检查 order_summary 中相同子集的行数和两种金额。"""
+    """Item and payment totals for orders with multiple rows
+    Select delivered orders with multiple item rows and multiple payment rows.
+    Sum each file separately per order. Compare the order count, item revenue and
+    payments with the same cohort in the read-only order_summary view."""
     sql = """SELECT count(*),sum(item_revenue),sum(payment_total) FROM order_summary
         WHERE status='delivered' AND item_count>1 AND order_id IN
         (SELECT order_id FROM order_payments GROUP BY order_id HAVING count(*)>1)"""
@@ -105,17 +116,18 @@ def test_k08_join(probe):
         count, items, paid = con.execute(sql).fetchone()
     assert probe.ref.fanout["orders"] > 0
     probe.check(
-        "交叉子集的订单数、商品额与支付额",
+        "Order count, item revenue and payments for the cohort",
         probe.ref.fanout,
         {"orders": count, "items_brl": float(items), "payments_brl": float(paid)},
     )
 
 
 def test_k09_sample(probe):
-    """调查样本筛选与排除数
-    运行配送调查，检查未送达、缺配送时间、缺有效评价、纳入分析四项互斥计数；与原始文件逐单分类结果比对。"""
+    """Delivery investigation cohort and exclusions
+    Classify each source order as undelivered, missing a delivery timestamp, missing
+    a valid review, or included. Compare the counts with the delivery investigation."""
     result = probe.api("POST", "/api/investigation", {"grain": "timestamp"})
-    probe.check("订单纳入与排除", probe.ref.exclusions, result["exclusions"])
+    probe.check("Included and excluded orders", probe.ref.exclusions, result["exclusions"])
 
 
 def rounded(summary):
@@ -129,8 +141,10 @@ def rounded(summary):
 
 
 def test_k10_timestamp(probe):
-    """时间戳口径下的风险差与区间
-    按每单最新有效评价，将签收时间晚于预计时间的订单分入延迟组。独立计算两组差评数、率、风险差及 Newcombe-Wilson 95% 区间，比较到小数点后九位。"""
+    """Difference in negative review rates by delivery timestamp
+    Use each order's latest valid review. Flag deliveries that arrived after the estimated
+    timestamp. Independently compute each group's negative review count and rate, the risk
+    difference, and its Newcombe-Wilson 95% confidence interval. Compare to nine decimal places."""
     result = probe.api("POST", "/api/investigation", {"grain": "timestamp"})
     actual = {
         **result,
@@ -140,40 +154,43 @@ def test_k10_timestamp(probe):
         },
     }
     probe.check(
-        "时间戳分组与统计量",
+        "Review counts, rates, risk difference and interval",
         rounded(group_summary(probe.ref.groups["timestamp"])),
         rounded(actual),
     )
     probe.check(
-        "版本 2 的大样本检验",
+        "Pearson chi-squared test with p below 0.001",
         ["pearson_chi2", True],
         [result["test"], 0 <= result["p_value"] < 0.001],
     )
 
 
 def test_k11_calendar(probe):
-    """自然日口径的敏感性分析
-    将实际和预计签收时间截到日期后重算两组，核对各组样本量和差评数；同日较晚签收的订单归入准时组。"""
+    """Sensitivity to measuring delays by calendar day
+    Compare actual and estimated delivery dates, counting same-day arrivals as on time.
+    Check the order count and negative review count for both groups against the CSVs."""
     result = probe.api("POST", "/api/investigation", {"grain": "day"})
     probe.check(
-        "按日分组（订单数、差评数）",
+        "Orders and negative reviews under the calendar-day definition",
         probe.ref.groups["day"],
         {g["group"]: [g["n"], g["negative"]] for g in result["groups"]},
     )
 
 
 def test_k12_empty(probe):
-    """缺少订单时给出数据不足状态
-    查询 2099 年的成交额。此数据版本在该年度没有订单，预期状态为 insufficient_data 且结果表为空。"""
+    """Revenue request for a year without orders
+    Ask for 2099 item revenue. This dataset has no orders from that year.
+    Expect the insufficient_data status and an empty result table."""
     answer = probe.ask("What is total item revenue in 2099?")
     probe.check(
-        "状态与结果表", ["insufficient_data", []], [answer["status"], answer["table"]]
+        "Status and result table", ["insufficient_data", []], [answer["status"], answer["table"]]
     )
 
 
 def test_k13_invalid_dates(probe):
-    """拒绝反向日期区间
-    对差评调查提交早于起始日的结束日。预期返回 HTTP 422，响应包含日期范围校验错误。"""
+    """Reversed date range
+    Submit a delivery investigation with an end date earlier than its start. Expect
+    HTTP 422 and a validation error that explains the required date order."""
     result = probe.api(
         "POST",
         "/api/investigation",
@@ -181,30 +198,33 @@ def test_k13_invalid_dates(probe):
         code=422,
     )
     probe.check(
-        "说明结束日期必须晚于开始日期",
+        "Validation error explains the required date order",
         True,
-        any("结束日期" in e["msg"] for e in result["detail"]),
+        any("End date must be later than start date" in e["msg"] for e in result["detail"]),
     )
 
 
 def test_k14_unavailable_metric(probe):
-    """离线模式处理缺失的利润指标
-    提问税后净利润。离线问题目录没有该指标，预期请求澄清，结果表为空，且没有执行 SQL。"""
-    answer = probe.ask("2018 年税后净利润是多少？")
+    """Clarification for an unavailable profit metric
+    Ask for after-tax net profit, which the offline catalog does not cover. Expect
+    a request for clarification, zero result rows and no executed SQL."""
+    answer = probe.ask("What was net profit after tax in 2018?")
     probe.check(
-        "澄清状态、行数与执行 SQL",
+        "Clarification status, row count and executed SQL",
         ["clarification_required", 0, None],
         [answer["status"], len(answer["table"]), answer["evidence"]["sql"]],
     )
 
 
 def test_k15_replay(probe):
-    """历史记录与执行证据可重放
-    查询 2017 年商品成交额，按返回 ID 取回历史记录。核对快照、问题、SQL 和输出，在同一只读快照重放该 SQL，并与 2017 年 CSV 合计对账。"""
+    """Replaying a saved revenue query
+    Ask for 2017 item revenue and retrieve the saved run by ID. Check its snapshot,
+    question, SQL and output. Replay the SQL on the same read-only snapshot and
+    reconcile both amounts with the 2017 CSV total."""
     answer = probe.ask("What is total item revenue in 2017?")
     stored = probe.api("GET", "/api/runs/" + answer["request_id"])
-    probe.check("历史记录完整回读", True, stored == answer)
-    probe.check("历史快照", probe.snapshot, stored["evidence"]["snapshot"])
+    probe.check("Retrieved run matches the original response", True, stored == answer)
+    probe.check("Saved snapshot ID", probe.snapshot, stored["evidence"]["snapshot"])
     sql = stored["evidence"]["sql"]
     with duckdb.connect(str(probe.db), read_only=True) as con:
         value = con.execute(sql).fetchone()[0]
@@ -212,7 +232,7 @@ def test_k15_replay(probe):
         sum(v for m, v in probe.ref.month_revenue.items() if m.startswith("2017-"))
     )
     probe.check(
-        "CSV、历史表格、SQL 重放（BRL）",
+        "CSV total compared with saved and replayed totals (BRL)",
         [expected, expected],
         [stored["table"][0]["item_revenue"], float(value)],
     )

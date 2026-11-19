@@ -8,16 +8,16 @@ export function PageHead({ title, sub, action }: { title: string; sub?: string; 
   return <header className="page-head"><div><h1>{title}</h1>{sub && <p>{sub}</p>}</div>{action}</header>
 }
 export function Pending() {
-  return <div className="blank" role="status"><LoaderCircle className="spin" size={22}/>正在读取数据…</div>
+  return <div className="blank" role="status"><LoaderCircle className="spin" size={22}/>Loading data…</div>
 }
 export function ErrorBox({ message, retry }: { message: string; retry?: () => void }) {
-  return <div className="error" role="alert"><AlertCircle size={19}/><span>{message}</span>{retry && <button className="quiet" onClick={retry}><RefreshCw size={15}/>重试</button>}</div>
+  return <div className="error" role="alert"><AlertCircle size={19}/><span>{message}</span>{retry && <button className="quiet" onClick={retry}><RefreshCw size={15}/>Retry</button>}</div>
 }
 export function Empty({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
   return <div className="empty"><FileSearch size={28}/><strong>{title}</strong>{children && <p>{children}</p>}{action}</div>
 }
-export function Table({ rows, caption = '数据表' }: { rows?: Row[]; caption?: string }) {
-  if (!rows?.length) return <Empty title="没有可显示的数据"/>
+export function Table({ rows, caption = 'Data table' }: { rows?: Row[]; caption?: string }) {
+  if (!rows?.length) return <Empty title="No data to display"/>
   const keys = [...new Set(rows.flatMap(r => Object.keys(r)))]
   return <div className="table-scroll" tabIndex={0} role="region" aria-label={caption}><table><caption className="sr-only">{caption}</caption>
     <thead><tr>{keys.map(k => <th key={k} scope="col">{label(k)}</th>)}</tr></thead>
@@ -25,7 +25,7 @@ export function Table({ rows, caption = '数据表' }: { rows?: Row[]; caption?:
   </table></div>
 }
 export function Facts({ value }: { value: unknown }) {
-  if (Array.isArray(value)) return value.length ? <ul className="fact-items">{value.map((item, i) => <li key={i}><Facts value={item}/></li>)}</ul> : <div className="fact-value">无</div>
+  if (Array.isArray(value)) return value.length ? <ul className="fact-items">{value.map((item, i) => <li key={i}><Facts value={item}/></li>)}</ul> : <div className="fact-value">None</div>
   if (!value || typeof value !== 'object') return <div className="fact-value">{display(value)}</div>
   return <dl className="facts">{Object.entries(value).map(([k, v]) =>
     <div key={k}><dt>{label(k)}</dt><dd>{v !== null && typeof v === 'object' ? <Facts value={v}/> : display(v)}</dd></div>)}</dl>
@@ -38,16 +38,16 @@ export function Sql({ sql }: { sql: unknown }) {
   if (typeof sql !== 'string' || !sql.trim()) return null
   async function copy() {
     try {
-      await navigator.clipboard.writeText(String(sql)); setFeedback('已复制 SQL')
-    } catch { setFeedback('请选中下方 SQL 并复制。') }
+      await navigator.clipboard.writeText(String(sql)); setFeedback('SQL copied')
+    } catch { setFeedback('Select the SQL below and copy it.') }
   }
-  return <section className="sql"><div><span><Database size={15}/>执行 SQL</span><button className="copy" onClick={copy}>{feedback === '已复制 SQL' ? <Check size={15}/> : <Clipboard size={15}/>}复制 SQL</button></div>
+  return <section className="sql"><div><span><Database size={15}/>Executed SQL</span><button className="copy" onClick={copy}>{feedback === 'SQL copied' ? <Check size={15}/> : <Clipboard size={15}/>}Copy SQL</button></div>
     <pre tabIndex={0}>{sql}</pre><span className="copy-message" role="status">{feedback}</span></section>
 }
 export const chartColors = ['#0071e3', '#3187d9', '#5098d6', '#65a0c9', '#82adbf', '#97b6bd']
 export function BarChart({ rows, x, y, formatter = number }: { rows: Row[]; x: string; y: string; formatter?: (n: number) => string }) {
   const valid = rows.filter(r => typeof r[y] === 'number' && Number.isFinite(r[y]))
-  if (!valid.length) return <Empty title="没有可绘制的数据"/>
+  if (!valid.length) return <Empty title="No data to chart"/>
   const max = Math.max(1, ...valid.map(r => Math.abs(Number(r[y]))))
   return <ol className="bars">{valid.map((r, i) => <li key={i}><div><span className="rank">{String(i + 1).padStart(2, '0')}</span>
     <span className="category">{display(r[x]).replaceAll('_', ' ')}</span><strong>{formatter(Number(r[y]))}</strong></div>
@@ -70,7 +70,7 @@ export function Trend({ rows, x, y, unit }: { rows: Row[]; x: string; y: string;
   }, [])
   const values = rows.map((r, i) => ({ x: String(r[x]), y: r[y], i }))
     .filter((p): p is { x: string; y: number; i: number } => typeof p.y === 'number' && Number.isFinite(p.y))
-  if (values.length === 0) return <Empty title="当前指标没有数据"/>
+  if (values.length === 0) return <Empty title="No data for this metric"/>
   const bottom = 165, top = 16, left = 40, right = width - 14
   const topValue = Math.max(0, ...values.map(p => p.y))
   const lowValue = Math.min(0, ...values.map(p => p.y))
@@ -92,7 +92,7 @@ export function Trend({ rows, x, y, unit }: { rows: Row[]; x: string; y: string;
   return <div className="trend" ref={chart}>
     <div className="axis-unit">{unit}</div>
     <svg viewBox={'0 0 ' + width + ' 196'} style={{ width: '100%', height: 196 }} role="img" tabIndex={0}
-      aria-label={label(y) + '趋势，可用左右方向键查看每个值。'}
+      aria-label={label(y) + ' trend. Use the left and right arrow keys to explore each value.'}
       onFocus={() => setIndex(0)} onBlur={() => setIndex(null)}
       onKeyDown={e => { if (['ArrowRight', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); setIndex(n => Math.max(0, Math.min(pos.length - 1, (n ?? 0) + (e.key === 'ArrowRight' ? 1 : -1)))) } }}
       onPointerMove={e => { const at = e.clientX - e.currentTarget.getBoundingClientRect().left; setIndex(pos.reduce((best, p, i) => Math.abs(p.px - at) < Math.abs(pos[best].px - at) ? i : best, 0)) }}

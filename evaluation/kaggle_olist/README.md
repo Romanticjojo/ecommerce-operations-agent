@@ -1,24 +1,27 @@
-# Olist · 15 个真实数据测试用例
+# Olist acceptance tests
 
-[观看 K03 本地单例测试全程（MP4）](media/K03-revenue.mp4) · [录像对应的单次运行记录](media/K03-results.json) · [阅读本次完整报告](verified/REPORT.md) · [逐项输入、预期与实测 JSON](verified/results.json) · [数据来源和文件指纹](verified/manifest.json)
+Fifteen pytest cases run Commerce Lens against the full Brazilian E-Commerce dataset published by Olist. The suite imports the source CSVs into a fresh DuckDB database, starts the real HTTP service on a temporary local port and compares its answers with independent calculations from the CSVs. The business questions use English and offline demo mode.
 
-这套验收使用 KaggleHub 下载的 Olist 完整数据，在本机启动真实 HTTP 服务并执行 15 个 pytest 用例。数字对照来自原始 CSV 的独立计算。用例分为导入审计、经营分析、多表金额、配送差评统计、异常输入及证据重放。适合评审课程项目，也可在修改导入或指标逻辑后做回归。
+[Read the verified report](verified/REPORT.md) · [Inspect requests and results](verified/results.json) · [Check source files and versions](verified/manifest.json)
 
-## 用网页展示 K03
+## Follow the revenue case
 
-下载[含前端和 API 的完整工程](https://github.com/Romanticjojo/ecommerce-operations-agent/archive/refs/heads/main.zip)，在解压后的项目根目录运行 `./scripts/start.sh`，按项目 README 导入 Olist 数据。打开本机[分析工作台](http://127.0.0.1:8731/#ask)，输入「总销售额」，点击「运行分析」后展开「查询证据与 SQL」。[观看网页操作录像（MP4）](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4)
+K03 asks **“What is total item revenue?”** The independent reference selects delivered order IDs and sums their item prices, excluding freight. On dataset version 2, the CSV calculation and the service both returned **BRL 13,221,498.11**. [Watch the terminal run (MP4)](media/K03-revenue.mp4) · [Inspect the recorded K03 result](media/K03-results.json)
 
-## 复现
+To try the same question in the workbench, download the full application, import the Olist CSVs as described in the project README and run `./scripts/start.sh` from the project root. Open **Ask the agent**, confirm the header shows offline demo mode, enter the question and click **Run analysis**. Expand **Query evidence and SQL** to inspect the executed query. [Download the full application](https://github.com/Romanticjojo/ecommerce-operations-agent/archive/refs/heads/main.zip) · [Open the local workbench](http://127.0.0.1:8731/#ask) · [Watch the workbench recording (MP4)](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4)
 
-从本仓库根目录运行（Python 3.11，macOS / Linux）：
+## Run the suite
+
+Run these commands from the repository root or from the root of the standalone test archive on macOS or Linux with Python 3.11. Use version 2 to reproduce the published results.
 
 ```sh
 python3.11 -m venv .venv
 .venv/bin/python -m pip install -r evaluation/kaggle_olist/requirements.txt
-.venv/bin/python -m pytest -q evaluation/kaggle_olist/cases.py
+.venv/bin/python -m pytest -q evaluation/kaggle_olist/cases.py \
+  --olist-version 2 --olist-output runtime/kaggle-v2
 ```
 
-默认下载调用与下方等价。KaggleHub 返回的目录直接传给导入器。第一次运行需联网，SDK 按版本缓存文件。
+To run against the latest version, omit `--olist-version 2`. The default download call is shown below. KaggleHub caches files by version after the first download. Set `KAGGLEHUB_CACHE` to choose a different cache directory.
 
 ```python
 import kagglehub
@@ -27,23 +30,23 @@ path = kagglehub.dataset_download("olistbr/brazilian-ecommerce")
 print("Path to dataset files:", path)
 ```
 
-要复现已发布报告中的 **v2** 而非未来的最新版：
+To trace K03 by itself, run the following command.
 
 ```sh
-.venv/bin/python -m pytest -q evaluation/kaggle_olist/cases.py \
-  --olist-version 2 --olist-output runtime/kaggle-v2
+.venv/bin/python -m pytest -q -s evaluation/kaggle_olist/cases.py::test_k03_revenue \
+  --olist-version 2 --olist-trace --olist-output runtime/k03
 ```
 
-默认报告保存在 `runtime/kaggle-acceptance/`，包括 REPORT.md、results.json 和 manifest.json。可加 `-k k10` 单跑时间戳口径的统计测试。只有显式指定 `cases.py` 才运行这套需要外部数据的用例。pytest 的失败退出码可供 CI 使用。可设置 `KAGGLEHUB_CACHE` 改变数据缓存位置。测试临时数据库由 pytest 管理；每次运行使用新的快照和历史，不需要占用工作台端口或配置模型密钥。
+Each run writes `REPORT.md`, `results.json` and `manifest.json` to the specified output directory. The default directory is `runtime/kaggle-acceptance/`. To run only the timestamp-based delivery investigation, add `-k k10`. The suite runs when you explicitly select `cases.py` and returns a failing exit code if an assertion fails.
 
-## 文件与核对方式
+## Coverage and source files
 
-| 文件 | 用途 |
+| File | Role |
 |---|---|
-| cases.py | 15 项测试的操作、输入与判定 |
-| oracle.py | 读取原始 CSV，用十进制累加金额，独立选择最新有效评价并计算风险差和区间 |
-| conftest.py | 获取数据、构建隔离环境、通过 HTTP 请求运行系统，记录用例结果 |
-| reporting.py | 将同一次 pytest 会话生成 Markdown、JSON 与文件清单 |
-| verified/ | 本次在 Mac 上执行的归档结果 |
+| `cases.py` | Fifteen cases covering imports, sales metrics, multi-row joins, delivery and review statistics, invalid input and replay of saved SQL. |
+| `oracle.py` | Reads the source CSVs, sums prices with decimal arithmetic, selects the latest valid review per order and computes the risk difference and its confidence interval. |
+| `conftest.py` | Resolves the data version, builds the temporary database, starts the server and records HTTP requests and comparisons. |
+| `reporting.py` | Generates the Markdown report, machine-readable results and manifest from the same pytest session. |
+| `verified/` | Contains the archived results of the full version 2 run. |
 
-下载包共九个 CSV，系统导入七张核心表和一张品类翻译表。地理位置表只核对文件指纹和记录数。CC BY-NC-SA 4.0 的数据由 [Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) 发布。此包包括测试源码、数据获取方式和聚合结果。真实模型的生成质量属于另一项实验。
+The download contains nine CSVs. The importer loads seven core tables and a category translation table. The manifest also records the geolocation file's row count, byte size and SHA-256. Olist publishes the data under CC BY-NC-SA 4.0. [Olist dataset on Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
