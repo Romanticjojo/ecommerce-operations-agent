@@ -1,0 +1,898 @@
+{
+  "pytest_exit_code": 0,
+  "passed": 15,
+  "total": 15,
+  "environment": {
+    "dataset": "olistbr/brazilian-ecommerce",
+    "request": "olistbr/brazilian-ecommerce",
+    "resolved_version": "2",
+    "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+    "data_license": "CC BY-NC-SA 4.0",
+    "utc": "2026-11-19T09:22:11+00:00",
+    "platform": "Darwin 25.6.0 / arm64",
+    "python": "3.11.16",
+    "packages": {
+      "kagglehub": "1.0.3",
+      "kagglesdk": "0.1.38",
+      "duckdb": "2.0.0",
+      "scipy": "1.17.1",
+      "pytest": "9.2.0",
+      "fastapi": "0.165.0",
+      "uvicorn": "0.54.0"
+    },
+    "snapshot": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840",
+    "files": {
+      "olist_customers_dataset.csv": {
+        "sha256": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2",
+        "rows": 99441,
+        "bytes": 9033957
+      },
+      "olist_geolocation_dataset.csv": {
+        "sha256": "b514f6fc991b9566aeba02aa5d67e2c3630f034b60a0e05aa0d082a3b66d88d6",
+        "rows": 1000163,
+        "bytes": 61273883
+      },
+      "olist_order_items_dataset.csv": {
+        "sha256": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279",
+        "rows": 112650,
+        "bytes": 15438671
+      },
+      "olist_order_payments_dataset.csv": {
+        "sha256": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0",
+        "rows": 103886,
+        "bytes": 5777138
+      },
+      "olist_order_reviews_dataset.csv": {
+        "sha256": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7",
+        "rows": 99224,
+        "bytes": 14451670
+      },
+      "olist_orders_dataset.csv": {
+        "sha256": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf",
+        "rows": 99441,
+        "bytes": 17654914
+      },
+      "olist_products_dataset.csv": {
+        "sha256": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc",
+        "rows": 32951,
+        "bytes": 2379446
+      },
+      "olist_sellers_dataset.csv": {
+        "sha256": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e",
+        "rows": 3095,
+        "bytes": 174703
+      },
+      "product_category_name_translation.csv": {
+        "sha256": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278",
+        "rows": 71,
+        "bytes": 2613
+      }
+    },
+    "app_sha256": {
+      "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "agent.py": "f5263d6372f17d91e1391c6e97a1f491c42cd0f61a85284fc657955a1694800c",
+      "api.py": "416b149235fc212a1994a82d6ce2a0ce2c305640112596863abcc8f15a31b1e2",
+      "benchmark.py": "69818204212a4537a15c755df808d512b7688f461ebf77ed58b372e6d2514c7e",
+      "cli.py": "f67185fbba3b241e9216039aee3d62d4f3a84b49e850570dab0729927bc5d706",
+      "data.py": "0b73f8e6e1c86f42a4314833ca8c6e3565efa12552b22c74497918bfd08891df",
+      "demo.py": "a6786b54940239268d5d75f6d86b431b48c0577b517a1ed156b3f7704965b9bc",
+      "history.py": "cde89bb6bea879fa172cb772cadaf9fb5067713d5a4403bf5e71caf9217c5dc7",
+      "model.py": "a33280f1b97d3335d76d130c2f3fa3c0965a0014a5959707bfa2fa733386e5e9",
+      "plans.py": "01f4ec7e14ee2cb0449388ffd40807e787fda68a4d122f2ed5276fa669f5164c",
+      "query_guard.py": "c71fe780dfdd0b3321c19398700a44a297f39d90e3f838ef1ee597f58e452716",
+      "query_worker.py": "e1be44afadb5946c954e71b22067172854854340c2712f3b55cf6b3b6891a140",
+      "schema.py": "14162caca79ccd9e6b41c60bd78ad7113be55413e51a40974c19bd02ac9bc5d4",
+      "settings.py": "4cc4fda3371032d853a478c46d4a86b558d791568fae858cf3f0725d43bba5e1",
+      "stats.py": "4909d70fc659ed0cec5cdb269fd9d7f0ae5c9ab9314c6127da1b0f05240dcbe8"
+    },
+    "suite_sha256": {
+      "cases.py": "8f1b7ebf988deb59ae09b4a33b22211b16b619a6296c432671bda891198a3500",
+      "conftest.py": "14fd1a364e219b54372b578da41107ac665d1a8581f63e5e7a6fbd474127780d",
+      "oracle.py": "8f0f6496591f23a5d3253161c3812c7367542f805cea49ee659743b69732bab7",
+      "package.py": "43a67d7d44653b812d2238f518a8857407d5c9811aa2f39cf8b0b1d85f814e08",
+      "reporting.py": "0609a939322ed17492db3c6e00f1108f7226c3ca448651767d9bee9b704cad9e"
+    }
+  },
+  "cases": [
+    {
+      "id": "K01",
+      "title": "导入清单与原始文件一致",
+      "procedure": "请求数据目录。对照下载目录中 CSV 的 SHA-256 和按 CSV 记录计数的行数，逐表核对七张核心表及翻译表。地理坐标文件只列入下载清单。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/catalog",
+          "input": null,
+          "http_status": 200
+        }
+      ],
+      "checks": [
+        {
+          "label": "业务表、翻译表的行数与摘要",
+          "expected": {
+            "olist_customers_dataset.csv": {
+              "rows": 99441,
+              "sha256": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2"
+            },
+            "olist_order_items_dataset.csv": {
+              "rows": 112650,
+              "sha256": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279"
+            },
+            "olist_order_payments_dataset.csv": {
+              "rows": 103886,
+              "sha256": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0"
+            },
+            "olist_order_reviews_dataset.csv": {
+              "rows": 99224,
+              "sha256": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7"
+            },
+            "olist_orders_dataset.csv": {
+              "rows": 99441,
+              "sha256": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf"
+            },
+            "olist_products_dataset.csv": {
+              "rows": 32951,
+              "sha256": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc"
+            },
+            "olist_sellers_dataset.csv": {
+              "rows": 3095,
+              "sha256": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e"
+            },
+            "product_category_name_translation.csv": {
+              "rows": 71,
+              "sha256": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278"
+            }
+          },
+          "actual": {
+            "olist_orders_dataset.csv": {
+              "rows": 99441,
+              "sha256": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf"
+            },
+            "olist_order_items_dataset.csv": {
+              "rows": 112650,
+              "sha256": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279"
+            },
+            "olist_order_payments_dataset.csv": {
+              "rows": 103886,
+              "sha256": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0"
+            },
+            "olist_order_reviews_dataset.csv": {
+              "rows": 99224,
+              "sha256": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7"
+            },
+            "olist_customers_dataset.csv": {
+              "rows": 99441,
+              "sha256": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2"
+            },
+            "olist_products_dataset.csv": {
+              "rows": 32951,
+              "sha256": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc"
+            },
+            "olist_sellers_dataset.csv": {
+              "rows": 3095,
+              "sha256": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e"
+            },
+            "product_category_name_translation.csv": {
+              "rows": 71,
+              "sha256": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278"
+            }
+          }
+        },
+        {
+          "label": "数据来源与导入快照",
+          "expected": [
+            "olist",
+            "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840"
+          ],
+          "actual": [
+            "olist",
+            "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840"
+          ]
+        }
+      ],
+      "duration_ms": 100.35
+    },
+    {
+      "id": "K02",
+      "title": "汇总已送达订单",
+      "procedure": "用英文查询订单数。以原始订单表中状态为 delivered 的不同订单 ID 数为期望值。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "Show total delivered order count.",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT COUNT(DISTINCT order_id) AS order_count FROM order_summary WHERE status = 'delivered' HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "已送达订单数",
+          "expected": [
+            {
+              "order_count": 96478
+            }
+          ],
+          "actual": [
+            {
+              "order_count": 96478
+            }
+          ]
+        }
+      ],
+      "duration_ms": 133.61
+    },
+    {
+      "id": "K03",
+      "title": "核对已送达商品成交额",
+      "procedure": "请求“总销售额”。独立累加已送达订单下的商品价格，使用十进制定点数，单位 BRL，精确到分。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "总销售额",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "商品成交额（BRL）",
+          "expected": [
+            {
+              "item_revenue": 13221498.11
+            }
+          ],
+          "actual": [
+            {
+              "item_revenue": 13221498.11
+            }
+          ]
+        }
+      ],
+      "duration_ms": 115.04
+    },
+    {
+      "id": "K04",
+      "title": "核对客单价",
+      "procedure": "请求“客单价”。将已送达商品成交额除以已送达订单数，比对保留两位小数的 BRL 金额。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "客单价",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) / NULLIF(COUNT(DISTINCT order_id), 0) AS aov FROM order_summary WHERE status = 'delivered' HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "客单价（BRL）",
+          "expected": 137.04,
+          "actual": 137.04
+        }
+      ],
+      "duration_ms": 120.64
+    },
+    {
+      "id": "K05",
+      "title": "2017 年逐月订单趋势",
+      "procedure": "请求 2017 年月度已送达订单数。从 CSV 按购买年月计数，完整比较每月标签、行数、数值及顺序。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "Show monthly delivered orders in 2017.",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT CAST(DATE_TRUNC('MONTH', purchased_at) AS DATE) AS month, COUNT(DISTINCT order_id) AS order_count FROM order_summary WHERE status = 'delivered' AND NOT purchased_at IS NULL AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) GROUP BY month ORDER BY month) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "各月订单数",
+          "expected": [
+            {
+              "month": "2017-01-01",
+              "order_count": 750
+            },
+            {
+              "month": "2017-02-01",
+              "order_count": 1653
+            },
+            {
+              "month": "2017-03-01",
+              "order_count": 2546
+            },
+            {
+              "month": "2017-04-01",
+              "order_count": 2303
+            },
+            {
+              "month": "2017-05-01",
+              "order_count": 3546
+            },
+            {
+              "month": "2017-06-01",
+              "order_count": 3135
+            },
+            {
+              "month": "2017-07-01",
+              "order_count": 3872
+            },
+            {
+              "month": "2017-08-01",
+              "order_count": 4193
+            },
+            {
+              "month": "2017-09-01",
+              "order_count": 4150
+            },
+            {
+              "month": "2017-10-01",
+              "order_count": 4478
+            },
+            {
+              "month": "2017-11-01",
+              "order_count": 7289
+            },
+            {
+              "month": "2017-12-01",
+              "order_count": 5513
+            }
+          ],
+          "actual": [
+            {
+              "month": "2017-01-01",
+              "order_count": 750
+            },
+            {
+              "month": "2017-02-01",
+              "order_count": 1653
+            },
+            {
+              "month": "2017-03-01",
+              "order_count": 2546
+            },
+            {
+              "month": "2017-04-01",
+              "order_count": 2303
+            },
+            {
+              "month": "2017-05-01",
+              "order_count": 3546
+            },
+            {
+              "month": "2017-06-01",
+              "order_count": 3135
+            },
+            {
+              "month": "2017-07-01",
+              "order_count": 3872
+            },
+            {
+              "month": "2017-08-01",
+              "order_count": 4193
+            },
+            {
+              "month": "2017-09-01",
+              "order_count": 4150
+            },
+            {
+              "month": "2017-10-01",
+              "order_count": 4478
+            },
+            {
+              "month": "2017-11-01",
+              "order_count": 7289
+            },
+            {
+              "month": "2017-12-01",
+              "order_count": 5513
+            }
+          ]
+        }
+      ],
+      "duration_ms": 106.91
+    },
+    {
+      "id": "K06",
+      "title": "2018 年成交额前十品类",
+      "procedure": "按 CSV 关联已送达订单行、商品和品类翻译，缺翻译时回退到原始品类。按金额降序、品类名升序取十项，核对完整排名。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "2018 年哪些品类的商品成交额最高？",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT category AS category, SUM(item_revenue) AS item_revenue FROM category_sales WHERE purchased_at >= CAST('2018-01-01' AS DATE) AND purchased_at < CAST('2019-01-01' AS DATE) GROUP BY category ORDER BY item_revenue DESC, category ASC LIMIT 10) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "前十品类及 BRL 金额",
+          "expected": [
+            {
+              "category": "health_beauty",
+              "item_revenue": 755724.5
+            },
+            {
+              "category": "watches_gifts",
+              "item_revenue": 687855.2
+            },
+            {
+              "category": "bed_bath_table",
+              "item_revenue": 532358.85
+            },
+            {
+              "category": "sports_leisure",
+              "item_revenue": 517166.26
+            },
+            {
+              "category": "computers_accessories",
+              "item_revenue": 496269.3
+            },
+            {
+              "category": "housewares",
+              "item_revenue": 391823.46
+            },
+            {
+              "category": "furniture_decor",
+              "item_revenue": 381649.57
+            },
+            {
+              "category": "auto",
+              "item_revenue": 343288.3
+            },
+            {
+              "category": "baby",
+              "item_revenue": 250615.79
+            },
+            {
+              "category": "cool_stuff",
+              "item_revenue": 227743.7
+            }
+          ],
+          "actual": [
+            {
+              "category": "health_beauty",
+              "item_revenue": 755724.5
+            },
+            {
+              "category": "watches_gifts",
+              "item_revenue": 687855.2
+            },
+            {
+              "category": "bed_bath_table",
+              "item_revenue": 532358.85
+            },
+            {
+              "category": "sports_leisure",
+              "item_revenue": 517166.26
+            },
+            {
+              "category": "computers_accessories",
+              "item_revenue": 496269.3
+            },
+            {
+              "category": "housewares",
+              "item_revenue": 391823.46
+            },
+            {
+              "category": "furniture_decor",
+              "item_revenue": 381649.57
+            },
+            {
+              "category": "auto",
+              "item_revenue": 343288.3
+            },
+            {
+              "category": "baby",
+              "item_revenue": 250615.79
+            },
+            {
+              "category": "cool_stuff",
+              "item_revenue": 227743.7
+            }
+          ]
+        }
+      ],
+      "duration_ms": 105.74
+    },
+    {
+      "id": "K07",
+      "title": "日期窗口按购买日左闭右开",
+      "procedure": "查询 2018-01-01 至 2018-02-01（不含）商品成交额。独立汇总购买月份为 2018-01 的商品行，并核对证据中的实际日期范围。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "总销售额",
+            "mode": "demo",
+            "language": "zh",
+            "start": "2018-01-01",
+            "end": "2018-02-01"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2018-01-01' AS DATE) AND purchased_at < CAST('2018-02-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "一月商品成交额",
+          "expected": [
+            {
+              "item_revenue": 924645.0
+            }
+          ],
+          "actual": [
+            {
+              "item_revenue": 924645.0
+            }
+          ]
+        },
+        {
+          "label": "日期边界",
+          "expected": [
+            "2018-01-01",
+            "2018-02-01"
+          ],
+          "actual": [
+            "2018-01-01",
+            "2018-02-01"
+          ]
+        }
+      ],
+      "duration_ms": 100.3
+    },
+    {
+      "id": "K08",
+      "title": "多商品且多支付的订单不会放大金额",
+      "procedure": "仅取商品行数和支付行数均大于一的已送达订单。独立 CSV 逐单累加商品及支付，再用只读连接检查 order_summary 中相同子集的行数和两种金额。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DuckDB read-only",
+          "executed_sql": "SELECT count(*),sum(item_revenue),sum(payment_total) FROM order_summary\n        WHERE status='delivered' AND item_count>1 AND order_id IN\n        (SELECT order_id FROM order_payments GROUP BY order_id HAVING count(*)>1)"
+        }
+      ],
+      "checks": [
+        {
+          "label": "交叉子集的订单数、商品额与支付额",
+          "expected": {
+            "orders": 274,
+            "items_brl": 54397.39,
+            "payments_brl": 66795.94
+          },
+          "actual": {
+            "orders": 274,
+            "items_brl": 54397.39,
+            "payments_brl": 66795.94
+          }
+        }
+      ],
+      "duration_ms": 22.52
+    },
+    {
+      "id": "K09",
+      "title": "调查样本筛选与排除数",
+      "procedure": "运行配送调查，检查未送达、缺配送时间、缺有效评价、纳入分析四项互斥计数；与原始文件逐单分类结果比对。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/investigation",
+          "input": {
+            "grain": "timestamp"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT late_timestamp AS late, count(*) AS n,\n       count(*) FILTER (WHERE review_score <= 2) AS negative\nFROM order_review_delivery WHERE TRUE GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "checks": [
+        {
+          "label": "订单纳入与排除",
+          "expected": {
+            "total_orders": 99441,
+            "not_delivered": 2963,
+            "missing_delivery_time": 8,
+            "no_valid_review": 646,
+            "included_orders": 95824
+          },
+          "actual": {
+            "total_orders": 99441,
+            "not_delivered": 2963,
+            "missing_delivery_time": 8,
+            "no_valid_review": 646,
+            "included_orders": 95824
+          }
+        }
+      ],
+      "duration_ms": 55.27
+    },
+    {
+      "id": "K10",
+      "title": "时间戳口径下的风险差与区间",
+      "procedure": "按每单最新有效评价，将签收时间晚于预计时间的订单分入延迟组。独立计算两组差评数、率、风险差及 Newcombe-Wilson 95% 区间，比较到小数点后九位。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/investigation",
+          "input": {
+            "grain": "timestamp"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT late_timestamp AS late, count(*) AS n,\n       count(*) FILTER (WHERE review_score <= 2) AS negative\nFROM order_review_delivery WHERE TRUE GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "checks": [
+        {
+          "label": "时间戳分组与统计量",
+          "expected": {
+            "groups": {
+              "late": {
+                "n": 7661,
+                "negative": 4142,
+                "rate": 0.540660488
+              },
+              "on_time": {
+                "n": 88163,
+                "negative": 8130,
+                "rate": 0.092215555
+              }
+            },
+            "risk_difference": 0.448444933,
+            "ci95": [
+              0.437103082,
+              0.459740616
+            ]
+          },
+          "actual": {
+            "groups": {
+              "late": {
+                "n": 7661,
+                "negative": 4142,
+                "rate": 0.540660488
+              },
+              "on_time": {
+                "n": 88163,
+                "negative": 8130,
+                "rate": 0.092215555
+              }
+            },
+            "risk_difference": 0.448444933,
+            "ci95": [
+              0.437103082,
+              0.459740616
+            ]
+          }
+        },
+        {
+          "label": "版本 2 的大样本检验",
+          "expected": [
+            "pearson_chi2",
+            true
+          ],
+          "actual": [
+            "pearson_chi2",
+            true
+          ]
+        }
+      ],
+      "duration_ms": 55.07
+    },
+    {
+      "id": "K11",
+      "title": "自然日口径的敏感性分析",
+      "procedure": "将实际和预计签收时间截到日期后重算两组，核对各组样本量和差评数；同日较晚签收的订单归入准时组。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/investigation",
+          "input": {
+            "grain": "day"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT late_day AS late, count(*) AS n,\n       count(*) FILTER (WHERE review_score <= 2) AS negative\nFROM order_review_delivery WHERE TRUE GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "checks": [
+        {
+          "label": "按日分组（订单数、差评数）",
+          "expected": {
+            "late": [
+              6381,
+              3983
+            ],
+            "on_time": [
+              89443,
+              8289
+            ]
+          },
+          "actual": {
+            "late": [
+              6381,
+              3983
+            ],
+            "on_time": [
+              89443,
+              8289
+            ]
+          }
+        }
+      ],
+      "duration_ms": 56.41
+    },
+    {
+      "id": "K12",
+      "title": "缺少订单时给出数据不足状态",
+      "procedure": "查询 2099 年的成交额。此数据版本在该年度没有订单，预期状态为 insufficient_data 且结果表为空。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "What is total item revenue in 2099?",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2099-01-01' AS DATE) AND purchased_at < CAST('2100-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "状态与结果表",
+          "expected": [
+            "insufficient_data",
+            []
+          ],
+          "actual": [
+            "insufficient_data",
+            []
+          ]
+        }
+      ],
+      "duration_ms": 94.66
+    },
+    {
+      "id": "K13",
+      "title": "拒绝反向日期区间",
+      "procedure": "对差评调查提交早于起始日的结束日。预期返回 HTTP 422，响应包含日期范围校验错误。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/investigation",
+          "input": {
+            "start": "2018-02-01",
+            "end": "2018-01-01"
+          },
+          "http_status": 422
+        }
+      ],
+      "checks": [
+        {
+          "label": "说明结束日期必须晚于开始日期",
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "duration_ms": 1.2
+    },
+    {
+      "id": "K14",
+      "title": "离线模式处理缺失的利润指标",
+      "procedure": "提问税后净利润。离线问题目录没有该指标，预期请求澄清，结果表为空，且没有执行 SQL。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "2018 年税后净利润是多少？",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200
+        }
+      ],
+      "checks": [
+        {
+          "label": "澄清状态、行数与执行 SQL",
+          "expected": [
+            "clarification_required",
+            0,
+            null
+          ],
+          "actual": [
+            "clarification_required",
+            0,
+            null
+          ]
+        }
+      ],
+      "duration_ms": 11.18
+    },
+    {
+      "id": "K15",
+      "title": "历史记录与执行证据可重放",
+      "procedure": "查询 2017 年商品成交额，按返回 ID 取回历史记录。核对快照、问题、SQL 和输出，在同一只读快照重放该 SQL，并与 2017 年 CSV 合计对账。",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/query",
+          "input": {
+            "question": "What is total item revenue in 2017?",
+            "mode": "demo",
+            "language": "zh"
+          },
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runs/b473d9f7-9bae-45fd-98e9-8f8902bd5610",
+          "input": null,
+          "http_status": 200,
+          "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
+        }
+      ],
+      "checks": [
+        {
+          "label": "历史记录完整回读",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "label": "历史快照",
+          "expected": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840",
+          "actual": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840"
+        },
+        {
+          "label": "CSV、历史表格、SQL 重放（BRL）",
+          "expected": [
+            5962902.01,
+            5962902.01
+          ],
+          "actual": [
+            5962902.01,
+            5962902.01
+          ]
+        }
+      ],
+      "duration_ms": 126.69
+    }
+  ]
+}

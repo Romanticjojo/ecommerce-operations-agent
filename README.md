@@ -44,7 +44,23 @@ cp .env.example .env
 
 从 [Olist 数据页](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) 下载并解压，保持原 CSV 名称。需要订单、商品行、支付、评价、客户、商品及商家七张表，品类翻译表可选。原始数据采用 **CC BY-NC-SA 4.0**，由使用者自行取得。项目源码和自制演示数据使用 MIT 许可证。
 
-原生运行环境下导入：
+指定的数据源是 Kaggle 的 `olistbr/brazilian-ecommerce`。在已创建的项目虚拟环境中，可用 KaggleHub 获取最新版并直接导入本地工作台：
+
+```sh
+.venv/bin/python -m pip install -r evaluation/kaggle_olist/requirements.txt
+.venv/bin/python - <<'PYTHON'
+from pathlib import Path
+import kagglehub
+from commerce.data import build_db
+from commerce.settings import database
+
+path = kagglehub.dataset_download("olistbr/brazilian-ecommerce")
+print("Path to dataset files:", path)
+print("Snapshot:", build_db(Path(path), database(), "olist")["snapshot_id"])
+PYTHON
+```
+
+若已有该数据集解压后的 CSV，也可直接导入：
 
 ```sh
 .venv/bin/python -m commerce.cli import /path/to/unzipped-olist
@@ -59,6 +75,8 @@ docker compose run --rm -v "/path/to/unzipped-olist:/input:ro" workbench python 
 刷新页面即可看到新快照。导入先构建完整候选数据库，再原子替换。导入失败时原快照可继续使用。运行 `python -m commerce.cli demo` 会将当前快照切换回合成数据。查询历史保留各自的快照标识。原生模式默认工作目录为 `runtime/`，可通过 `LENS_HOME` 指向其他本地目录。
 
 ## 测试与评估
+
+真实 Kaggle 数据验收涵盖 15 项。下载 ZIP 后可从解压目录独立运行，详细报告列出每项输入、期望与实测值。[完整报告](evaluation/kaggle_olist/verified/REPORT.md) · [复现说明](evaluation/kaggle_olist/README.md) · [完整测试包 ZIP](evaluation/kaggle_olist/olist-kaggle-acceptance.zip)
 
 ```sh
 .venv/bin/python -m pytest -q

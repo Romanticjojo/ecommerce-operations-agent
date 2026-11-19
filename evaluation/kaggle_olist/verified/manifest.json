@@ -1,0 +1,91 @@
+{
+  "dataset": "olistbr/brazilian-ecommerce",
+  "request": "olistbr/brazilian-ecommerce",
+  "resolved_version": "2",
+  "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "data_license": "CC BY-NC-SA 4.0",
+  "utc": "2026-11-19T09:22:11+00:00",
+  "platform": "Darwin 25.6.0 / arm64",
+  "python": "3.11.16",
+  "packages": {
+    "kagglehub": "1.0.3",
+    "kagglesdk": "0.1.38",
+    "duckdb": "2.0.0",
+    "scipy": "1.17.1",
+    "pytest": "9.2.0",
+    "fastapi": "0.165.0",
+    "uvicorn": "0.54.0"
+  },
+  "snapshot": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840",
+  "files": {
+    "olist_customers_dataset.csv": {
+      "sha256": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2",
+      "rows": 99441,
+      "bytes": 9033957
+    },
+    "olist_geolocation_dataset.csv": {
+      "sha256": "b514f6fc991b9566aeba02aa5d67e2c3630f034b60a0e05aa0d082a3b66d88d6",
+      "rows": 1000163,
+      "bytes": 61273883
+    },
+    "olist_order_items_dataset.csv": {
+      "sha256": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279",
+      "rows": 112650,
+      "bytes": 15438671
+    },
+    "olist_order_payments_dataset.csv": {
+      "sha256": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0",
+      "rows": 103886,
+      "bytes": 5777138
+    },
+    "olist_order_reviews_dataset.csv": {
+      "sha256": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7",
+      "rows": 99224,
+      "bytes": 14451670
+    },
+    "olist_orders_dataset.csv": {
+      "sha256": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf",
+      "rows": 99441,
+      "bytes": 17654914
+    },
+    "olist_products_dataset.csv": {
+      "sha256": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc",
+      "rows": 32951,
+      "bytes": 2379446
+    },
+    "olist_sellers_dataset.csv": {
+      "sha256": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e",
+      "rows": 3095,
+      "bytes": 174703
+    },
+    "product_category_name_translation.csv": {
+      "sha256": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278",
+      "rows": 71,
+      "bytes": 2613
+    }
+  },
+  "app_sha256": {
+    "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent.py": "f5263d6372f17d91e1391c6e97a1f491c42cd0f61a85284fc657955a1694800c",
+    "api.py": "416b149235fc212a1994a82d6ce2a0ce2c305640112596863abcc8f15a31b1e2",
+    "benchmark.py": "69818204212a4537a15c755df808d512b7688f461ebf77ed58b372e6d2514c7e",
+    "cli.py": "f67185fbba3b241e9216039aee3d62d4f3a84b49e850570dab0729927bc5d706",
+    "data.py": "0b73f8e6e1c86f42a4314833ca8c6e3565efa12552b22c74497918bfd08891df",
+    "demo.py": "a6786b54940239268d5d75f6d86b431b48c0577b517a1ed156b3f7704965b9bc",
+    "history.py": "cde89bb6bea879fa172cb772cadaf9fb5067713d5a4403bf5e71caf9217c5dc7",
+    "model.py": "a33280f1b97d3335d76d130c2f3fa3c0965a0014a5959707bfa2fa733386e5e9",
+    "plans.py": "01f4ec7e14ee2cb0449388ffd40807e787fda68a4d122f2ed5276fa669f5164c",
+    "query_guard.py": "c71fe780dfdd0b3321c19398700a44a297f39d90e3f838ef1ee597f58e452716",
+    "query_worker.py": "e1be44afadb5946c954e71b22067172854854340c2712f3b55cf6b3b6891a140",
+    "schema.py": "14162caca79ccd9e6b41c60bd78ad7113be55413e51a40974c19bd02ac9bc5d4",
+    "settings.py": "4cc4fda3371032d853a478c46d4a86b558d791568fae858cf3f0725d43bba5e1",
+    "stats.py": "4909d70fc659ed0cec5cdb269fd9d7f0ae5c9ab9314c6127da1b0f05240dcbe8"
+  },
+  "suite_sha256": {
+    "cases.py": "8f1b7ebf988deb59ae09b4a33b22211b16b619a6296c432671bda891198a3500",
+    "conftest.py": "14fd1a364e219b54372b578da41107ac665d1a8581f63e5e7a6fbd474127780d",
+    "oracle.py": "8f0f6496591f23a5d3253161c3812c7367542f805cea49ee659743b69732bab7",
+    "package.py": "43a67d7d44653b812d2238f518a8857407d5c9811aa2f39cf8b0b1d85f814e08",
+    "reporting.py": "0609a939322ed17492db3c6e00f1108f7226c3ca448651767d9bee9b704cad9e"
+  }
+}
