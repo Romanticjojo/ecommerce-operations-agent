@@ -55,3 +55,7 @@ Keep data import, metrics, model adapter, controller, execution, statistics, evi
 ## Boundaries
 
 Scope covers sales analysis, negative-review investigation and evidence retrieval. Live stores, automated pricing or ordering, outbound messages, causal identification, unrestricted code execution, multi-tenant permissions, review-text model training, retrieval-augmented generation and multi-agent orchestration are outside this release. The project tracks real-data verification, real-model evaluation and human benchmark review separately.
+
+## Operations skill extension
+
+The November 20 release adds nine executable procedures and moves the data reference and delivery comparison into Ask. Its decision matrix, source constraints and acceptance checks are recorded in the [skill requirements](superpowers/specs/2026-11-20-analysis-skills.md) and [release plan](superpowers/plans/2026-11-20-analysis-skills.md).

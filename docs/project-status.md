@@ -13,6 +13,10 @@ The November 19, 2026 check-in selected three outcomes from the original proposa
 | Deployment | Native launcher, Python/npm lock files, Docker and CI | Clean install and release checks |
 | Maintenance | Versioned source, run history, snapshot hashes, license and repeatable checks | Metric changes require corresponding dictionary, reference, test and report changes. |
 
+## Current skill release
+
+Version 1.1 adds nine local analysis procedures, including a full merchant ranking and SKU-level decisions. Ask now contains the delivery comparison and data reference. The original course project update and walkthrough record the v1.0 milestone. [Skill acceptance](../evaluation/skill_checks/REPORT.md) · [Product and release criteria](superpowers/specs/2026-11-20-analysis-skills.md)
+
 ## Design decisions and evidence
 
 The full workflow asks a model for a structured plan. The backend compiles the metric, time window and grouping into SQL. The direct baseline asks for SQL. Both share the same execution limits. This makes the effect of planning testable under the same conditions.

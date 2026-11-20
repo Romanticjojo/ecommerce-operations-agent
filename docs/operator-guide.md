@@ -23,6 +23,14 @@ Offline demo mode recognizes a limited set of sales totals, order trends, catego
 
 Model mode supports plans for sales totals, monthly trends, category or customer-state breakdowns and order-level review analysis. Specify the metric and grouping. Purchase-date filters include the start date and exclude the end date. The application reads server-side model configuration at startup. The planner mode and the source of the data are independent. For example, an offline planner can query a real Olist snapshot.
 
+## Choose a skill or open the data reference
+
+Open **Ask the agent → Questions & skills**. On desktop select a skill by name. On a small screen use **Choose an analysis skill**. Each skill lists its purpose, supported scope, example and analysis steps. The date fields use the local purchase date and an exclusive end. These procedures produce English conclusions, including when the installation has a provider configured. Select **Back to custom question** to resume free-form questions.
+
+For a keyboard-only demo, type **Rank merchants** or **Analyze product sales trends** into the question field. The scorecard presents all eligible sellers with pagination, score components and full JSON export. The product outlook presents an individual SKU's three monthly observations and its conditional next action. [Merchant scoring](merchant-scoring.md) · [Sales, retention and outlook methods](operations-methods.md)
+
+**Delivery comparison** retains the original statistical investigation, including timestamp and calendar-day sensitivity. A lane's late-order percentage in the **Delivery performance** skill measures a different outcome from the comparison's negative-review percentage. **Data reference** contains snapshot source, table definitions, metric catalog and import-quality checks. The overview links open each tool in context.
+
 ## Interpret the metrics
 
 | Metric | Definition |

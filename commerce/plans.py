@@ -4,7 +4,7 @@ import unicodedata
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator, model_validator
 
 
 SALES = {"item_revenue": "SUM(item_revenue)", "payment_total": "SUM(payment_total)",
@@ -28,7 +28,8 @@ def iso_day(value):
 
 class Plan(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    intent: Literal["sales", "reviews", "investigation", "clarification_required", "rejected"]
+    intent: Literal["sales", "reviews", "investigation", "skill", "clarification_required", "rejected"]
+    skill_id: str | None = Field(default=None, max_length=40)
     metric: Literal["item_revenue", "payment_total", "order_count", "aov", "reviewed_order_count", "negative_count", "negative_rate"] | None = None
     dimension: Literal["total", "month", "category", "state", "delivery_group"] = "total"
     sort: Literal["asc", "desc", "dimension"] | None = None
@@ -41,6 +42,16 @@ class Plan(BaseModel):
     status: str = "delivered"
     delivery_group: Literal["late", "on_time"] | None = None
     grain: Literal["timestamp", "day"] = "timestamp"
+
+    @model_validator(mode="after")
+    def skill_parameters(self):
+        if self.intent == "skill":
+            from .skills import SKILLS
+            if self.skill_id not in SKILLS or self.model_fields_set - {"intent", "skill_id", "start", "end", "year"}:
+                raise ValueError("unsupported_skill_scope")
+        elif self.skill_id is not None:
+            raise ValueError("unexpected_skill")
+        return self
 
     @field_validator("start", "end")
     @classmethod

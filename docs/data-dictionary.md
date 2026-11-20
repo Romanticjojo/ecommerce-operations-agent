@@ -47,3 +47,12 @@ A score of 1 or 2 is negative. In the primary comparison, an order is late when 
 The contingency table has rows for late and on-time orders and columns for negative and other eligible reviews. The risk difference subtracts the on-time negative-review rate from the late rate. A difference of 0.10 is ten percentage points. The 95% interval uses Newcombe method 10 with uncorrected Wilson score intervals. Use a two-sided Fisher exact test if any expected cell is below 5, otherwise Pearson's chi-squared test without continuity correction. For an empty group the status is `insufficient_data` and effect, interval and p-value are null. With two nonempty groups and a constant outcome, report the difference and interval and leave test and p-value null. Extremely small values may be displayed as p < 0.001.
 
 Region, carrier, order mix and the customer's decision to review may affect the comparison. The result describes an association among reviewed orders. It cannot establish how many negative reviews an earlier delivery would prevent.
+
+
+## Skill data availability
+
+The v1.1 procedures work on v1.0 imports. The original loader already preserves the order-level customer ID, cross-order customer ID, seller and product keys, order-item price, purchase and delivery timestamps, review title, message, stars and deterministic review tie-breakers. New SQL aggregates these fields at buyer, SKU-month, seller-order, product-order and state-lane grains. Calculations use the pinned snapshot and leave the source fingerprint intact.
+
+Olist v2 contains 3,095 seller records, 32,951 product records and 99,224 review records. Of the reviews, 40,968 have a nonblank body. After eligibility, attribution and latest-review selection, the sentiment workflow covers 38,783 orders with a written title or body. These denominators describe different populations.
+
+Website traffic, search impressions, cart events, stock on hand, refunds and promotion assignments have no corresponding source table. SKU trends count delivered item lines. Cohort returns require another observed delivered order. Sentiment and themes use local Portuguese phrase matching. [Detailed scoring and attribution](merchant-scoring.md) · [Other analysis methods](operations-methods.md)

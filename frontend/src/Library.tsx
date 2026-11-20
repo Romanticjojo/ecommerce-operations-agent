@@ -11,7 +11,7 @@ function Preparation() {
 export function DataPage() {
   const { data, error, retry } = useResource<Catalog>('catalog')
   const [tab, setTab] = useState('tables')
-  return <><PageHead title="Data and metrics" sub="Inspect the dataset, the meaning of each row, metric definitions, and import quality."/>
+  return <><div className="tool-heading"><h2>Data reference</h2><p>Check the source tables, metric definitions and import quality behind an answer.</p></div>
     {error ? <><ErrorBox message={error} retry={retry}/><Preparation/></> : !data ? <Pending/> : <>
       <div className="panel snapshot"><span className="quick-icon blue"><Database size={21}/></span><div><h2>{sourceName(data.source)}</h2><p>Snapshot <code>{display(data.snapshot)}</code>{(data.imported_at || data.audit?.imported_at) && <> · Imported {data.imported_at || data.audit?.imported_at}</>}</p></div></div>
       <div className="tabs" aria-label="Data views">{[['tables','Data dictionary'],['metrics','Metric catalog'],['quality','Data quality']].map(([id,name]) => <button key={id} aria-pressed={tab === id} onClick={() => setTab(id)}>{name}</button>)}</div>

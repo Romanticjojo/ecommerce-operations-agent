@@ -2,6 +2,19 @@
 
 The November 19, 2026 engineering check-in ran locally on an Apple M4 (10 cores, 16 GB) with Python 3.11, Node.js 22 and Chromium/Chrome. That check-in recorded **17 passing backend and integration tests**. A separate acceptance suite subsequently passed **15 of 15** cases against version 2 of the Brazilian E-Commerce Public Dataset by Olist. The figures below retain their original test conditions. [Olist acceptance report](../evaluation/kaggle_olist/verified/REPORT.md) · [CI runs by commit](https://github.com/Romanticjojo/ecommerce-operations-agent/actions)
 
+## Version 1.1 acceptance · November 20, 2026
+
+| Check | Result |
+|---|---|
+| Regression and integration | 38 tests passed, including eligibility, multiple-review attribution, Portuguese cues, empty periods, model routing and skill history. |
+| Original Olist end-to-end suite | 15 cases passed against a fresh v2 import. |
+| Skill execution and evidence | All nine English procedures returned an operating conclusion. Replaying each query reproduced every result field and row. |
+| Independent CSV oracle | All 784 seller ranks, scores, components and denominators matched. The top 20 product rows and the overall population of 92,673 rated orders matched. |
+| Browser acceptance | Headless Chrome at 390, 768 and 1,440 pixels. Ran nine skills, checked both lateness definitions, data reference and previous bookmarks. Compared the full ranking export to the API, paged to the final sellers, and selected an individual product for its three-point trend and next action. |
+| Build and model coverage | Built the production React bundle and started the native service. A local provider fixture tested skill routing and rejected unsupported restrictions. A live provider evaluation remains pending. |
+
+[Run the skill checks](../evaluation/skill_checks/REPORT.md) · [Independent ranking oracle](../evaluation/skill_checks/merchant_oracle.py) · [Desktop skill directory](images/analysis-skills.png) · [Merchant result](images/merchant-ranking.png)
+
 ## Olist data and independent checks
 
 The acceptance suite counted CSV records and recorded SHA-256 hashes, sizes and usage for nine source files. DuckDB imported seven business tables and the English category translation. The geolocation file has 1,000,163 records and is included only in the download audit. The analytical snapshot is `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`. One observed build took approximately 0.7 seconds, excluding download. [Source manifest](../evaluation/kaggle_olist/verified/manifest.json)

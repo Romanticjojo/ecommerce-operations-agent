@@ -128,3 +128,25 @@ def test_provider_timeout_classification(monkeypatch):
     monkeypatch.setattr(httpx, "stream", timeout)
     with pytest.raises(model.ModelError, match="model_timeout"):
         model.complete("count orders", "full", None, None)
+
+
+def test_model_can_select_only_a_known_procedure(db, provider, monkeypatch):
+    from commerce import skills
+    calls = []
+    def local(db, slug, start, end):
+        calls.append((slug, start, end))
+        return {"table": [{"n": 20}], "sql": "SELECT 20 AS n", "answer": "Twenty orders.", "warnings": []}
+
+    monkeypatch.setattr(skills, "run", local)
+    queue, messages = provider
+    queue.append((200, {"intent": "skill", "skill_id": "merchant-score", "year": 2018}, None))
+    run = ask(db, "How would you rank the merchants for 2018?", start="2018-02-01")
+    assert run["status"] == "ok" and run["mode"] == "model"
+    assert calls == [("merchant-score", "2018-02-01", "2019-01-01")]
+    assert run["evidence"]["execution"] == "local_skill"
+    assert "merchant-score" in messages[0][1]["messages"][0]["content"]
+    assert len(messages[0][1]["messages"]) == 2
+    for _ in range(2):
+        queue.append((200, {"intent": "skill", "skill_id": "merchant-score", "state": "SP"}, None))
+    assert ask(db, "Rank only sellers in SP")["evidence"]["error_code"] == "invalid_plan"
+    assert len(calls) == 1

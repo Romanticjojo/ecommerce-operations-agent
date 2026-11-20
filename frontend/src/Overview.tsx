@@ -11,7 +11,7 @@ export function Overview({ data, error, retry }: { data?: OverviewData; error: s
   return <div className="overview-report">
     <PageHead title="Operations overview" sub={coverage} action={<a className="primary" href="#ask">Ask the agent<ArrowRight size={16}/></a>}/>
     {error ? <ErrorBox message={error} retry={retry}/> : !data ? <Pending/> :
-      !data.order_count && !data.monthly?.length ? <div className="panel"><Empty title="No delivered orders" action={<a className="quiet" href="#data">View data setup<ArrowRight size={15}/></a>}>Import a snapshot with delivered orders to see sales and review metrics.</Empty></div> :
+      !data.order_count && !data.monthly?.length ? <div className="panel"><Empty title="No delivered orders" action={<a className="quiet" href="#ask/data">View data setup<ArrowRight size={15}/></a>}>Import a snapshot with delivered orders to see sales and review metrics.</Empty></div> :
       <>
         <div className="sales-spread">
           <section className="sales-total">
@@ -43,10 +43,10 @@ export function Overview({ data, error, retry }: { data?: OverviewData; error: s
             <h2>Delivery and reviews</h2>
             <div className="review-metric"><strong>{percent(data.negative_rate)}</strong><span>of eligible orders had a negative review</span></div>
             <p>Includes delivered orders with both delivery timestamps and a valid review. The latest eligible review counts once per order. Scores of 1 or 2 are negative.</p>
-            <a className="report-link" href="#investigation">Compare late and on-time orders<ArrowRight size={16}/></a>
+            <a className="report-link" href="#ask/delivery">Compare deliveries in Ask the agent<ArrowRight size={16}/></a>
           </section>
         </div>
-        <footer className="report-footer"><a className="report-link" href="#data">View data sources and metric definitions<ArrowUpRight size={15}/></a></footer>
+        <footer className="report-footer"><a className="report-link" href="#ask/data">Open data reference in Ask the agent<ArrowUpRight size={15}/></a></footer>
       </>}
   </div>
 }

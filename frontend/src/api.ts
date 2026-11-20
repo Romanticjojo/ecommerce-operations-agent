@@ -12,6 +12,7 @@ export interface Catalog {
   source: string; snapshot: string; tables: { name: string; rows: number; grain: string; columns: unknown[] }[]
   metrics: { id: string; label: string; definition: string }[]; quality: Row; imported_at?: string; audit?: { imported_at?: string }
 }
+export interface Skill { id: string; title: string; description: string; scope: string; question: string; steps: string[] }
 export interface Answer {
   request_id: string; question: string; status: string; answer: string; table: Row[]
   chart?: { type: string; x: string; y: string } | null; evidence: Row; mode: string; timing_ms: number
@@ -77,12 +78,16 @@ export function modeName(value?: string) {
   if (/offline|demo|deterministic/i.test(value)) return 'Offline demo'
   if (value === 'full') return 'Full workflow'
   if (/model|online|live/i.test(value)) return 'Live model'
+  if (value === 'skill') return 'Local analysis skill'
   if (value === 'statistics') return 'Statistical investigation'
   if (value === 'reference') return 'Reference SQL'
   if (value === 'baseline' || value === 'direct') return 'Baseline model'
   return value
 }
 const names: Record<string, string> = {
+  rank: 'Rank', seller_id: 'Seller ID', product_id: 'Product ID', score: 'Score / 100',
+  rating_component: 'Rating / 100', delivery_component: 'Delivery / 100', timed_orders: 'Timed orders',
+  text_coverage_pct: 'Text coverage (%)', low_rating_pct: 'Low ratings (%)', sku_month_pairs: 'SKU-month pairs',
   month: 'Month', category: 'Product category', item_revenue: 'Item revenue (BRL)', order_count: 'Orders',
   aov: 'Average order value (BRL)', negative_rate: 'Negative review rate', risk_difference: 'Difference in negative review rates',
   filters: 'Filters', metric: 'Metric', metrics: 'Metrics', metric_id: 'Metric ID', metric_ids: 'Metric IDs',
@@ -108,7 +113,7 @@ const names: Record<string, string> = {
   model_ms: 'Model time (ms)', sql_ms: 'SQL time (ms)', statistics_ms: 'Statistical analysis time (ms)',
   id: 'ID', ci95: '95% confidence interval', p_value: 'p-value', reviewed_order_count: 'Orders with reviews', negative_count: 'Negative reviews',
 }
-export const label = (key: string) => names[key] ?? key
+export const label = (key: string) => names[key] ?? key.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase())
 export function stateName(state: string) {
   return ({ success: 'Success', ok: 'Success', completed: 'Completed', not_run: 'Not run',
     insufficient_data: 'Insufficient data', no_data: 'No data', clarification_required: 'Clarification needed',

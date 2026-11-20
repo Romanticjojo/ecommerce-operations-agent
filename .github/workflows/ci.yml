@@ -31,6 +31,8 @@ jobs:
           curl --fail http://127.0.0.1:8731/
           curl --fail http://127.0.0.1:8731/api/overview | python -c "import json,sys; assert json.load(sys.stdin)['order_count'] > 0"
           curl --fail -H 'Content-Type: application/json' -d '{"question":"Show monthly delivered orders in 2017.","mode":"demo"}' http://127.0.0.1:8731/api/query | python -c "import json,sys; assert json.load(sys.stdin)['status']=='ok'"
+          curl --fail http://127.0.0.1:8731/api/skills | python -c "import json,sys; assert len(json.load(sys.stdin)['skills'])==9"
+          curl --fail -H 'Content-Type: application/json' -d '{"question":"Rank merchants","skill_id":"merchant-score"}' http://127.0.0.1:8731/api/query | python -c "import json,sys; r=json.load(sys.stdin); assert r['status']=='ok' and r['mode']=='skill' and r['table']"
       - if: failure()
         run: docker compose logs
       - if: always()

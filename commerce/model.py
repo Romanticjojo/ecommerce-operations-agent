@@ -10,7 +10,7 @@ import httpx
 from .plans import Plan
 from .query_guard import VIEWS
 
-PROMPT_VERSION = "commerce-plan-1"
+PROMPT_VERSION = "commerce-plan-2"
 DIRECT_VERSION = "commerce-direct-1"
 
 
@@ -84,6 +84,15 @@ def complete(question, variant, start, end, *, correction=None, timeout=60):
     if key:
         headers["Authorization"] = "Bearer " + key
     system = _DIRECT if variant == "direct" else _FULL
+    if variant == "full":
+        from .skills import catalog
+        available = [{key: spec[key] for key in ("id", "description", "scope")} for spec in catalog()]
+        system += ("\nYou may route a matching English business question to a local procedure with "
+                   "intent=skill and its skill_id. Supply only year/start/end restrictions. If the "
+                   "user adds a restriction the procedure cannot honor, request clarification. "
+                   "Keep the original investigation intent for late vs on-time review inference. "
+                   "Use the original sales/reviews plan for simple metric queries. Skills: "
+                   + json.dumps(available))
     if correction:
         system += "\nThe previous response did not conform to the plan schema. Return only permitted fields and values."
     body = {"model": model, "temperature": 0, "messages": [

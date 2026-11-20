@@ -6,7 +6,7 @@ from time import perf_counter
 import duckdb
 from pydantic import ValidationError
 
-from . import model
+from . import model, skills
 from .plans import Plan, bounds, compile_plan, demo_plan, iso_day
 from .query_guard import InvalidSQL, QueryError, Rejected, execute, validate_sql
 from .schema import METRICS
@@ -92,11 +92,42 @@ def _investigate(db, plan, left, right, out, en):
     out.update(status="ok" if ok else "insufficient_data", table=groups, answer=answer)
 
 
-def _run(db, question, chosen, en, left, right, variant, out):
+def _run_skill(db, slug, left, right, out):
+    evidence = out["evidence"]
+    if evidence["language"] != "en":
+        out.update(status="clarification_required", answer="该分析技能目前提供英文结论。请选择 English 再运行。")
+        return
+    spec = skills.SKILLS[slug]
+    evidence.update(skill_id=slug, scope=spec["scope"], steps=spec["steps"], execution="local_skill",
+                    skill_version="1.1", filters={"start": left, "end": right})
+    if left and right and left >= right:
+        out.update(status="insufficient_data", answer="The requested purchase-date ranges do not overlap.")
+        return
+    started = perf_counter()
+    try:
+        result = skills.run(db, slug, left, right)
+    except duckdb.Error:
+        raise QueryError("query_execution_failed") from None
+    table = result.pop("table")
+    status = result.pop("status", "ok" if table else "insufficient_data")
+    out.update(status=status, answer=result.pop("answer"), table=table)
+    evidence.update(**result, sql_success=True, row_count=len(table), sql_ms=round((perf_counter()-started)*1000, 2))
+
+
+def _run(db, question, chosen, en, left, right, variant, out, skill_id):
     evidence = out["evidence"]
     evidence["filters"] = {"start": left, "end": right}
     if _UNSAFE.search(question):
         raise Rejected("unsafe_request")
+    matched = skills.match(question) if variant == "full" else None
+    if skill_id is not None and skill_id != matched:
+        out.update(status="clarification_required", answer="Use the skill’s example question and date controls, or submit your own question without a selected skill.")
+        return
+    if matched:
+        out["mode"] = "skill"
+        evidence.update(model=None, prompt_version=None)
+        _run_skill(db, matched, left, right, out)
+        return
     direct = chosen == "model" and variant == "direct"
     sql = None
     plan = None
@@ -145,6 +176,9 @@ def _run(db, question, chosen, en, left, right, variant, out):
         left, right = bounds(plan, left, right)
         evidence["filters"].update(start=left, end=right)
         evidence["plan"] = plan.model_dump(exclude_none=True)
+        if plan.intent == "skill":
+            _run_skill(db, plan.skill_id, left, right, out)
+            return
         if plan.intent == "investigation":
             _investigate(db, plan, left, right, out, en)
             return
@@ -171,7 +205,7 @@ def _run(db, question, chosen, en, left, right, variant, out):
     out.update(status="ok", answer=msg, table=rows)
 
 
-def ask(db: Path, question: str, *, mode="auto", language="en", start=None, end=None, variant="full"):
+def ask(db: Path, question: str, *, mode="auto", language="en", start=None, end=None, variant="full", skill_id=None):
     began = perf_counter()
     configured = model_status()
     chosen = configured["mode"] if mode == "auto" else mode
@@ -189,7 +223,7 @@ def ask(db: Path, question: str, *, mode="auto", language="en", start=None, end=
         left, right = iso_day(start), iso_day(end)
         if left and right and left >= right:
             raise ValueError("invalid_period")
-        _run(db, question.strip(), chosen, en, left, right, variant, out)
+        _run(db, question.strip(), chosen, en, left, right, variant, out, skill_id)
     except Rejected as error:
         evidence["error_code"] = str(error)
         out.update(status="rejected", answer=_text("rejected", en))

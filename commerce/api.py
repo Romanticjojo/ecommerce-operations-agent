@@ -13,10 +13,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from . import agent, data, history, stats
+from . import agent, data, history, skills, stats
 from .schema import RAW, TRANSLATION, VIEWS
 from .settings import ROOT, database, home, model_status, pinned_database
 
@@ -35,8 +35,17 @@ class DateRange(BaseModel):
 
 class Question(DateRange):
     question: str = Field(min_length=1, max_length=1500)
+    skill_id: str | None = Field(default=None, max_length=40)
     language: Literal["en", "zh"] = "en"
     mode: Literal["auto", "model", "demo"] = "auto"
+
+
+    @field_validator("skill_id")
+    @classmethod
+    def known_skill(cls, value):
+        if value is not None and value not in skills.SKILLS:
+            raise ValueError("Choose a skill from /api/skills.")
+        return value
 
 
 class Investigation(DateRange):
@@ -67,7 +76,7 @@ def envelope(run, question, started):
 
 
 def make_app():
-    app = FastAPI(title="Commerce Lens", version="1.0.0")
+    app = FastAPI(title="Commerce Lens", version="1.1.0")
     hosts = ["127.0.0.1", "localhost", "[::1]", "testserver"]
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=hosts)
 
@@ -96,6 +105,10 @@ def make_app():
     @app.get("/api/config/status")
     def config():
         return model_status()
+
+    @app.get("/api/skills")
+    def skill_catalog():
+        return {"skills": skills.catalog()}
 
     @app.get("/api/catalog")
     def catalog():

@@ -8,7 +8,7 @@
     "resolved_version": "2",
     "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
     "data_license": "CC BY-NC-SA 4.0",
-    "utc": "2026-11-19T12:44:30+00:00",
+    "utc": "2026-11-20T07:03:24+00:00",
     "platform": "Darwin 25.6.0 / arm64",
     "python": "3.11.16",
     "packages": {
@@ -70,19 +70,22 @@
     },
     "app_sha256": {
       "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "agent.py": "b16739341b9e2fef453d1105392612a600049f129db7caa84de1f803d9b7b696",
-      "api.py": "ccfb0e519addbcef69aa09f0dae86f64e506cb641efadf9dfcb6bfb7fd13ef63",
+      "agent.py": "151c71f3272b908b0e20352d8b70b676eee0d58c8b2b3e57b654f03579515552",
+      "api.py": "3278e1850fb5654e37c7b02430e3ddf33968ebd324ebc6e4893d2e4728bdcd05",
       "benchmark.py": "69818204212a4537a15c755df808d512b7688f461ebf77ed58b372e6d2514c7e",
       "cli.py": "cdaa482724da5405c4b681c52a8bb5986e52c40bfec7958dd3cc6c6c1681d8f4",
       "data.py": "0b73f8e6e1c86f42a4314833ca8c6e3565efa12552b22c74497918bfd08891df",
       "demo.py": "a6786b54940239268d5d75f6d86b431b48c0577b517a1ed156b3f7704965b9bc",
       "history.py": "cde89bb6bea879fa172cb772cadaf9fb5067713d5a4403bf5e71caf9217c5dc7",
-      "model.py": "a33280f1b97d3335d76d130c2f3fa3c0965a0014a5959707bfa2fa733386e5e9",
-      "plans.py": "01f4ec7e14ee2cb0449388ffd40807e787fda68a4d122f2ed5276fa669f5164c",
+      "model.py": "e3e9e0e2acb07d698ffe542aa5baecf736da35ba1c011cf432dd8712ed40e111",
+      "operations_skills.py": "0fe7f9ae07a0792abfdc3c969941602fc5619bc0804d587725511635eb42c426",
+      "plans.py": "910343153ee86bd350465db7e116a3d5ced0b9d0d955dab7a9d8c8b536690cf8",
       "query_guard.py": "c71fe780dfdd0b3321c19398700a44a297f39d90e3f838ef1ee597f58e452716",
       "query_worker.py": "e1be44afadb5946c954e71b22067172854854340c2712f3b55cf6b3b6891a140",
+      "review_skills.py": "6700d4428a7d01f7f259ce89eb735c300ee36ca838155d8a269f461f8f4616c0",
       "schema.py": "14162caca79ccd9e6b41c60bd78ad7113be55413e51a40974c19bd02ac9bc5d4",
       "settings.py": "4cc4fda3371032d853a478c46d4a86b558d791568fae858cf3f0725d43bba5e1",
+      "skills.py": "7dd2023adb4f6d38b5da535d05707284184c87334479b5b09d0249b84fe31d75",
       "stats.py": "4909d70fc659ed0cec5cdb269fd9d7f0ae5c9ab9314c6127da1b0f05240dcbe8"
     },
     "suite_sha256": {
@@ -191,7 +194,7 @@
           ]
         }
       ],
-      "duration_ms": 101.8
+      "duration_ms": 113.15
     },
     {
       "id": "K02",
@@ -226,7 +229,7 @@
           ]
         }
       ],
-      "duration_ms": 146.61
+      "duration_ms": 148.12
     },
     {
       "id": "K03",
@@ -261,7 +264,7 @@
           ]
         }
       ],
-      "duration_ms": 120.42
+      "duration_ms": 116.01
     },
     {
       "id": "K04",
@@ -288,7 +291,7 @@
           "actual": 137.04
         }
       ],
-      "duration_ms": 121.94
+      "duration_ms": 122.16
     },
     {
       "id": "K05",
@@ -413,7 +416,7 @@
           ]
         }
       ],
-      "duration_ms": 108.75
+      "duration_ms": 108.22
     },
     {
       "id": "K06",
@@ -522,7 +525,7 @@
           ]
         }
       ],
-      "duration_ms": 106.66
+      "duration_ms": 104.33
     },
     {
       "id": "K07",
@@ -570,7 +573,7 @@
           ]
         }
       ],
-      "duration_ms": 113.32
+      "duration_ms": 99.42
     },
     {
       "id": "K08",
@@ -598,7 +601,7 @@
           }
         }
       ],
-      "duration_ms": 23.07
+      "duration_ms": 22.99
     },
     {
       "id": "K09",
@@ -635,7 +638,7 @@
           }
         }
       ],
-      "duration_ms": 56.05
+      "duration_ms": 54.92
     },
     {
       "id": "K10",
@@ -707,7 +710,7 @@
           ]
         }
       ],
-      "duration_ms": 53.06
+      "duration_ms": 52.49
     },
     {
       "id": "K11",
@@ -750,7 +753,7 @@
           }
         }
       ],
-      "duration_ms": 54.06
+      "duration_ms": 53.39
     },
     {
       "id": "K12",
@@ -783,7 +786,7 @@
           ]
         }
       ],
-      "duration_ms": 96.75
+      "duration_ms": 94.35
     },
     {
       "id": "K13",
@@ -808,7 +811,7 @@
           "actual": true
         }
       ],
-      "duration_ms": 1.17
+      "duration_ms": 1.71
     },
     {
       "id": "K14",
@@ -842,7 +845,7 @@
           ]
         }
       ],
-      "duration_ms": 11.85
+      "duration_ms": 11.65
     },
     {
       "id": "K15",
@@ -863,7 +866,7 @@
         },
         {
           "method": "GET",
-          "path": "/api/runs/8eb65976-2b9c-492f-99f4-ba793ecc42b3",
+          "path": "/api/runs/23a54b6f-0452-4f92-a96d-f554e122a6b5",
           "input": null,
           "http_status": 200,
           "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
@@ -892,7 +895,7 @@
           ]
         }
       ],
-      "duration_ms": 132.53
+      "duration_ms": 126.27
     }
   ]
 }

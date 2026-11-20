@@ -127,3 +127,8 @@ The relationships describe the intended grains. Import audits test the actual ke
 ## Deployment
 
 FastAPI serves the built React workbench and its API from one origin. Analytical requests read a DuckDB snapshot and write history to a separate local SQLite database. When configured, the model adapter calls the operator's chosen endpoint. Local CLI commands handle imports and batch evaluation. Native and Docker startup bind to the loopback interface by default.
+
+
+## Named analysis procedures
+
+The workbench reads skill descriptions and steps from `GET /api/skills` and submits the selected procedure ID and canonical question to `POST /api/query`. The controller checks the ID, date bounds and question before running the packaged read-only query locally. In model mode the full planner can also choose an allowlisted procedure and include supported dates. The direct SQL baseline retains its original reporting-view restrictions. Each procedure returns its executed query, table, conclusion, scope and interpretation notes in the existing history envelope. The model receives no stored review text or warehouse rows.
