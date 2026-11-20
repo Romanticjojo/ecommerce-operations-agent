@@ -25,7 +25,7 @@ Model mode supports plans for sales totals, monthly trends, category or customer
 
 ## Choose a skill or open the data reference
 
-Open **Ask the agent → Questions & skills**. On desktop select a skill by name. On a small screen use **Choose an analysis skill**. Each skill lists its purpose, supported scope, example and analysis steps. The date fields use the local purchase date and an exclusive end. These procedures produce English conclusions, including when the installation has a provider configured. Select **Back to custom question** to resume free-form questions.
+Open **Ask the agent → Questions & skills**. On desktop select a skill by name. On a small screen use **Choose an analysis skill**. Each skill lists its purpose, supported scope, example and analysis steps. The date fields use the local purchase date and an exclusive end. In offline demo mode these procedures run directly. In model mode, look for **Model-planned skill** before running and **Live model** alongside **Local analysis skill** on success. The provider plans the call and the local engine produces the English conclusion. Select **Back to custom question** to resume free-form questions.
 
 For a keyboard-only demo, type **Rank merchants** or **Analyze product sales trends** into the question field. The scorecard presents all eligible sellers with pagination, score components and full JSON export. The product outlook presents an individual SKU's three monthly observations and its conditional next action. [Merchant scoring](merchant-scoring.md) · [Sales, retention and outlook methods](operations-methods.md)
 

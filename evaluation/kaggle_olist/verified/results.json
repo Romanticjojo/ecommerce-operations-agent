@@ -8,7 +8,7 @@
     "resolved_version": "2",
     "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
     "data_license": "CC BY-NC-SA 4.0",
-    "utc": "2026-11-20T07:03:24+00:00",
+    "utc": "2026-11-20T07:29:48+00:00",
     "platform": "Darwin 25.6.0 / arm64",
     "python": "3.11.16",
     "packages": {
@@ -70,14 +70,14 @@
     },
     "app_sha256": {
       "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "agent.py": "151c71f3272b908b0e20352d8b70b676eee0d58c8b2b3e57b654f03579515552",
-      "api.py": "3278e1850fb5654e37c7b02430e3ddf33968ebd324ebc6e4893d2e4728bdcd05",
+      "agent.py": "ae26c1a070ba3d9568d15ff4947d4de7826f2bb20bd360534b38892b1d930126",
+      "api.py": "5fffb3b18c79d440c45ea1e3b8cb8e2fce1b704e389d9103f7a9ab4431e3806a",
       "benchmark.py": "69818204212a4537a15c755df808d512b7688f461ebf77ed58b372e6d2514c7e",
       "cli.py": "cdaa482724da5405c4b681c52a8bb5986e52c40bfec7958dd3cc6c6c1681d8f4",
       "data.py": "0b73f8e6e1c86f42a4314833ca8c6e3565efa12552b22c74497918bfd08891df",
       "demo.py": "a6786b54940239268d5d75f6d86b431b48c0577b517a1ed156b3f7704965b9bc",
       "history.py": "cde89bb6bea879fa172cb772cadaf9fb5067713d5a4403bf5e71caf9217c5dc7",
-      "model.py": "e3e9e0e2acb07d698ffe542aa5baecf736da35ba1c011cf432dd8712ed40e111",
+      "model.py": "f07fc1f409db8dfe17ca31499308d7d14f4bf8c11be3df63521edd795e1b79b6",
       "operations_skills.py": "0fe7f9ae07a0792abfdc3c969941602fc5619bc0804d587725511635eb42c426",
       "plans.py": "910343153ee86bd350465db7e116a3d5ced0b9d0d955dab7a9d8c8b536690cf8",
       "query_guard.py": "c71fe780dfdd0b3321c19398700a44a297f39d90e3f838ef1ee597f58e452716",
@@ -194,7 +194,7 @@
           ]
         }
       ],
-      "duration_ms": 113.15
+      "duration_ms": 109.5
     },
     {
       "id": "K02",
@@ -229,7 +229,7 @@
           ]
         }
       ],
-      "duration_ms": 148.12
+      "duration_ms": 148.49
     },
     {
       "id": "K03",
@@ -264,7 +264,7 @@
           ]
         }
       ],
-      "duration_ms": 116.01
+      "duration_ms": 127.45
     },
     {
       "id": "K04",
@@ -291,7 +291,7 @@
           "actual": 137.04
         }
       ],
-      "duration_ms": 122.16
+      "duration_ms": 132.86
     },
     {
       "id": "K05",
@@ -416,7 +416,7 @@
           ]
         }
       ],
-      "duration_ms": 108.22
+      "duration_ms": 117.48
     },
     {
       "id": "K06",
@@ -525,7 +525,7 @@
           ]
         }
       ],
-      "duration_ms": 104.33
+      "duration_ms": 118.22
     },
     {
       "id": "K07",
@@ -573,7 +573,7 @@
           ]
         }
       ],
-      "duration_ms": 99.42
+      "duration_ms": 113.37
     },
     {
       "id": "K08",
@@ -601,7 +601,7 @@
           }
         }
       ],
-      "duration_ms": 22.99
+      "duration_ms": 24.36
     },
     {
       "id": "K09",
@@ -638,7 +638,7 @@
           }
         }
       ],
-      "duration_ms": 54.92
+      "duration_ms": 58.84
     },
     {
       "id": "K10",
@@ -710,7 +710,7 @@
           ]
         }
       ],
-      "duration_ms": 52.49
+      "duration_ms": 54.58
     },
     {
       "id": "K11",
@@ -753,7 +753,7 @@
           }
         }
       ],
-      "duration_ms": 53.39
+      "duration_ms": 56.67
     },
     {
       "id": "K12",
@@ -786,7 +786,7 @@
           ]
         }
       ],
-      "duration_ms": 94.35
+      "duration_ms": 95.98
     },
     {
       "id": "K13",
@@ -811,7 +811,7 @@
           "actual": true
         }
       ],
-      "duration_ms": 1.71
+      "duration_ms": 1.67
     },
     {
       "id": "K14",
@@ -845,7 +845,7 @@
           ]
         }
       ],
-      "duration_ms": 11.65
+      "duration_ms": 18.44
     },
     {
       "id": "K15",
@@ -866,7 +866,7 @@
         },
         {
           "method": "GET",
-          "path": "/api/runs/23a54b6f-0452-4f92-a96d-f554e122a6b5",
+          "path": "/api/runs/9437ddbe-2af3-4be5-b1c6-d776ca284d0e",
           "input": null,
           "http_status": 200,
           "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"
@@ -895,7 +895,7 @@
           ]
         }
       ],
-      "duration_ms": 126.27
+      "duration_ms": 135.95
     }
   ]
 }

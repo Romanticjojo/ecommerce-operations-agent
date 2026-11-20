@@ -99,7 +99,7 @@ export function Ask({ config, tool = '' }: { config?: Config; tool?: string }) {
             </>}
             <Fold title={dates}><DateFields {...{ start, end, setStart, setEnd }} disabled={busy}/></Fold>
             <div className="options-line">
-              {skill ? <span className="field-note">Local skill · English</span> :
+              {skill ? <span className="field-note">{config?.mode === 'model' ? 'Model-planned skill' : config?.mode === 'demo' ? 'Local skill' : 'Analysis skill'} · English</span> :
                 <label className="language"><Languages size={16}/>Answer language<select value={language} disabled={busy} onChange={e => setLanguage(e.target.value)}><option value="en">English</option><option value="zh">Chinese</option></select></label>}
               <button className="primary" disabled={busy || !effectiveQuestion}><CornerDownLeft size={16}/>{busy ? 'Running…' : skill ? 'Run skill' : 'Run analysis'}</button>
             </div>

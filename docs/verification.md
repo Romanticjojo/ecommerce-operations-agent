@@ -2,6 +2,10 @@
 
 The November 19, 2026 engineering check-in ran locally on an Apple M4 (10 cores, 16 GB) with Python 3.11, Node.js 22 and Chromium/Chrome. That check-in recorded **17 passing backend and integration tests**. A separate acceptance suite subsequently passed **15 of 15** cases against version 2 of the Brazilian E-Commerce Public Dataset by Olist. The figures below retain their original test conditions. [Olist acceptance report](../evaluation/kaggle_olist/verified/REPORT.md) · [CI runs by commit](https://github.com/Romanticjojo/ecommerce-operations-agent/actions)
 
+## Model-planned skills · v1.1.1
+
+Qwen2.5-1.5B-Instruct ran through the production Chat Completions adapter against Olist v2. The suite passed 24 of 26 end-to-end cases. Nine original free-form questions and all nine selected skills passed. Two additional free-form requests returned invalid plans after one repair. Four separate requests supplied by a Codex session through a local relay matched the expected outcomes. The application regression suite passed 45 tests and the fresh Olist v2 acceptance suite passed all 15. [Model test report](../evaluation/skill_checks/MODEL-REPORT.md)
+
 ## Version 1.1 acceptance · November 20, 2026
 
 | Check | Result |

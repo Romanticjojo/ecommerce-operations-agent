@@ -76,7 +76,7 @@ def envelope(run, question, started):
 
 
 def make_app():
-    app = FastAPI(title="Commerce Lens", version="1.1.0")
+    app = FastAPI(title="Commerce Lens", version="1.1.1")
     hosts = ["127.0.0.1", "localhost", "[::1]", "testserver"]
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=hosts)
 

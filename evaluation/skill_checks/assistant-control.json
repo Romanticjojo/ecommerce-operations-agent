@@ -1,0 +1,75 @@
+{
+  "source": "Plans supplied by the current Codex session through a loopback Chat Completions relay. No independent model-selection accuracy or API usage measurement.",
+  "snapshot": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840",
+  "cases": [
+    {
+      "question": "我想比较 2018 年各家商户的服务表现，综合顾客打分和准时履约来排名。",
+      "assistant_plan": {
+        "intent": "skill",
+        "skill_id": "merchant-score",
+        "year": 2018
+      },
+      "status": "ok",
+      "model": "codex-session-relay",
+      "filters": {
+        "start": "2018-01-01",
+        "end": "2019-01-01"
+      },
+      "row_count": 536,
+      "answer": "Seller b410bdd36d5db7a65dcd42b7ead933b8 ranks first at 92.25/100 among 536 eligible sellers. It has 42 rated orders and 42 on-time arrivals in 42 timed deliveries. Inspect both adjusted components before selecting a seller for operational follow-up.",
+      "matched_expected_result": true,
+      "system_prompt_sha256": "5cc59d5619804af185d710279bfd608bcca0b117d7394b990a894b7a0fedd970"
+    },
+    {
+      "question": "Taking only purchases before July 2018, what do the last three covered months of SKU unit sales suggest about the next reorder?",
+      "assistant_plan": {
+        "intent": "skill",
+        "skill_id": "product-trend",
+        "end": "2018-07-01"
+      },
+      "status": "ok",
+      "model": "codex-session-relay",
+      "filters": {
+        "start": null,
+        "end": "2018-07-01"
+      },
+      "row_count": 15,
+      "answer": "For 2018-07 planning, product aca2eb7d00ea1a7b8ebd4e68314663af (furniture_decor) moved from 83 to 90 to 2 units over 2018-04–2018-06. Its three-month median is 83 units. Hold the baseline and monitor weekly sales. For a small reorder test, check stock for 19c91ef95d509ea33eda93495c4d3481 (13 → 23 → 43 units).",
+      "matched_expected_result": true,
+      "system_prompt_sha256": "5cc59d5619804af185d710279bfd608bcca0b117d7394b990a894b7a0fedd970"
+    },
+    {
+      "question": "Which products draw repeated complaints in written Portuguese feedback, and what problems do customers describe?",
+      "assistant_plan": {
+        "intent": "skill",
+        "skill_id": "reviews-aftercare"
+      },
+      "status": "ok",
+      "model": "codex-session-relay",
+      "filters": {
+        "start": null,
+        "end": null
+      },
+      "row_count": 21,
+      "answer": "11,206 of 92,673 attributable rated orders received 1–2 stars (12.1%). Of 38,783 written reviews, 20,179 matched positive language only and 5,016 matched negative language only. Product 99a4788cb24856965c36a24e339b6058 has 53 low ratings across 397 rated orders. Delivery appears in 2,271 low ratings, the highest count among the four tracked themes. Start the review there.",
+      "matched_expected_result": true,
+      "system_prompt_sha256": "5cc59d5619804af185d710279bfd608bcca0b117d7394b990a894b7a0fedd970"
+    },
+    {
+      "question": "What is the exact number of units currently sitting in each seller's warehouse?",
+      "assistant_plan": {
+        "intent": "clarification_required"
+      },
+      "status": "clarification_required",
+      "model": "codex-session-relay",
+      "filters": {
+        "start": null,
+        "end": null
+      },
+      "row_count": 0,
+      "answer": "Please specify a supported metric, grouping and date range. In demo mode, try one of the example questions.",
+      "matched_expected_result": true,
+      "system_prompt_sha256": "5cc59d5619804af185d710279bfd608bcca0b117d7394b990a894b7a0fedd970"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 **15 of 15 cases passed.** pytest exited with code `0`.
 
-Run recorded at `2026-11-20T07:03:24+00:00` on `Darwin 25.6.0 / arm64` with Python `3.11.16`.
+Run recorded at `2026-11-20T07:29:48+00:00` on `Darwin 25.6.0 / arm64` with Python `3.11.16`.
 
 The suite used version **2** of the Olist dataset. DuckDB snapshot `a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840`. [Olist dataset on Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
@@ -60,21 +60,21 @@ Package versions used in this run include `kagglehub 1.0.3`, `kagglesdk 0.1.38`,
 
 | Case | Check | Result | Time (ms) |
 |---|---|---|---:|
-| K01 | Imported tables match the source files | PASS | 113.15 |
-| K02 | Total delivered orders | PASS | 148.12 |
-| K03 | Item revenue from delivered orders | PASS | 116.01 |
-| K04 | Average order value | PASS | 122.16 |
-| K05 | Monthly delivered orders in 2017 | PASS | 108.22 |
-| K06 | Top ten categories by 2018 item revenue | PASS | 104.33 |
-| K07 | January revenue with an exclusive end date | PASS | 99.42 |
-| K08 | Item and payment totals for orders with multiple rows | PASS | 22.99 |
-| K09 | Delivery investigation cohort and exclusions | PASS | 54.92 |
-| K10 | Difference in negative review rates by delivery timestamp | PASS | 52.49 |
-| K11 | Sensitivity to measuring delays by calendar day | PASS | 53.39 |
-| K12 | Revenue request for a year without orders | PASS | 94.35 |
-| K13 | Reversed date range | PASS | 1.71 |
-| K14 | Clarification for an unavailable profit metric | PASS | 11.65 |
-| K15 | Replaying a saved revenue query | PASS | 126.27 |
+| K01 | Imported tables match the source files | PASS | 109.50 |
+| K02 | Total delivered orders | PASS | 148.49 |
+| K03 | Item revenue from delivered orders | PASS | 127.45 |
+| K04 | Average order value | PASS | 132.86 |
+| K05 | Monthly delivered orders in 2017 | PASS | 117.48 |
+| K06 | Top ten categories by 2018 item revenue | PASS | 118.22 |
+| K07 | January revenue with an exclusive end date | PASS | 113.37 |
+| K08 | Item and payment totals for orders with multiple rows | PASS | 24.36 |
+| K09 | Delivery investigation cohort and exclusions | PASS | 58.84 |
+| K10 | Difference in negative review rates by delivery timestamp | PASS | 54.58 |
+| K11 | Sensitivity to measuring delays by calendar day | PASS | 56.67 |
+| K12 | Revenue request for a year without orders | PASS | 95.98 |
+| K13 | Reversed date range | PASS | 1.67 |
+| K14 | Clarification for an unavailable profit metric | PASS | 18.44 |
+| K15 | Replaying a saved revenue query | PASS | 135.95 |
 
 ## Case evidence
 
@@ -966,7 +966,7 @@ Ask for 2017 item revenue and retrieve the saved run by ID. Check its snapshot, 
     },
     {
       "method": "GET",
-      "path": "/api/runs/23a54b6f-0452-4f92-a96d-f554e122a6b5",
+      "path": "/api/runs/9437ddbe-2af3-4be5-b1c6-d776ca284d0e",
       "input": null,
       "http_status": 200,
       "executed_sql": "SELECT * FROM (SELECT SUM(item_revenue) AS item_revenue FROM order_summary WHERE status = 'delivered' AND purchased_at >= CAST('2017-01-01' AS DATE) AND purchased_at < CAST('2018-01-01' AS DATE) HAVING COUNT(*) > 0) AS result LIMIT 1001"

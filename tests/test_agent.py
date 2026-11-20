@@ -150,3 +150,88 @@ def test_model_can_select_only_a_known_procedure(db, provider, monkeypatch):
         queue.append((200, {"intent": "skill", "skill_id": "merchant-score", "state": "SP"}, None))
     assert ask(db, "Rank only sellers in SP")["evidence"]["error_code"] == "invalid_plan"
     assert len(calls) == 1
+
+
+def test_selected_skill_uses_configured_model_and_local_warehouse(tmp_path, provider):
+    from commerce import data, skills
+    csv_dir = tmp_path / "csv"
+    db = tmp_path / "real.duckdb"
+    data.demo_data(csv_dir)
+    data.build_db(csv_dir, db, "demo")
+    queue, messages = provider
+    skill_id = "merchant-score"
+    question = skills.SKILLS[skill_id]["question"]
+    queue.append((200, {"intent": "skill", "skill_id": skill_id}, None))
+    answer = ask(db, question, skill_id=skill_id, start="2017-01-01")
+    assert answer["status"] == "ok" and answer["mode"] == "model"
+    assert len(messages) == 1
+    prompt = json.loads(messages[0][1]["messages"][1]["content"])
+    assert prompt["selected_skill"] == skill_id and prompt["start"] == "2017-01-01"
+    assert answer["table"] and answer["evidence"]["execution"] == "local_skill"
+    assert answer["evidence"]["model"] == "test-provider"
+
+
+def test_selected_skill_rejects_substitution_or_invented_dates(db, provider):
+    from commerce.skills import SKILLS
+    queue, received = provider
+    slug = "merchant-score"
+    for plan in [{"intent": "skill", "skill_id": "retention"},
+                 {"intent": "skill", "skill_id": slug, "year": 2014},
+                 {"intent": "sales", "metric": "item_revenue"}]:
+        queue.extend([(200, plan, None)] * 2)
+        result = ask(db, SKILLS[slug]["question"], skill_id=slug)
+        assert result["status"] == "error" and result["evidence"]["error_code"] == "invalid_plan"
+        assert result["table"] == [] and not result["evidence"]["sql_success"]
+    assert len(received) == 6
+
+
+def test_selected_skill_reports_provider_failure_without_local_fallback(db, provider):
+    from commerce.skills import SKILLS
+    queue, received = provider
+    queue.append((401, "denied", None))
+    result = ask(db, SKILLS["retention"]["question"], skill_id="retention")
+    assert result["status"] == "error" and result["evidence"]["error_code"] == "model_authentication"
+    assert len(received) == 1 and not result["table"]
+
+
+def test_compatible_planner_accepts_one_fenced_json_object(db, provider):
+    queue, _ = provider
+    plan = '{"intent":"sales","metric":"order_count"}'
+    queue.append((200, "```json\n" + plan + "\n```", None))
+    assert ask(db, "Count delivered orders")["table"] == [{"order_count": 3}]
+    for bad in ["Answer: " + plan, "```json\n" + plan + "\n```\nExtra text",
+                "```json\n" + plan + "\n```\n```json\n" + plan + "\n```"]:
+        queue.append((200, bad, None))
+        assert ask(db, "Count delivered orders")["evidence"]["error_code"] == "model_invalid_response"
+
+
+def test_unobserved_promotion_effect_cannot_run_as_sql_or_skill(db, provider):
+    queue, _ = provider
+    for proposed in [{"intent": "sales", "metric": "item_revenue"}, {"intent": "skill", "skill_id": "price-volume"}]:
+        queue.append((200, proposed, None))
+        result = ask(db, "Estimate the causal effect of our voucher campaign on order revenue.")
+        assert result["status"] == "clarification_required" and result["table"] == []
+        assert result["evidence"]["scope_reason"] == "promotion_attribution_unavailable"
+        assert result["evidence"]["plan"]["intent"] == proposed["intent"]
+        assert not result["evidence"]["sql_success"]
+    queue.append((200, {"intent": "sales", "metric": "item_revenue"}, None))
+    assert ask(db, "Show item revenue for delivered orders.")["status"] == "ok"
+
+
+def test_model_blank_optional_dates_keep_the_ui_window(db, provider):
+    queue, _ = provider
+    queue.append((200, {"intent": "sales", "metric": "order_count", "start": "", "end": ""}, None))
+    run = ask(db, "Count delivered orders in my selected window", start="2018-01-01")
+    assert run["status"] == "ok" and run["table"] == [{"order_count": 2}]
+    assert run["evidence"]["filters"]["start"] == "2018-01-01"
+
+
+def test_named_calendar_year_survives_a_model_omission(db, provider):
+    queue, _ = provider
+    queue.append((200, {"intent": "sales", "metric": "order_count", "start": "2018-01-15"}, None))
+    run = ask(db, "Count delivered orders for calendar year 2018.", start="2018-01-15")
+    assert run["evidence"]["filters"]["end"] == "2019-01-01"
+    assert run["evidence"]["calendar_year"] == 2018 and run["table"] == [{"order_count": 1}]
+    queue.append((200, {"intent": "sales", "metric": "order_count", "year": 2016}, None))
+    conflict = ask(db, "Count delivered orders during the calendar year 2018.")
+    assert conflict["status"] == "clarification_required" and not conflict["evidence"]["sql_success"]

@@ -1,0 +1,1239 @@
+{
+  "utc": "2026-11-20T07:30:34+00:00",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m",
+  "snapshot": "a0fc02b4ba5e65b648f23d3e6171549b0e2b34f7950f34ed65e617a5ab042840",
+  "prompt_version": "commerce-plan-3",
+  "passed": 24,
+  "total": 26,
+  "cases": [
+    {
+      "id": "Q01",
+      "entry": "free_text",
+      "question": "Break down our recent change in sales into shopper counts, orders per shopper and basket size.",
+      "expected": {
+        "skill": "sales-growth",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "sales-growth",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 10,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "sales-growth",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "From 2018-06 to 2018-07, delivered item revenue moved from BRL 856,077.86 to BRL 867,953.46. Buyers moved from 6,061 to 6,100, orders per identified buyer from 1.006 to 1.010, and average order value from BRL 140.36 to BRL 140.92. The largest category gain shown was watches_gifts (BRL +10,137.22). The largest category decline shown was bed_bath_table (BRL -16,451.85).",
+        "model_ms": 414.87,
+        "usage": {
+          "prompt_tokens": 971,
+          "completion_tokens": 30,
+          "total_tokens": 1001
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q02",
+      "entry": "free_text",
+      "question": "How often did buyers return within ninety days, grouped by what they bought on their first order?",
+      "expected": {
+        "skill": "retention",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "retention",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "retention",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Among the 15 largest first-purchase cohorts shown, bed_bath_table had the highest observed 90-day repeat rate: 282 of 7,126 buyers (3.96%). In the largest cohort (bed_bath_table), 6,844 of 7,126 had no repeat by day 90. Test a win-back offer against a holdout.",
+        "model_ms": 277.53,
+        "usage": {
+          "prompt_tokens": 972,
+          "completion_tokens": 19,
+          "total_tokens": 991
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q03",
+      "entry": "free_text",
+      "question": "Which merchandise categories gained or lost the most units between the last two comparable months?",
+      "expected": {
+        "skill": "assortment",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "assortment",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "assortment",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Comparing 2018-06 with 2018-07, bed_bath_table had the largest absolute unit change (764 to 617). It had 87 active sellers in 2018-07. Check seller capacity and current stock before changing the assortment.",
+        "model_ms": 266.3,
+        "usage": {
+          "prompt_tokens": 969,
+          "completion_tokens": 20,
+          "total_tokens": 989
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q04",
+      "entry": "free_text",
+      "question": "Across matched products, how did unit sales move when the same SKU sold at a higher or lower price?",
+      "expected": {
+        "skill": "price-volume",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "price-volume",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 3,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "price-volume",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Across matched consecutive SKU-months, unchanged prices: +0 median units (1,561 pairs), higher prices: +0 median units (535 pairs), lower prices: +0 median units (487 pairs). Use these associations to select products for a pricing test.",
+        "model_ms": 326.12,
+        "usage": {
+          "prompt_tokens": 974,
+          "completion_tokens": 23,
+          "total_tokens": 997
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q05",
+      "entry": "free_text",
+      "question": "Find merchants whose sales revenue kept growing month after month.",
+      "expected": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "seller-growth",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "From 2018-05 through 2018-07, seller 5656537e588803a555b8eb41f07a944b ranked first among eligible sellers. Revenue rose in 2 of 2 comparisons. Its marketplace revenue share in 2018-07 was 0.103%. Use the order counts to size any seller-support pilot.",
+        "model_ms": 449.46,
+        "usage": {
+          "prompt_tokens": 964,
+          "completion_tokens": 36,
+          "total_tokens": 1000
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q06",
+      "entry": "free_text",
+      "question": "Which merchants and state-to-state shipping lanes have the most frequent late arrivals?",
+      "expected": {
+        "skill": "fulfillment",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "fulfillment",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 10,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "fulfillment",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Seller ad781527c93d00d89a11eecd9dcad7c1 had 12 late deliveries among 33 orders (36.4%). State lane PR → AL had 11 late deliveries among 35 orders (31.4%). Check handover timing and the promised transit time for these groups.",
+        "model_ms": 404.35,
+        "usage": {
+          "prompt_tokens": 968,
+          "completion_tokens": 32,
+          "total_tokens": 1000
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q07",
+      "entry": "free_text",
+      "question": "Which products should customer support investigate based on Portuguese complaint themes and low star ratings?",
+      "expected": {
+        "skill": "reviews-aftercare",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "reviews-aftercare",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 21,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "reviews-aftercare",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "11,206 of 92,673 attributable rated orders received 1–2 stars (12.1%). Of 38,783 written reviews, 20,179 matched positive language only and 5,016 matched negative language only. Product 99a4788cb24856965c36a24e339b6058 has 53 low ratings across 397 rated orders. Delivery appears in 2,271 low ratings, the highest count among the four tracked themes. Start the review there.",
+        "model_ms": 223.18,
+        "usage": {
+          "prompt_tokens": 969,
+          "completion_tokens": 16,
+          "total_tokens": 985
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q08",
+      "entry": "free_text",
+      "question": "Score and rank the sellers using their buyer ratings and on-time performance.",
+      "expected": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 784,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "merchant-score",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Seller 48efc9d94a9834137efd9ea76b065a38 ranks first at 93.76/100 among 784 eligible sellers. It has 33 rated orders and 33 on-time arrivals in 33 timed deliveries. Inspect both adjusted components before selecting a seller for operational follow-up.",
+        "model_ms": 258.65,
+        "usage": {
+          "prompt_tokens": 967,
+          "completion_tokens": 19,
+          "total_tokens": 986
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "Q09",
+      "entry": "free_text",
+      "question": "Use each SKU’s recent monthly unit trajectory to suggest a small reorder or an assortment check.",
+      "expected": {
+        "skill": "product-trend",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "product-trend",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "product-trend",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "For 2018-08 planning, product 53b36df67ebb7c41585e8d54d6772e08 (watches_gifts) moved from 114 to 9 to 11 units over 2018-05–2018-07. Its three-month median is 11 units. Hold the baseline and monitor weekly sales. For a small reorder test, check stock for 2ff995aead9c63a1f37a07b3664ead37 (2 → 8 → 21 units).",
+        "model_ms": 289.6,
+        "usage": {
+          "prompt_tokens": 971,
+          "completion_tokens": 20,
+          "total_tokens": 991
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B01",
+      "entry": "selected",
+      "question": "What drove the change in platform sales?",
+      "expected": {
+        "skill": "sales-growth",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "sales-growth",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 10,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "sales-growth",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "From 2018-06 to 2018-07, delivered item revenue moved from BRL 856,077.86 to BRL 867,953.46. Buyers moved from 6,061 to 6,100, orders per identified buyer from 1.006 to 1.010, and average order value from BRL 140.36 to BRL 140.92. The largest category gain shown was watches_gifts (BRL +10,137.22). The largest category decline shown was bed_bath_table (BRL -16,451.85).",
+        "model_ms": 152.19,
+        "usage": {
+          "prompt_tokens": 206,
+          "completion_tokens": 13,
+          "total_tokens": 219
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B02",
+      "entry": "selected",
+      "question": "Which first-purchase categories lead to repeat purchases within 90 days?",
+      "expected": {
+        "skill": "retention",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "retention",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "retention",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Among the 15 largest first-purchase cohorts shown, bed_bath_table had the highest observed 90-day repeat rate: 282 of 7,126 buyers (3.96%). In the largest cohort (bed_bath_table), 6,844 of 7,126 had no repeat by day 90. Test a win-back offer against a holdout.",
+        "model_ms": 143.17,
+        "usage": {
+          "prompt_tokens": 233,
+          "completion_tokens": 12,
+          "total_tokens": 245
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B03",
+      "entry": "selected",
+      "question": "Which categories gained or lost the most units?",
+      "expected": {
+        "skill": "assortment",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "assortment",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "assortment",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Comparing 2018-06 with 2018-07, bed_bath_table had the largest absolute unit change (764 to 617). It had 87 active sellers in 2018-07. Check seller capacity and current stock before changing the assortment.",
+        "model_ms": 151.94,
+        "usage": {
+          "prompt_tokens": 213,
+          "completion_tokens": 13,
+          "total_tokens": 226
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B04",
+      "entry": "selected",
+      "question": "How did unit sales change when the same product sold at a different price?",
+      "expected": {
+        "skill": "price-volume",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "price-volume",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 3,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "price-volume",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Across matched consecutive SKU-months, unchanged prices: +0 median units (1,561 pairs), higher prices: +0 median units (535 pairs), lower prices: +0 median units (487 pairs). Use these associations to select products for a pricing test.",
+        "model_ms": 139.31,
+        "usage": {
+          "prompt_tokens": 219,
+          "completion_tokens": 12,
+          "total_tokens": 231
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B05",
+      "entry": "selected",
+      "question": "Which sellers grew consistently across three months?",
+      "expected": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "seller-growth",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "From 2018-05 through 2018-07, seller 5656537e588803a555b8eb41f07a944b ranked first among eligible sellers. Revenue rose in 2 of 2 comparisons. Its marketplace revenue share in 2018-07 was 0.103%. Use the order counts to size any seller-support pilot.",
+        "model_ms": 159.38,
+        "usage": {
+          "prompt_tokens": 217,
+          "completion_tokens": 13,
+          "total_tokens": 230
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B06",
+      "entry": "selected",
+      "question": "Which sellers and shipping lanes should we investigate for late delivery?",
+      "expected": {
+        "skill": "fulfillment",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "fulfillment",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 10,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "fulfillment",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Seller ad781527c93d00d89a11eecd9dcad7c1 had 12 late deliveries among 33 orders (36.4%). State lane PR → AL had 11 late deliveries among 35 orders (31.4%). Check handover timing and the promised transit time for these groups.",
+        "model_ms": 153.44,
+        "usage": {
+          "prompt_tokens": 245,
+          "completion_tokens": 13,
+          "total_tokens": 258
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B07",
+      "entry": "selected",
+      "question": "Which products receive the most low ratings, and what do their customers mention?",
+      "expected": {
+        "skill": "reviews-aftercare",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "reviews-aftercare",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 21,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "reviews-aftercare",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "11,206 of 92,673 attributable rated orders received 1–2 stars (12.1%). Of 38,783 written reviews, 20,179 matched positive language only and 5,016 matched negative language only. Product 99a4788cb24856965c36a24e339b6058 has 53 low ratings across 397 rated orders. Delivery appears in 2,271 low ratings, the highest count among the four tracked themes. Start the review there.",
+        "model_ms": 152.74,
+        "usage": {
+          "prompt_tokens": 220,
+          "completion_tokens": 13,
+          "total_tokens": 233
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B08",
+      "entry": "selected",
+      "question": "How do merchants rank on customer ratings and on-time delivery?",
+      "expected": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 784,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "merchant-score",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Seller 48efc9d94a9834137efd9ea76b065a38 ranks first at 93.76/100 among 784 eligible sellers. It has 33 rated orders and 33 on-time arrivals in 33 timed deliveries. Inspect both adjusted components before selecting a seller for operational follow-up.",
+        "model_ms": 143.53,
+        "usage": {
+          "prompt_tokens": 217,
+          "completion_tokens": 12,
+          "total_tokens": 229
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "B09",
+      "entry": "selected",
+      "question": "Which products should I review for reordering next month?",
+      "expected": {
+        "skill": "product-trend",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "product-trend",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "product-trend",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "For 2018-08 planning, product 53b36df67ebb7c41585e8d54d6772e08 (watches_gifts) moved from 114 to 9 to 11 units over 2018-05–2018-07. Its three-month median is 11 units. Hold the baseline and monitor weekly sales. For a small reorder test, check stock for 2ff995aead9c63a1f37a07b3664ead37 (2 → 8 → 21 units).",
+        "model_ms": 293.81,
+        "usage": {
+          "prompt_tokens": 225,
+          "completion_tokens": 13,
+          "total_tokens": 238
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "D01",
+      "entry": "free_text",
+      "question": "Rank the merchants on ratings and punctuality for calendar year 2018.",
+      "expected": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "start": "2018-04-01",
+        "end": "2019-01-01"
+      },
+      "actual": {
+        "skill": "merchant-score",
+        "status": "ok",
+        "filters": {
+          "start": "2018-04-01",
+          "end": "2019-01-01"
+        },
+        "rows": 346,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "merchant-score",
+          "dimension": "total",
+          "start": "2018-04-01",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Seller b410bdd36d5db7a65dcd42b7ead933b8 ranks first at 92.86/100 among 346 eligible sellers. It has 33 rated orders and 33 on-time arrivals in 33 timed deliveries. Inspect both adjusted components before selecting a seller for operational follow-up.",
+        "model_ms": 1647.2599999999998,
+        "usage": {
+          "prompt_tokens": 1978,
+          "completion_tokens": 131,
+          "total_tokens": 2109
+        },
+        "calendar_year": 2018,
+        "scope_reason": null,
+        "repairs": 1
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "D02",
+      "entry": "selected",
+      "question": "Which products should I review for reordering next month?",
+      "expected": {
+        "skill": "product-trend",
+        "status": "insufficient_data",
+        "start": "2030-01-01",
+        "end": null
+      },
+      "actual": {
+        "skill": "product-trend",
+        "status": "insufficient_data",
+        "filters": {
+          "start": "2030-01-01",
+          "end": null
+        },
+        "rows": 0,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "product-trend",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "No eligible comparison in this date range. Widen the purchase dates and check the coverage and sample rules.",
+        "model_ms": 182.36,
+        "usage": {
+          "prompt_tokens": 235,
+          "completion_tokens": 13,
+          "total_tokens": 248
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "U01",
+      "entry": "free_text",
+      "question": "How many visitors abandoned a shopping cart between visiting a product page and checking out?",
+      "expected": {
+        "skill": null,
+        "status": "clarification_required",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": null,
+        "status": "clarification_required",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 0,
+        "plan": {
+          "intent": "clarification_required",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Please specify a supported metric, grouping and date range. In demo mode, try one of the example questions.",
+        "model_ms": 167.5,
+        "usage": {
+          "prompt_tokens": 969,
+          "completion_tokens": 9,
+          "total_tokens": 978
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "no_query": true
+      },
+      "passed": true
+    },
+    {
+      "id": "U02",
+      "entry": "free_text",
+      "question": "What incremental revenue did issuing discount coupons cause compared with a randomized control group?",
+      "expected": {
+        "skill": null,
+        "status": "clarification_required",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": null,
+        "status": "clarification_required",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 0,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "price-volume",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Estimating promotion lift requires assignment or exposure data and a comparison group. Olist records purchases and payments. Its price and volume skill can compare observed sales.",
+        "model_ms": 206.66,
+        "usage": {
+          "prompt_tokens": 968,
+          "completion_tokens": 15,
+          "total_tokens": 983
+        },
+        "calendar_year": null,
+        "scope_reason": "promotion_attribution_unavailable",
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "no_query": true
+      },
+      "passed": true
+    },
+    {
+      "id": "H01",
+      "entry": "free_text",
+      "question": "Shortlist merchants with consistently rising takings and show their share of the marketplace.",
+      "expected": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": "seller-growth",
+        "status": "ok",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 15,
+        "plan": {
+          "intent": "skill",
+          "skill_id": "seller-growth",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "From 2018-05 through 2018-07, seller 5656537e588803a555b8eb41f07a944b ranked first among eligible sellers. Revenue rose in 2 of 2 comparisons. Its marketplace revenue share in 2018-07 was 0.103%. Use the order counts to size any seller-support pilot.",
+        "model_ms": 266.25,
+        "usage": {
+          "prompt_tokens": 969,
+          "completion_tokens": 20,
+          "total_tokens": 989
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "date_bounds": true,
+        "execution": true,
+        "reference": true
+      },
+      "passed": true
+    },
+    {
+      "id": "H02",
+      "entry": "free_text",
+      "question": "Support can investigate just a few items. Where do poor ratings pile up, and what do the written comments mention?",
+      "expected": {
+        "skill": "reviews-aftercare",
+        "status": "ok",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": null,
+        "status": "error",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 0,
+        "plan": null,
+        "error": "invalid_plan",
+        "answer": "The model plan failed field validation.",
+        "model_ms": 1391.76,
+        "usage": {
+          "prompt_tokens": 1970,
+          "completion_tokens": 108,
+          "total_tokens": 2078
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 1
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": false,
+        "skill": false,
+        "date_bounds": true,
+        "execution": false,
+        "reference": false
+      },
+      "passed": false
+    },
+    {
+      "id": "H03",
+      "entry": "free_text",
+      "question": "Using purchases through June 30, 2018, which SKUs deserve a replenishment check based on monthly units?",
+      "expected": {
+        "skill": "product-trend",
+        "status": "ok",
+        "start": null,
+        "end": "2018-07-01"
+      },
+      "actual": {
+        "skill": null,
+        "status": "error",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 0,
+        "plan": null,
+        "error": "invalid_plan",
+        "answer": "The model plan failed field validation.",
+        "model_ms": 2095.61,
+        "usage": {
+          "prompt_tokens": 1978,
+          "completion_tokens": 170,
+          "total_tokens": 2148
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 1
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": false,
+        "skill": false,
+        "date_bounds": false,
+        "execution": false,
+        "reference": false
+      },
+      "passed": false
+    },
+    {
+      "id": "H04",
+      "entry": "free_text",
+      "question": "How many units were physically in merchants’ warehouses yesterday?",
+      "expected": {
+        "skill": null,
+        "status": "clarification_required",
+        "start": null,
+        "end": null
+      },
+      "actual": {
+        "skill": null,
+        "status": "clarification_required",
+        "filters": {
+          "start": null,
+          "end": null
+        },
+        "rows": 0,
+        "plan": {
+          "intent": "clarification_required",
+          "dimension": "total",
+          "status": "delivered",
+          "grain": "timestamp"
+        },
+        "error": null,
+        "answer": "Please specify a supported metric, grouping and date range. In demo mode, try one of the example questions.",
+        "model_ms": 167.02,
+        "usage": {
+          "prompt_tokens": 964,
+          "completion_tokens": 9,
+          "total_tokens": 973
+        },
+        "calendar_year": null,
+        "scope_reason": null,
+        "repairs": 0
+      },
+      "checks": {
+        "model_path": true,
+        "snapshot": true,
+        "status": true,
+        "skill": true,
+        "no_query": true
+      },
+      "passed": true
+    }
+  ]
+}

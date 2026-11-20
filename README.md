@@ -3,7 +3,7 @@
 **DSC 200 · Data Science Programming · Fall 2026**
 Commerce Lens is the local workbench for the *E-commerce Operations Agent*. Ask about Brazilian marketplace orders, run nine repeatable operations analyses, or inspect the data and SQL behind an answer.
 
-**The default is offline demo mode.** With the course dataset imported, all nine analysis skills run on real Olist records with no API key. An optional compatible model can interpret free-form questions. The workbench identifies whether a particular run used a local skill or a provider.
+**The default is offline demo mode.** With the course dataset imported, all nine analysis skills run on real Olist records with no API key. A configured compatible model plans both free-form questions and skills selected in the workbench. The workbench identifies whether a particular run used a local skill or a provider.
 
 [Download the current complete project ZIP](https://github.com/Romanticjojo/ecommerce-operations-agent/releases/latest/download/commerce-lens.zip) · [Four-page course project update (PDF)](docs/course/project-update.pdf) · [Original v1.0 walkthrough (MP4)](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/docs/media/K03-workbench.mp4)
 
@@ -76,7 +76,15 @@ LLM_API_KEY=your-local-key
 
 Use the provider's **base URL**, including any required version prefix. The adapter appends `/chat/completions`. Set the exact **model ID** supported by the provider. The **API key** can be empty for a local endpoint that accepts unauthenticated requests. When using Docker, the endpoint must be reachable from the container. Keep credentials out of Git.
 
-Recreate the container with `docker compose up -d --force-recreate --wait`, or restart `./scripts/start.sh` for a native installation. Open the mode control in the upper right to check the configured model ID. Submit a sales question and inspect its evidence to verify a real call. For a free-form model run, the agent sends the question, permitted schema and skill descriptions to the provider. Selected skills and recognized offline questions execute locally. Raw comments stay inside the database. It compiles the returned plan and executes the query against local reporting views.
+Recreate the container with `docker compose up -d --force-recreate --wait`, or restart `./scripts/start.sh` for a native installation. Open the mode control in the upper right to check the configured model ID. Submit a sales question and inspect its evidence to verify a real call. For free-form questions the model receives the question, supported actions and purchase-date controls. When you click **Run skill**, the model receives that procedure's ID, scope and steps. It returns a JSON plan. The agent validates the plan and runs the read-only SQL on the local snapshot. Raw comments and result tables stay local. A selected skill cannot be substituted or narrowed to invented dates. A provider error is shown in the workbench.
+
+To test your configured model against Olist, run the following with the workbench running. The suite submits test questions and saves their results in workbench history. Use a separate test workspace if you want to keep them apart from your own questions.
+
+```sh
+.venv/bin/python -m evaluation.skill_checks.model_routing --app-url http://127.0.0.1:8731 --out runtime/my-model-results.json
+```
+
+[Live model test cases and findings](evaluation/skill_checks/MODEL-REPORT.md)
 
 ## Reproduce the checks
 
@@ -89,7 +97,7 @@ From the project root with the native environment installed:
 .venv/bin/python -m commerce.cli evaluate --mode demo --output runtime/demo-report
 ```
 
-The application suite checks imports, statistics, query restrictions, model-adapter contracts and HTTP behavior. The 15 Kaggle acceptance cases run a real local API against a fresh snapshot and compare it to calculations from the original CSVs. The 55-question benchmark is a separate experiment. Measuring real-model direct-SQL versus structured-plan accuracy requires a configured provider and `python -m commerce.cli evaluate --mode model`. Human review of the benchmark and real-model evaluation remain pending. [Acceptance report](evaluation/kaggle_olist/verified/REPORT.md) · [Runnable test package](evaluation/kaggle_olist/olist-kaggle-acceptance.zip) · [Recorded K03 test (MP4)](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/evaluation/kaggle_olist/media/K03-revenue.mp4)
+The application suite checks imports, statistics, query restrictions, model-adapter contracts and HTTP behavior. The 15 Kaggle acceptance cases run a real local API against a fresh snapshot and compare it to calculations from the original CSVs. The 55-question benchmark is a separate experiment. Measuring real-model direct-SQL versus structured-plan accuracy requires a configured provider and `python -m commerce.cli evaluate --mode model`. The separate 55-question direct-SQL versus full-plan model comparison and its human review remain pending. [Acceptance report](evaluation/kaggle_olist/verified/REPORT.md) · [Runnable test package](evaluation/kaggle_olist/olist-kaggle-acceptance.zip) · [Recorded K03 test (MP4)](https://raw.githubusercontent.com/Romanticjojo/ecommerce-operations-agent/main/evaluation/kaggle_olist/media/K03-revenue.mp4)
 
 ## Course and engineering materials
 

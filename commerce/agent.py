@@ -4,7 +4,6 @@ from pathlib import Path
 from time import perf_counter
 
 import duckdb
-from pydantic import ValidationError
 
 from . import model, skills
 from .plans import Plan, bounds, compile_plan, demo_plan, iso_day
@@ -36,6 +35,10 @@ _METRICS = {
     "reviewed_order_count": ("有效评价订单数", "reviewed order count"),
 }
 _UNSAFE = re.compile(r"\b(drop|truncate|delete|insert|attach|detach|pragma|install|uninstall)\b|\b(update|alter|create)\s+(?:the\s+)?(?:orders?|tables?|database|set)\b|\b(read_csv|read_parquet|read_text)\s*\(|删除(?:数据|表|所有)|清空(?:数据|表)", re.I)
+
+_CALENDAR_YEAR = re.compile(r"\b(?:for|in|during) (?:the )?calendar year ([12]\d{3})[.!? ]*$", re.I)
+_PROMOTION = re.compile(r"\b(coupons?|vouchers?|discounts?|promotions?|subsid(?:y|ies))\b|优惠券|促销|补贴", re.I)
+_ATTRIBUTION = re.compile(r"\b(caus\w*|incremental|uplift|lift|counterfactual|randomi[sz]ed|control group)\b|因果|增量|对照组|随机分组", re.I)
 
 
 def _text(key, en):
@@ -123,7 +126,7 @@ def _run(db, question, chosen, en, left, right, variant, out, skill_id):
     if skill_id is not None and skill_id != matched:
         out.update(status="clarification_required", answer="Use the skill’s example question and date controls, or submit your own question without a selected skill.")
         return
-    if matched:
+    if matched and chosen == "demo":
         out["mode"] = "skill"
         evidence.update(model=None, prompt_version=None)
         _run_skill(db, matched, left, right, out)
@@ -137,7 +140,8 @@ def _run(db, question, chosen, en, left, right, variant, out, skill_id):
         for attempt in range(2):
             started = perf_counter()
             try:
-                raw, usage = model.complete(question, variant, left, right, correction=attempt > 0)
+                raw, usage = model.complete(question, variant, left, right, correction=attempt > 0,
+                                            selected_skill=skill_id)
             except model.ModelError:
                 out["usage"] = None
                 raise
@@ -162,20 +166,39 @@ def _run(db, question, chosen, en, left, right, variant, out, skill_id):
                 plan = Plan.model_validate(raw)
                 if direct and plan.intent not in {"investigation", "clarification_required", "rejected"}:
                     raise model.ModelError("invalid_plan")
+                if skill_id and plan.intent not in {"clarification_required", "rejected"}:
+                    # A button runs one named SOP with the operator's date controls.
+                    if plan.skill_id != skill_id or bounds(plan, left, right) != (left, right):
+                        raise ValueError("selected_skill_mismatch")
                 break
-            except ValidationError:
+            except ValueError:
                 if attempt or direct:
                     raise model.ModelError("invalid_plan") from None
                 evidence["repairs"] = 1
     if plan:
+        evidence["plan"] = plan.model_dump(exclude_none=True)
+        if chosen == "model" and plan.intent != "rejected" and _PROMOTION.search(question) and _ATTRIBUTION.search(question):
+            evidence["scope_reason"] = "promotion_attribution_unavailable"
+            out.update(status="clarification_required", answer=(
+                "Estimating promotion lift requires assignment or exposure data and a comparison group. "
+                "Olist records purchases and payments. Its price and volume skill can compare observed sales."
+                if en else "估算促销增量需要分配或曝光记录以及对照组。Olist 记录了订单和支付，可用价格与销量技能比较实际成交。"))
+            return
         if plan.intent in {"rejected", "clarification_required"}:
             out.update(status=plan.intent, answer=_text(plan.intent, en))
             return
         if plan.start and plan.end and plan.start >= plan.end:
             raise model.ModelError("invalid_plan")
+        named = _CALENDAR_YEAR.search(question) if chosen == "model" and not direct else None
+        if named and len(set(re.findall(r"\b[12]\d{3}\b", question))) == 1:
+            year = int(named[1])
+            evidence["calendar_year"] = year
+            if plan.year is not None and plan.year != year:
+                out.update(status="clarification_required", answer=_text("clarification_required", en))
+                return
+            plan = plan.model_copy(update={"year": year})
         left, right = bounds(plan, left, right)
         evidence["filters"].update(start=left, end=right)
-        evidence["plan"] = plan.model_dump(exclude_none=True)
         if plan.intent == "skill":
             _run_skill(db, plan.skill_id, left, right, out)
             return
